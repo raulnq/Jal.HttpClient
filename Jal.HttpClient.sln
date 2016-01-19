@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jal.HttpClient.Logger", "Ja
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jal.HttpClient.Logger.Installer", "Jal.HttpClient.Logger.Installer\Jal.HttpClient.Logger.Installer.csproj", "{957A4780-55A8-4232-9575-F9CF6B650EFF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jal.HttpClient.Tests", "Jal.HttpClient.Tests\Jal.HttpClient.Tests.csproj", "{DB277486-93E6-4887-BDAE-C820E1E2C26B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +40,10 @@ Global
 		{957A4780-55A8-4232-9575-F9CF6B650EFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{957A4780-55A8-4232-9575-F9CF6B650EFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{957A4780-55A8-4232-9575-F9CF6B650EFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB277486-93E6-4887-BDAE-C820E1E2C26B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB277486-93E6-4887-BDAE-C820E1E2C26B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB277486-93E6-4887-BDAE-C820E1E2C26B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB277486-93E6-4887-BDAE-C820E1E2C26B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

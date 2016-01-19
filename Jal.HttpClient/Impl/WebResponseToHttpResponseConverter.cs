@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net;
 using System.Text;
 using Jal.HttpClient.Interface;
@@ -67,11 +68,11 @@ namespace Jal.HttpClient.Impl
 
                 if (responseStream != null)
                 {
-                    using (var readStream = new StreamReader(responseStream, Encoding.UTF8))
+                    var encoding = string.IsNullOrEmpty(response.CharacterSet) ? Encoding.UTF8 : Encoding.GetEncoding(response.CharacterSet);
+
+                    using (var readStream = new StreamReader(responseStream, encoding))
                     {
                         httpResponse.Content = readStream.ReadToEnd();
-
-                        httpResponse.HttpStatusCode = response.StatusCode;
                     }
                 }
             }

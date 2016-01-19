@@ -4,16 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5BBE156D-E724-47D0-88B8-0EC6B0FB7E33}</ProjectGuid>
+    <ProjectGuid>{DB277486-93E6-4887-BDAE-C820E1E2C26B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Jal.HttpClient</RootNamespace>
-    <AssemblyName>Jal.HttpClient</AssemblyName>
+    <RootNamespace>Jal.HttpClient.Tests</RootNamespace>
+    <AssemblyName>Jal.HttpClient.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,6 +25,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -32,7 +34,23 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core">
+      <HintPath>..\packages\Castle.Core.3.3.0\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Windsor">
+      <HintPath>..\packages\Castle.Windsor.3.3.0\lib\net45\Castle.Windsor.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Shouldly">
+      <HintPath>..\packages\Shouldly.2.6.0\lib\net40\Shouldly.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -42,26 +60,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Impl\HttpContentTypeMapper.cs" />
-    <Compile Include="Impl\HttpHandler.cs" />
-    <Compile Include="Impl\HttpMethodMapper.cs" />
-    <Compile Include="Impl\HttpRequestToWebRequestConverter.cs" />
-    <Compile Include="Impl\NullHttpLogger.cs" />
-    <Compile Include="Impl\WebResponseToHttpResponseConverter.cs" />
-    <Compile Include="Interface\IHttpContentTypeMapper.cs" />
-    <Compile Include="Interface\IHttpHandler.cs" />
-    <Compile Include="Interface\IHttpLogger.cs" />
-    <Compile Include="Interface\IHttpMethodMapper.cs" />
-    <Compile Include="Interface\IHttpRequestToWebRequestConverter.cs" />
-    <Compile Include="Interface\IWebResponseToHttpResponseConverter.cs" />
-    <Compile Include="Model\HttpCharacterSet.cs" />
-    <Compile Include="Model\HttpContentType.cs" />
-    <Compile Include="Model\HttpHeader.cs" />
-    <Compile Include="Model\HttpMethod.cs" />
-    <Compile Include="Model\HttpQueryParameter.cs" />
-    <Compile Include="Model\HttpRequest.cs" />
-    <Compile Include="Model\HttpResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Jal.HttpClient.Installer\Jal.HttpClient.Installer.csproj">
+      <Project>{cf1f1ee3-47f7-4f53-9aae-c6aab6be7598}</Project>
+      <Name>Jal.HttpClient.Installer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Jal.HttpClient.Logger.Installer\Jal.HttpClient.Logger.Installer.csproj">
+      <Project>{957a4780-55a8-4232-9575-f9cf6b650eff}</Project>
+      <Name>Jal.HttpClient.Logger.Installer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Jal.HttpClient.Logger\Jal.HttpClient.Logger.csproj">
+      <Project>{a4fb5d41-f423-4977-b44f-480b2a5e5976}</Project>
+      <Name>Jal.HttpClient.Logger</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Jal.HttpClient\Jal.HttpClient.csproj">
+      <Project>{5bbe156d-e724-47d0-88b8-0ec6b0fb7e33}</Project>
+      <Name>Jal.HttpClient</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

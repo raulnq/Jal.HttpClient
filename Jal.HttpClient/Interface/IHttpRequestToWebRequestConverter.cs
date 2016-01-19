@@ -5,6 +5,6 @@ namespace Jal.HttpClient.Interface
 {
     public interface IHttpRequestToWebRequestConverter
     {
-        WebRequest Convert(HttpRequest httpRequest);
+        WebRequest Convert(HttpRequest httpRequest, int timeout);
     }
 }

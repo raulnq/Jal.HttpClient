@@ -7,17 +7,19 @@ namespace Jal.HttpClient.Model
     {
         public HttpContentType HttpContentType { get; set; }
 
-        public string Body { get; set; }
-
-        public int TimeoutInSeconds { get; set; }
+        public HttpCharacterSet HttpCharacterSet { get; set; }
 
         public HttpMethod HttpMethod { get; set; }
-
-        public string Url { get; set; }
 
         public List<HttpHeader> Headers { get; set; }
 
         public List<HttpQueryParameter> QueryParameters { get; set; }
+            
+        public string Body { get; set; }
+
+        public string Url { get; set; }
+
+        public int Timeout { get; set; }
 
         public void AddHeader(string name, string value)
         {
@@ -34,14 +36,15 @@ namespace Jal.HttpClient.Model
             QueryParameters.Add(new HttpQueryParameter() { Name = name, Value = value });
         }
 
-        public HttpRequest(string url, HttpMethod httpMethod, HttpContentType httpContentType)
+        public HttpRequest(string url, HttpMethod httpMethod, HttpContentType httpContentType, HttpCharacterSet httpCharacterSet = HttpCharacterSet.Utf8)
         {
             Url = url;
-            TimeoutInSeconds = 20;
             QueryParameters = new List<HttpQueryParameter>();
             Headers = new List<HttpHeader>();
             HttpMethod = httpMethod;
             HttpContentType = httpContentType;
+            HttpCharacterSet = httpCharacterSet;
+            Timeout = -1;
         }
     }
 }

@@ -4,6 +4,6 @@ namespace Jal.HttpClient.Interface
 {
     public interface IHttpContentTypeMapper
     {
-        string Map(HttpContentType httpContentType);
+        string Map(HttpContentType httpContentType, HttpCharacterSet httpCharacterSet);
     }
 }

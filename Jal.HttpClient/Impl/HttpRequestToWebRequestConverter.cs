@@ -21,7 +21,7 @@ namespace Jal.HttpClient.Impl
             _httpMethodMapper = httpMethodMapper;
         }
 
-        public WebRequest Convert(HttpRequest httpRequest)
+        public WebRequest Convert(HttpRequest httpRequest, int timeout)
         {
             var url = httpRequest.Url;
 
@@ -34,9 +34,9 @@ namespace Jal.HttpClient.Impl
 
             request.Method = _httpMethodMapper.Map(httpRequest.HttpMethod);
 
-            request.Timeout = httpRequest.TimeoutInSeconds * 1000;
+            request.Timeout = httpRequest.Timeout < 0 ? timeout : httpRequest.Timeout;
 
-            request.ContentType = _httpContentTypeMapper.Map(httpRequest.HttpContentType);
+            request.ContentType = _httpContentTypeMapper.Map(httpRequest.HttpContentType, httpRequest.HttpCharacterSet);
 
             if (httpRequest.Headers.Count > 0)
             {

@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Threading.Tasks;
 using Jal.HttpClient.Interface;
 using Jal.HttpClient.Model;
 
@@ -11,6 +12,8 @@ namespace Jal.HttpClient.Impl
         private readonly IHttpRequestToWebRequestConverter _httpRequestToWebRequestConverter;
 
         private readonly IWebResponseToHttpResponseConverter _webResponseToHttpResponseConverter;
+
+        public int Timeout { get; set; }
 
         public HttpHandler(IHttpRequestToWebRequestConverter httpRequestToWebRequestConverter, IWebResponseToHttpResponseConverter webResponseToHttpResponseConverter)
         {
@@ -25,11 +28,38 @@ namespace Jal.HttpClient.Impl
         {
             HttpLogger.Log(httpRequest);
 
-            var request = _httpRequestToWebRequestConverter.Convert(httpRequest);
+            var request = _httpRequestToWebRequestConverter.Convert(httpRequest, Timeout);
 
             try
             {
                 using (var response = (HttpWebResponse) request.GetResponse())
+                {
+                    var httpResponse = _webResponseToHttpResponseConverter.Convert(response);
+
+                    HttpLogger.Log(httpResponse);
+
+                    return httpResponse;
+                }
+            }
+            catch (WebException wex)
+            {
+                var httpResponse = _webResponseToHttpResponseConverter.Convert(wex);
+
+                HttpLogger.Log(httpResponse);
+
+                return httpResponse;
+            }
+        }
+
+        public async Task<HttpResponse> SendAsync(HttpRequest httpRequest)
+        {
+            HttpLogger.Log(httpRequest);
+
+            var request = _httpRequestToWebRequestConverter.Convert(httpRequest, Timeout);
+
+            try
+            {
+               using (var response = (HttpWebResponse) await request.GetResponseAsync())
                 {
                     var httpResponse = _webResponseToHttpResponseConverter.Convert(response);
 
