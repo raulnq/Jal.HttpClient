@@ -19,6 +19,7 @@ namespace Jal.HttpClient.Logger
             var builder = new StringBuilder();
             builder.Append(string.Format("Request Url:{0}", request.Url));
             builder.Append(string.Format(",ContentType:{0}", request.HttpContentType));
+            builder.Append(string.Format(",CharacterSet:{0}", request.HttpCharacterSet));
             builder.Append(string.Format(",Method:{0}", request.HttpMethod));
             builder.Append(",QueryParameters: ");
             foreach (var queryParameter in request.QueryParameters)
