@@ -1,11 +1,13 @@
-﻿using System.Text;
+﻿using System.Net;
+using System.Text;
 using Common.Logging;
+using Jal.HttpClient.Impl;
 using Jal.HttpClient.Interface;
 using Jal.HttpClient.Model;
 
 namespace Jal.HttpClient.Logger
 {
-    public class HttpLogger : IHttpLogger
+    public class HttpLogger : AbstractHttpInterceptor
     {
         private readonly ILog _log;
 
@@ -14,7 +16,7 @@ namespace Jal.HttpClient.Logger
             _log = log;
         }
 
-        public void Log(HttpRequest request)
+        public override void OnEntry(HttpRequest request)
         {
             var builder = new StringBuilder();
             builder.Append(string.Format("Request Url:{0}", request.Url));
@@ -35,7 +37,7 @@ namespace Jal.HttpClient.Logger
             _log.Info(builder.ToString());
         }
 
-        public void Log(HttpResponse response)
+        public override void OnExit(HttpResponse response, HttpRequest request)
         {
             var builder = new StringBuilder();
             builder.Append(string.Format("Response Url:{0}", response.Url));
@@ -52,5 +54,6 @@ namespace Jal.HttpClient.Logger
             builder.Append(string.Format(",ErrorMessage:{0}", response.ErrorMessage));
             _log.Info(builder.ToString());
         }
+
     }
 }

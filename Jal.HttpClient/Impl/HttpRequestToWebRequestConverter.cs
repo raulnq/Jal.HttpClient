@@ -10,13 +10,13 @@ namespace Jal.HttpClient.Impl
 {
     public class HttpRequestToWebRequestConverter : IHttpRequestToWebRequestConverter
     {
-        private readonly IHttpContentTypeMapper _httpContentTypeMapper;
+        private readonly IHttpContentTypeBuilder _httpContentTypeBuilder;
 
         private readonly IHttpMethodMapper _httpMethodMapper;
 
-        public HttpRequestToWebRequestConverter(IHttpContentTypeMapper httpContentTypeMapper, IHttpMethodMapper httpMethodMapper)
+        public HttpRequestToWebRequestConverter(IHttpContentTypeBuilder httpContentTypeBuilder, IHttpMethodMapper httpMethodMapper)
         {
-            _httpContentTypeMapper = httpContentTypeMapper;
+            _httpContentTypeBuilder = httpContentTypeBuilder;
 
             _httpMethodMapper = httpMethodMapper;
         }
@@ -36,8 +36,11 @@ namespace Jal.HttpClient.Impl
 
             request.Timeout = httpRequest.Timeout < 0 ? timeout : httpRequest.Timeout;
 
-            request.ContentType = _httpContentTypeMapper.Map(httpRequest.HttpContentType, httpRequest.HttpCharacterSet);
-
+            if (!string.IsNullOrEmpty(httpRequest.HttpContentType))
+            {
+                request.ContentType = _httpContentTypeBuilder.Build(httpRequest.HttpContentType, httpRequest.HttpCharacterSet);
+            }
+           
             if (httpRequest.Headers.Count > 0)
             {
                 WriteHeaders(httpRequest, request);

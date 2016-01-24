@@ -42,20 +42,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Impl\HttpContentTypeMapper.cs" />
+    <Compile Include="Fluent\HttpHandlerDescriptorExtensions.cs" />
+    <Compile Include="Impl\AbstractHttpInterceptor.cs" />
+    <Compile Include="Impl\HttpContentTypeBuilder.cs" />
     <Compile Include="Impl\HttpHandler.cs" />
+    <Compile Include="Impl\HttpHandlerBuilder.cs" />
+    <Compile Include="Fluent\HttpHandlerDescriptor.cs" />
     <Compile Include="Impl\HttpMethodMapper.cs" />
     <Compile Include="Impl\HttpRequestToWebRequestConverter.cs" />
-    <Compile Include="Impl\NullHttpLogger.cs" />
+    <Compile Include="Interface\IHttpHandlerBuilder.cs" />
+    <Compile Include="Impl\NullHttpInterceptor.cs" />
     <Compile Include="Impl\WebResponseToHttpResponseConverter.cs" />
-    <Compile Include="Interface\IHttpContentTypeMapper.cs" />
+    <Compile Include="Interface\IHttpContentTypeBuilder.cs" />
     <Compile Include="Interface\IHttpHandler.cs" />
-    <Compile Include="Interface\IHttpLogger.cs" />
+    <Compile Include="Interface\IHttpInterceptor.cs" />
     <Compile Include="Interface\IHttpMethodMapper.cs" />
     <Compile Include="Interface\IHttpRequestToWebRequestConverter.cs" />
     <Compile Include="Interface\IWebResponseToHttpResponseConverter.cs" />
-    <Compile Include="Model\HttpCharacterSet.cs" />
-    <Compile Include="Model\HttpContentType.cs" />
     <Compile Include="Model\HttpHeader.cs" />
     <Compile Include="Model\HttpMethod.cs" />
     <Compile Include="Model\HttpQueryParameter.cs" />
@@ -63,6 +66,7 @@
     <Compile Include="Model\HttpResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

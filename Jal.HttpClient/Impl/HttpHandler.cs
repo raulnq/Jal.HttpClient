@@ -7,7 +7,7 @@ namespace Jal.HttpClient.Impl
 {
     public class HttpHandler : IHttpHandler
     {
-        public IHttpLogger HttpLogger { get; set; }
+        public IHttpInterceptor HttpInterceptor { get; set; }
 
         private readonly IHttpRequestToWebRequestConverter _httpRequestToWebRequestConverter;
 
@@ -17,7 +17,7 @@ namespace Jal.HttpClient.Impl
 
         public HttpHandler(IHttpRequestToWebRequestConverter httpRequestToWebRequestConverter, IWebResponseToHttpResponseConverter webResponseToHttpResponseConverter)
         {
-            HttpLogger = NullHttpLogger.Instance;
+            HttpInterceptor = AbstractHttpInterceptor.Instance;
 
             _httpRequestToWebRequestConverter = httpRequestToWebRequestConverter;
 
@@ -26,7 +26,9 @@ namespace Jal.HttpClient.Impl
 
         public HttpResponse Send(HttpRequest httpRequest)
         {
-            HttpLogger.Log(httpRequest);
+            HttpInterceptor.OnEntry(httpRequest);
+
+            HttpResponse httpResponse = null;
 
             var request = _httpRequestToWebRequestConverter.Convert(httpRequest, Timeout);
 
@@ -34,26 +36,32 @@ namespace Jal.HttpClient.Impl
             {
                 using (var response = (HttpWebResponse) request.GetResponse())
                 {
-                    var httpResponse = _webResponseToHttpResponseConverter.Convert(response);
+                    httpResponse = _webResponseToHttpResponseConverter.Convert(response);
 
-                    HttpLogger.Log(httpResponse);
+                    HttpInterceptor.OnSuccess(httpResponse, httpRequest);
 
                     return httpResponse;
                 }
             }
             catch (WebException wex)
             {
-                var httpResponse = _webResponseToHttpResponseConverter.Convert(wex);
+                httpResponse = _webResponseToHttpResponseConverter.Convert(wex);
 
-                HttpLogger.Log(httpResponse);
+                HttpInterceptor.OnError(httpResponse, httpRequest, wex);
 
                 return httpResponse;
+            }
+            finally
+            {
+                HttpInterceptor.OnExit(httpResponse, httpRequest);
             }
         }
 
         public async Task<HttpResponse> SendAsync(HttpRequest httpRequest)
         {
-            HttpLogger.Log(httpRequest);
+            HttpInterceptor.OnEntry(httpRequest);
+
+            HttpResponse httpResponse = null;
 
             var request = _httpRequestToWebRequestConverter.Convert(httpRequest, Timeout);
 
@@ -61,20 +69,24 @@ namespace Jal.HttpClient.Impl
             {
                using (var response = (HttpWebResponse) await request.GetResponseAsync())
                 {
-                    var httpResponse = _webResponseToHttpResponseConverter.Convert(response);
+                    httpResponse = _webResponseToHttpResponseConverter.Convert(response);
 
-                    HttpLogger.Log(httpResponse);
+                    HttpInterceptor.OnSuccess(httpResponse, httpRequest);
 
                     return httpResponse;
                 }
             }
             catch (WebException wex)
             {
-                var httpResponse = _webResponseToHttpResponseConverter.Convert(wex);
+                httpResponse = _webResponseToHttpResponseConverter.Convert(wex);
 
-                HttpLogger.Log(httpResponse);
+                HttpInterceptor.OnError(httpResponse, httpRequest, wex);
 
                 return httpResponse;
+            }
+            finally
+            {
+                HttpInterceptor.OnExit(httpResponse, httpRequest);
             }
         }
     }
