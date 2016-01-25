@@ -17,4 +17,4 @@ Resolve an instance of the IHttpHandler class
 	
 Send a request to https://github.com/raulnq
 
-    var response = httpclient.Send(new HttpRequest("https://github.com/raulnq", HttpMethod.Get, HttpContentType.Form));
+    var response = httpclient.Send(new HttpRequest("https://github.com/raulnq", HttpMethod.Get));
