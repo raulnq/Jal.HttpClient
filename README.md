@@ -18,3 +18,9 @@ Resolve an instance of the IHttpHandler class
 Send a request to https://github.com/raulnq
 
     var response = httpclient.Send(new HttpRequest("https://github.com/raulnq", HttpMethod.Get));
+    
+ ## Fluent API
+ 
+    var httpclientbuilder = container.Resolve<IHttpHandlerBuilder>();
+
+    var response = httpclientbuilder.Get("https://github.com/raulnq").Send();
