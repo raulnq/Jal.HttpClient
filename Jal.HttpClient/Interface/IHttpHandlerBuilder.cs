@@ -1,10 +1,22 @@
 ﻿using Jal.HttpClient.Fluent;
-using Jal.HttpClient.Impl;
 
 namespace Jal.HttpClient.Interface
 {
     public interface IHttpHandlerBuilder
     {
-        HttpHandlerDescriptor For(string url);
+        HttpHandlerDescriptor Get(string url);
+
+        HttpHandlerDescriptor Post(string url);
+
+        HttpHandlerDescriptor Put(string url);
+
+        HttpHandlerDescriptor Head(string url);
+
+        HttpHandlerDescriptor Delete(string url);
+
+        HttpHandlerDescriptor Patch(string url);
+
+        HttpHandlerDescriptor Options(string url);
+
     }
 }

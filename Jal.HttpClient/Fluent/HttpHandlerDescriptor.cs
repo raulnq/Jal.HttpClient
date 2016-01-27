@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Jal.HttpClient.Interface;
 using Jal.HttpClient.Model;
@@ -12,28 +13,28 @@ namespace Jal.HttpClient.Fluent
         private readonly IHttpHandler _httpHandler;
 
 
-        public HttpHandlerDescriptor(string url, IHttpHandler httpHandler)
+        public HttpHandlerDescriptor(string url, IHttpHandler httpHandler, HttpMethod httpMethod)
         {
-            _httpRequest = new HttpRequest(url, HttpMethod.Get);
+            _httpRequest = new HttpRequest(url, httpMethod);
             _httpHandler = httpHandler;
 
         }
 
-        public HttpHandlerDescriptor WithVerb(HttpMethod httpMethod)
+        public HttpHandlerDescriptor WithDecompressionMethods(DecompressionMethods decompressionMethods)
         {
-            _httpRequest.HttpMethod = httpMethod;
+            _httpRequest.DecompressionMethods = decompressionMethods;
             return this;
         }
 
-        public HttpHandlerDescriptor WithContentType(string httpContentType)
+        public HttpHandlerDescriptor WithContentType(string contentType)
         {
-            _httpRequest.HttpContentType = httpContentType;
+            _httpRequest.ContentType = contentType;
             return this;
         }
 
-        public HttpHandlerDescriptor WithCharacterSet(string httpCharacterSet)
+        public HttpHandlerDescriptor WithCharacterSet(string characterSet)
         {
-            _httpRequest.HttpCharacterSet = httpCharacterSet;
+            _httpRequest.CharacterSet = characterSet;
             return this;
         }
 
@@ -43,9 +44,9 @@ namespace Jal.HttpClient.Fluent
             return this;
         }
 
-        public HttpHandlerDescriptor WithBody(string body)
+        public HttpHandlerDescriptor WithContent(string content)
         {
-            _httpRequest.Body = body;
+            _httpRequest.Content = content;
             return this;
         }
 

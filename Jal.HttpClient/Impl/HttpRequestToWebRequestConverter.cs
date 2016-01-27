@@ -10,15 +10,17 @@ namespace Jal.HttpClient.Impl
 {
     public class HttpRequestToWebRequestConverter : IHttpRequestToWebRequestConverter
     {
-        private readonly IHttpContentTypeBuilder _httpContentTypeBuilder;
-
         private readonly IHttpMethodMapper _httpMethodMapper;
 
-        public HttpRequestToWebRequestConverter(IHttpContentTypeBuilder httpContentTypeBuilder, IHttpMethodMapper httpMethodMapper)
-        {
-            _httpContentTypeBuilder = httpContentTypeBuilder;
+        private readonly Encoding _defaultEncoding;
 
+        private readonly string _defaultContentType;
+
+        public HttpRequestToWebRequestConverter(IHttpMethodMapper httpMethodMapper)
+        {
             _httpMethodMapper = httpMethodMapper;
+            _defaultEncoding = Encoding.UTF8;
+            _defaultContentType = "text/plain";
         }
 
         public WebRequest Convert(HttpRequest httpRequest, int timeout)
@@ -30,23 +32,20 @@ namespace Jal.HttpClient.Impl
                 url = new UriBuilder(url) { Query = BuildQueryParameters(httpRequest.QueryParameters) }.Uri.ToString();
             }
 
-            var request = WebRequest.Create(new Uri(url));
+            var request = (HttpWebRequest) WebRequest.Create(new Uri(url));
 
             request.Method = _httpMethodMapper.Map(httpRequest.HttpMethod);
 
             request.Timeout = httpRequest.Timeout < 0 ? timeout : httpRequest.Timeout;
 
-            if (!string.IsNullOrEmpty(httpRequest.HttpContentType))
-            {
-                request.ContentType = _httpContentTypeBuilder.Build(httpRequest.HttpContentType, httpRequest.HttpCharacterSet);
-            }
-           
+            request.AutomaticDecompression = httpRequest.DecompressionMethods;
+
             if (httpRequest.Headers.Count > 0)
             {
                 WriteHeaders(httpRequest, request);
             }
 
-            if (!string.IsNullOrWhiteSpace(httpRequest.Body))
+            if (!string.IsNullOrWhiteSpace(httpRequest.Content))
             {
                 WriteContent(httpRequest, request);
             }
@@ -86,13 +85,42 @@ namespace Jal.HttpClient.Impl
             }
         }
 
-        private void WriteContent(HttpRequest webHandlerRequest, WebRequest request)
+        private void WriteContent(HttpRequest httpRequest, WebRequest request)
         {
-            request.ContentLength = Encoding.UTF8.GetByteCount(webHandlerRequest.Body);
+            Encoding encoding;
+
+            if (!string.IsNullOrEmpty(httpRequest.ContentType))
+            {
+                if (!string.IsNullOrEmpty(httpRequest.CharacterSet))
+                {
+                    request.ContentType = string.Format("{0}; {1}", httpRequest.ContentType, httpRequest.CharacterSet);
+                    encoding=Encoding.GetEncoding(httpRequest.CharacterSet.Replace("charset=", ""));
+                }
+                else
+                {
+                    request.ContentType = httpRequest.ContentType;
+                    encoding = _defaultEncoding;
+                }
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(httpRequest.CharacterSet))
+                {
+                    request.ContentType = string.Format("text/plain; {0}", httpRequest.CharacterSet);
+                    encoding = Encoding.GetEncoding(httpRequest.CharacterSet.Replace("charset=", ""));
+                }
+                else
+                {
+                    request.ContentType = _defaultContentType;
+                    encoding = _defaultEncoding;
+                }
+            }
+
+            request.ContentLength = encoding.GetByteCount(httpRequest.Content);
 
             using (var writeStream = request.GetRequestStream())
             {
-                var bytes = Encoding.UTF8.GetBytes(webHandlerRequest.Body);
+                var bytes = encoding.GetBytes(httpRequest.Content);
 
                 writeStream.Write(bytes, 0, bytes.Length);
 

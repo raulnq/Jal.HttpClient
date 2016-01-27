@@ -22,7 +22,6 @@ namespace Jal.HttpClient.Installer
                 Component.For<IHttpRequestToWebRequestConverter>().ImplementedBy<HttpRequestToWebRequestConverter>(),
                 Component.For<IWebResponseToHttpResponseConverter>().ImplementedBy<WebResponseToHttpResponseConverter>(),
                 Component.For<IHttpMethodMapper>().ImplementedBy<HttpMethodMapper>(),
-                Component.For<IHttpContentTypeBuilder>().ImplementedBy<HttpContentTypeBuilder>(),
                 Component.For<IHttpHandlerBuilder>().ImplementedBy<HttpHandlerBuilder>()
                 
                 );

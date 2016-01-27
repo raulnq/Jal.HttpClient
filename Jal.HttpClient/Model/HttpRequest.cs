@@ -1,13 +1,15 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
+using System.Net;
 
 namespace Jal.HttpClient.Model
 {
     public class HttpRequest
     {
-        public string HttpContentType { get; set; }
+        public string ContentType { get; set; }
 
-        public string HttpCharacterSet { get; set; }
+        public string CharacterSet { get; set; }
+
+        public DecompressionMethods DecompressionMethods { get; set; }
 
         public HttpMethod HttpMethod { get; set; }
 
@@ -15,7 +17,7 @@ namespace Jal.HttpClient.Model
 
         public List<HttpQueryParameter> QueryParameters { get; set; }
             
-        public string Body { get; set; }
+        public string Content { get; set; }
 
         public string Url { get; set; }
 
@@ -24,11 +26,12 @@ namespace Jal.HttpClient.Model
         public HttpRequest(string url, HttpMethod httpMethod)
         {
             Url = url;
+            DecompressionMethods = DecompressionMethods.None;
             QueryParameters = new List<HttpQueryParameter>();
             Headers = new List<HttpHeader>();
             HttpMethod = httpMethod;
-            HttpContentType = string.Empty;
-            HttpCharacterSet = "charset=UTF-8";
+            ContentType = string.Empty;
+            CharacterSet = string.Empty;
             Timeout = -1;
         }
     }

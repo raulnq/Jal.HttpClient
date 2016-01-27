@@ -20,8 +20,8 @@ namespace Jal.HttpClient.Logger
         {
             var builder = new StringBuilder();
             builder.Append(string.Format("Request Url:{0}", request.Url));
-            builder.Append(string.Format(",ContentType:{0}", request.HttpContentType));
-            builder.Append(string.Format(",CharacterSet:{0}", request.HttpCharacterSet));
+            builder.Append(string.Format(",ContentType:{0}", request.ContentType));
+            builder.Append(string.Format(",CharacterSet:{0}", request.CharacterSet));
             builder.Append(string.Format(",Method:{0}", request.HttpMethod));
             builder.Append(",QueryParameters: ");
             foreach (var queryParameter in request.QueryParameters)
@@ -33,7 +33,7 @@ namespace Jal.HttpClient.Logger
             {
                 builder.Append(string.Format("{0}:{1} ", httpHeader.Name, httpHeader.Value));
             }
-            builder.Append(string.Format(",Body:{0}", request.Body));
+            builder.Append(string.Format(",Content:{0}", request.Content));
             _log.Info(builder.ToString());
         }
 
@@ -44,14 +44,16 @@ namespace Jal.HttpClient.Logger
             builder.Append(string.Format(",ContentType:{0}", response.ContentType));
             builder.Append(string.Format(",ContentLength:{0}", response.ContentLength));
             builder.Append(string.Format(",HttpStatusCode:{0}", response.HttpStatusCode));
-            builder.Append(string.Format(",StatusDescription:{0}", response.StatusDescription));
             builder.Append(",Headers: ");
             foreach (var httpHeader in response.Headers)
             {
                 builder.Append(string.Format("{0}:{1} ", httpHeader.Name, httpHeader.Value));
             }
             builder.Append(string.Format(",Content:{0}", response.Content));
-            builder.Append(string.Format(",ErrorMessage:{0}", response.ErrorMessage));
+            if (response.WebException != null)
+            {
+                builder.Append(string.Format(",WebException:{0}", response.WebException.Message));
+            }
             _log.Info(builder.ToString());
         }
 

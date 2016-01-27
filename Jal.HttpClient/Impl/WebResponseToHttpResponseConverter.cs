@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Net;
 using System.Text;
 using Jal.HttpClient.Interface;
@@ -14,8 +13,6 @@ namespace Jal.HttpClient.Impl
             var httpResponse = new HttpResponse()
             {
                 HttpStatusCode = HttpStatusCode.OK,
-
-                WebExceptionStatus = WebExceptionStatus.Success
             };
 
             var response = (HttpWebResponse) webResponse;
@@ -29,13 +26,9 @@ namespace Jal.HttpClient.Impl
         {
             var httpResponse = new HttpResponse()
             {
-                HttpStatusCode =HttpStatusCode.InternalServerError,
+                HttpStatusCode = HttpStatusCode.InternalServerError,
 
-                WebExceptionStatus = webException.Status,
-
-                ErrorMessage = webException.Message,
-
-                ErrorException = webException
+                WebException = webException
             };
 
             if (webException.Status == WebExceptionStatus.ProtocolError)
@@ -53,8 +46,6 @@ namespace Jal.HttpClient.Impl
 
                 httpResponse.HttpStatusCode = response.StatusCode;
 
-                httpResponse.StatusDescription = response.StatusDescription;
-
                 httpResponse.ContentType = response.ContentType;
 
                 httpResponse.ContentLength = response.ContentLength;
@@ -70,9 +61,13 @@ namespace Jal.HttpClient.Impl
                 {
                     var encoding = string.IsNullOrEmpty(response.CharacterSet) ? Encoding.UTF8 : Encoding.GetEncoding(response.CharacterSet);
 
-                    using (var readStream = new StreamReader(responseStream, encoding))
+                    using (var ms = new MemoryStream())
                     {
-                        httpResponse.Content = readStream.ReadToEnd();
+                        responseStream.CopyTo(ms);
+
+                        httpResponse.Bytes = ms.ToArray();
+
+                        httpResponse.Content = encoding.GetString(httpResponse.Bytes);
                     }
                 }
             }

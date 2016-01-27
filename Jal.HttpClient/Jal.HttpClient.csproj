@@ -44,7 +44,6 @@
   <ItemGroup>
     <Compile Include="Fluent\HttpHandlerDescriptorExtensions.cs" />
     <Compile Include="Impl\AbstractHttpInterceptor.cs" />
-    <Compile Include="Impl\HttpContentTypeBuilder.cs" />
     <Compile Include="Impl\HttpHandler.cs" />
     <Compile Include="Impl\HttpHandlerBuilder.cs" />
     <Compile Include="Fluent\HttpHandlerDescriptor.cs" />
@@ -53,7 +52,6 @@
     <Compile Include="Interface\IHttpHandlerBuilder.cs" />
     <Compile Include="Impl\NullHttpInterceptor.cs" />
     <Compile Include="Impl\WebResponseToHttpResponseConverter.cs" />
-    <Compile Include="Interface\IHttpContentTypeBuilder.cs" />
     <Compile Include="Interface\IHttpHandler.cs" />
     <Compile Include="Interface\IHttpInterceptor.cs" />
     <Compile Include="Interface\IHttpMethodMapper.cs" />

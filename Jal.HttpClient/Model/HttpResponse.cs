@@ -9,27 +9,21 @@ namespace Jal.HttpClient.Model
 
         public string Content { get; set; }
 
+        public byte[] Bytes { get; set; }
+
         public long ContentLength { get; set; }
 
         public string ContentType { get; set; }
-
-        public string ErrorMessage { get; set; }
 
         public List<HttpHeader> Headers { get; set; }
 
         public HttpStatusCode HttpStatusCode { get; set; }
 
-        public WebException ErrorException { get; set; }
-
-        public string StatusDescription { get; set; }
-        
-        public WebExceptionStatus WebExceptionStatus { get; set; }
+        public WebException WebException { get; set; }
 
         public HttpResponse()
         {
             Headers=new List<HttpHeader>();
         }
-
-
     }
 }

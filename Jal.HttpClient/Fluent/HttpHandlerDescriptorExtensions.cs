@@ -1,57 +1,59 @@
+using System.Net;
 using Jal.HttpClient.Model;
 
 namespace Jal.HttpClient.Fluent
 {
     public static class HttpHandlerDescriptorExtensions
     {
-        public static HttpHandlerDescriptor Get(this HttpHandlerDescriptor descriptor)
+        public static HttpHandlerDescriptor GZip(this HttpHandlerDescriptor descriptor)
         {
-            return descriptor.WithVerb(HttpMethod.Get);
+            return descriptor.WithDecompressionMethods(DecompressionMethods.GZip);
         }
 
-        public static HttpHandlerDescriptor Delete(this HttpHandlerDescriptor descriptor)
+        public static HttpHandlerDescriptor Deflate(this HttpHandlerDescriptor descriptor)
         {
-            return descriptor.WithVerb(HttpMethod.Delete);
+            return descriptor.WithDecompressionMethods(DecompressionMethods.Deflate);
         }
 
-        public static HttpHandlerDescriptor FormUrlEncoded(this HttpHandlerDescriptor descriptor, string body)
+        public static HttpHandlerDescriptor DeflateGZip(this HttpHandlerDescriptor descriptor)
         {
-            return descriptor.WithContentType("application/x-www-form-urlencoded").WithBody(body);
+            return descriptor.WithDecompressionMethods(DecompressionMethods.GZip | DecompressionMethods.Deflate);
         }
 
-        public static HttpHandlerDescriptor MultipartFormData(this HttpHandlerDescriptor descriptor, string body)
+
+        public static HttpHandlerDescriptor Utf8(this HttpHandlerDescriptor descriptor)
         {
-            return descriptor.WithContentType("multipart/form-data").WithBody(body);
+            return descriptor.WithCharacterSet("charset=UTF-8");
         }
 
-        public static HttpHandlerDescriptor Json(this HttpHandlerDescriptor descriptor, string body)
+        public static HttpHandlerDescriptor Utf16(this HttpHandlerDescriptor descriptor)
         {
-            return descriptor.WithContentType("application/json").WithBody(body);
+            return descriptor.WithCharacterSet("charset=UTF-16");
         }
 
-        public static HttpHandlerDescriptor Xml(this HttpHandlerDescriptor descriptor, string body)
+        public static HttpHandlerDescriptor Utf7(this HttpHandlerDescriptor descriptor)
         {
-            return descriptor.WithVerb(HttpMethod.Post).WithContentType("text/xml").WithBody(body);
+            return descriptor.WithCharacterSet("charset=UTF-7");
         }
 
-        public static HttpHandlerDescriptor Put(this HttpHandlerDescriptor descriptor)
+        public static HttpHandlerDescriptor FormUrlEncoded(this HttpHandlerDescriptor descriptor, string content)
         {
-            return descriptor.WithVerb(HttpMethod.Put);
+            return descriptor.WithContentType("application/x-www-form-urlencoded").WithContent(content);
         }
 
-        public static HttpHandlerDescriptor Post(this HttpHandlerDescriptor descriptor)
+        public static HttpHandlerDescriptor MultipartFormData(this HttpHandlerDescriptor descriptor, string content)
         {
-            return descriptor.WithVerb(HttpMethod.Post);
+            return descriptor.WithContentType("multipart/form-data").WithContent(content);
         }
 
-        public static HttpHandlerDescriptor Patch(this HttpHandlerDescriptor descriptor)
+        public static HttpHandlerDescriptor Json(this HttpHandlerDescriptor descriptor, string content)
         {
-            return descriptor.WithVerb(HttpMethod.Patch);
+            return descriptor.WithContentType("application/json").WithContent(content);
         }
 
-        public static HttpHandlerDescriptor Head(this HttpHandlerDescriptor descriptor)
+        public static HttpHandlerDescriptor Xml(this HttpHandlerDescriptor descriptor, string content)
         {
-            return descriptor.WithVerb(HttpMethod.Head).WithContentType("text/xml");
+            return descriptor.WithContentType("text/xml").WithContent(content);
         }
 
         public static HttpHandlerDescriptor QueryParams(this HttpHandlerDescriptor descriptor, object queryParams)
