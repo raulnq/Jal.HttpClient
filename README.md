@@ -19,7 +19,7 @@ Send a request to https://github.com/raulnq
 
     var response = httpclient.Send(new HttpRequest("https://github.com/raulnq", HttpMethod.Get));
     
- ## Fluent API
+## Fluent API
  
     var httpclientbuilder = container.Resolve<IHttpHandlerBuilder>();
 
