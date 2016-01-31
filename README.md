@@ -24,3 +24,25 @@ Send a request to https://github.com/raulnq
     var httpclientbuilder = container.Resolve<IHttpHandlerBuilder>();
 
     var response = httpclientbuilder.Get("https://github.com/raulnq").Send();
+
+Post Json data
+
+    var response = httpclientbuilder.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").Utf8().Send();
+    
+Post Xml data
+
+    var response = httpclientbuilder.Post("http://httpbin.org/post").Xml(@"<message>Hello World!!</message>").Utf8().Send();
+    
+Post Form url encoded data
+
+    httpclientbuilder.Post("http://httpbin.org/post").FormUrlEncoded(@"message=Hello%World!!").Utf8().Send()
+    
+Get Async data
+
+    var task = httpclientbuilder.Get("http://httpbin.org//get").SendAsync();
+
+    var response = task.Result;
+    
+Post UTF-16 character set data
+
+    var response = httpclientbuilder.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").Utf16().Send();
