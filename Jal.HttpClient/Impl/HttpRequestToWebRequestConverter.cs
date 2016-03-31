@@ -38,6 +38,11 @@ namespace Jal.HttpClient.Impl
 
             request.Timeout = httpRequest.Timeout < 0 ? timeout : httpRequest.Timeout;
 
+            if (!string.IsNullOrEmpty(httpRequest.AcceptedType))
+            {
+                request.Accept = httpRequest.AcceptedType;
+            }
+
             request.AutomaticDecompression = httpRequest.DecompressionMethods;
 
             if (httpRequest.Headers.Count > 0)
@@ -93,6 +98,7 @@ namespace Jal.HttpClient.Impl
             {
                 if (!string.IsNullOrEmpty(httpRequest.CharacterSet))
                 {
+                    
                     request.ContentType = string.Format("{0}; {1}", httpRequest.ContentType, httpRequest.CharacterSet);
                     encoding=Encoding.GetEncoding(httpRequest.CharacterSet.Replace("charset=", ""));
                 }

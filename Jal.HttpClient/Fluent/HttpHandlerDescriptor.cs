@@ -32,6 +32,12 @@ namespace Jal.HttpClient.Fluent
             return this;
         }
 
+        public HttpHandlerDescriptor WithAcceptedType(string acceptedType)
+        {
+            _httpRequest.AcceptedType = acceptedType;
+            return this;
+        }
+
         public HttpHandlerDescriptor WithCharacterSet(string characterSet)
         {
             _httpRequest.CharacterSet = characterSet;

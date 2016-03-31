@@ -7,6 +7,8 @@ namespace Jal.HttpClient.Model
     {
         public string ContentType { get; set; }
 
+        public string AcceptedType { get; set; }
+
         public string CharacterSet { get; set; }
 
         public DecompressionMethods DecompressionMethods { get; set; }
@@ -32,6 +34,7 @@ namespace Jal.HttpClient.Model
             HttpMethod = httpMethod;
             ContentType = string.Empty;
             CharacterSet = string.Empty;
+            AcceptedType = string.Empty;
             Timeout = -1;
         }
     }
