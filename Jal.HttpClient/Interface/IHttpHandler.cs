@@ -8,6 +8,8 @@ namespace Jal.HttpClient.Interface
     {
         int Timeout { get; set; }
 
+        IHttpInterceptor HttpInterceptor { get; set; }
+
         HttpResponse Send(HttpRequest httpRequest);
 
         Task<HttpResponse> SendAsync(HttpRequest httpRequest);
