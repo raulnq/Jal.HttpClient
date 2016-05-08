@@ -1,4 +1,5 @@
-﻿using Jal.HttpClient.Fluent;
+﻿using System;
+using Jal.HttpClient.Fluent;
 using Jal.HttpClient.Interface;
 using Jal.HttpClient.Model;
 
@@ -6,6 +7,13 @@ namespace Jal.HttpClient.Impl
 {
     public class HttpHandlerBuilder : IHttpHandlerBuilder
     {
+        public static IHttpHandlerBuilder Current;
+
+        static HttpHandlerBuilder()
+        {
+            Current = new HttpHandlerBuilder(HttpHandler.Current);
+        }
+
         private readonly IHttpHandler _httpHandler;
 
         public HttpHandlerBuilder(IHttpHandler httpHandler)

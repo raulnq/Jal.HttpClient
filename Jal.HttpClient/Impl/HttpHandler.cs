@@ -15,6 +15,19 @@ namespace Jal.HttpClient.Impl
 
         public int Timeout { get; set; }
 
+        public static IHttpHandler Current;
+
+        static HttpHandler()
+        {
+            var httpMethodMapper = new HttpMethodMapper();
+            var httpRequestToWebRequestConverter = new HttpRequestToWebRequestConverter(httpMethodMapper);
+            var webResponseToHttpResponseConverter = new WebResponseToHttpResponseConverter();
+            Current = new HttpHandler(httpRequestToWebRequestConverter, webResponseToHttpResponseConverter)
+            {
+                Timeout=5000
+            };
+        }
+
         public HttpHandler(IHttpRequestToWebRequestConverter httpRequestToWebRequestConverter, IWebResponseToHttpResponseConverter webResponseToHttpResponseConverter)
         {
             HttpInterceptor = AbstractHttpInterceptor.Instance;
