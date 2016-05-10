@@ -9,9 +9,14 @@ namespace Jal.HttpClient.Impl
     {
         public static IHttpHandlerBuilder Current;
 
-        static HttpHandlerBuilder()
+        public static void SetHttpHandlerBuilderProvider(IHttpHandlerBuilder provider)
         {
-            Current = new HttpHandlerBuilder(HttpHandler.Current);
+            Current = provider;
+        }
+
+        public static void SetDefaultHttpHandlerBuilderProvider(IHttpHandler httpHandler)
+        {
+            Current = new HttpHandlerBuilder(httpHandler);
         }
 
         private readonly IHttpHandler _httpHandler;

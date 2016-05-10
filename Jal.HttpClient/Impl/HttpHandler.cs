@@ -17,15 +17,20 @@ namespace Jal.HttpClient.Impl
 
         public static IHttpHandler Current;
 
-        static HttpHandler()
+        public static void SetDefaultHttpHandlerProvider(int timeout=5000)
         {
             var httpMethodMapper = new HttpMethodMapper();
             var httpRequestToWebRequestConverter = new HttpRequestToWebRequestConverter(httpMethodMapper);
             var webResponseToHttpResponseConverter = new WebResponseToHttpResponseConverter();
             Current = new HttpHandler(httpRequestToWebRequestConverter, webResponseToHttpResponseConverter)
             {
-                Timeout=5000
+                Timeout = timeout
             };
+        }
+
+        public static void SetHttpHandlerProvider(IHttpHandler provider)
+        {
+            Current = provider;
         }
 
         public HttpHandler(IHttpRequestToWebRequestConverter httpRequestToWebRequestConverter, IWebResponseToHttpResponseConverter webResponseToHttpResponseConverter)
