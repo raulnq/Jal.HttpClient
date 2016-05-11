@@ -47,6 +47,8 @@
     <Compile Include="Impl\HttpHandler.cs" />
     <Compile Include="Impl\HttpHandlerBuilder.cs" />
     <Compile Include="Fluent\HttpHandlerDescriptor.cs" />
+    <Compile Include="Fluent\HttpHandlerSetupDescriptor.cs" />
+    <Compile Include="Fluent\HttpHandlerBuilderSetupDescriptor.cs" />
     <Compile Include="Impl\HttpMethodMapper.cs" />
     <Compile Include="Impl\HttpRequestToWebRequestConverter.cs" />
     <Compile Include="Interface\IHttpHandlerBuilder.cs" />

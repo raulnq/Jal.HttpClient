@@ -1,5 +1,7 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
+using Jal.HttpClient.Fluent;
 using Jal.HttpClient.Interface;
 using Jal.HttpClient.Model;
 
@@ -17,20 +19,12 @@ namespace Jal.HttpClient.Impl
 
         public static IHttpHandler Current;
 
-        public static void SetDefaultHttpHandlerProvider(int timeout=5000)
+        public static HttpHandlerSetupDescriptor Setup
         {
-            var httpMethodMapper = new HttpMethodMapper();
-            var httpRequestToWebRequestConverter = new HttpRequestToWebRequestConverter(httpMethodMapper);
-            var webResponseToHttpResponseConverter = new WebResponseToHttpResponseConverter();
-            Current = new HttpHandler(httpRequestToWebRequestConverter, webResponseToHttpResponseConverter)
+            get
             {
-                Timeout = timeout
-            };
-        }
-
-        public static void SetHttpHandlerProvider(IHttpHandler provider)
-        {
-            Current = provider;
+                return new HttpHandlerSetupDescriptor();
+            } 
         }
 
         public HttpHandler(IHttpRequestToWebRequestConverter httpRequestToWebRequestConverter, IWebResponseToHttpResponseConverter webResponseToHttpResponseConverter)
