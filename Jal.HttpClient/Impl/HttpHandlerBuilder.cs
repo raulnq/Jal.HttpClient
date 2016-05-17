@@ -9,7 +9,7 @@ namespace Jal.HttpClient.Impl
     {
         public static IHttpHandlerBuilder Current;
 
-        public static HttpHandlerBuilderSetupDescriptor Setup
+        public static IHttpHandlerBuilderHttpHandlerSetupDescriptor Setup
         {
             get
             {

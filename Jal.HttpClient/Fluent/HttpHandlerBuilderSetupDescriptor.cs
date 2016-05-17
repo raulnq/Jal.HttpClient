@@ -1,22 +1,27 @@
+using System;
 using Jal.HttpClient.Impl;
 using Jal.HttpClient.Interface;
 
 namespace Jal.HttpClient.Fluent
 {
-    public class HttpHandlerBuilderSetupDescriptor
+    public class HttpHandlerBuilderSetupDescriptor : IHttpHandlerBuilderHttpHandlerSetupDescriptor, IHttpHandlerBuilderSetupDescriptor
     {
         private IHttpHandler _httpHandler;
 
         private IHttpHandlerBuilder _httpHandlerBuilder;
 
-        public HttpHandlerBuilderSetupDescriptor UseHttpHandlerBuilder(IHttpHandlerBuilder httpHandlerBuilder)
+        public IHttpHandlerBuilderSetupDescriptor UseHttpHandlerBuilder(IHttpHandlerBuilder httpHandlerBuilder)
         {
             _httpHandlerBuilder = httpHandlerBuilder;
             return this;
         }
 
-        public HttpHandlerBuilderSetupDescriptor UseHttpHandler(IHttpHandler httpHandler)
+        public IHttpHandlerBuilderSetupDescriptor UseHttpHandler(IHttpHandler httpHandler)
         {
+            if (httpHandler == null)
+            {
+                throw new ArgumentNullException("httpHandler");
+            }
             _httpHandler = httpHandler;
             return this;
         }
@@ -29,15 +34,7 @@ namespace Jal.HttpClient.Fluent
             }
             else
             {
-                if (_httpHandler != null)
-                {
-                    return new HttpHandlerBuilder(_httpHandler);
-                }
-                else
-                {
-                    var handler = new HttpHandlerSetupDescriptor().Create();
-                    return new HttpHandlerBuilder(handler);
-                }
+                return new HttpHandlerBuilder(_httpHandler);
             }
         }
     }

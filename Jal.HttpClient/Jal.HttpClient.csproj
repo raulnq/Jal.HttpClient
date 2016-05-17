@@ -43,6 +43,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Fluent\HttpHandlerDescriptorExtensions.cs" />
+    <Compile Include="Interface\IHttpHandlerBuilderHttpHandlerSetupDescriptor.cs" />
+    <Compile Include="Interface\IHttpHandlerBuilderSetupDescriptor.cs" />
     <Compile Include="Impl\AbstractHttpInterceptor.cs" />
     <Compile Include="Impl\HttpHandler.cs" />
     <Compile Include="Impl\HttpHandlerBuilder.cs" />
