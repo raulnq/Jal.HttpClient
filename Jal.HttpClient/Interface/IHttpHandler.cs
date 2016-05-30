@@ -8,7 +8,11 @@ namespace Jal.HttpClient.Interface
     {
         int Timeout { get; set; }
 
-        IHttpInterceptor HttpInterceptor { get; set; }
+        IHttpInterceptor Interceptor { get; set; }
+
+        IHttpRequestToWebRequestConverter RequestConverter { get; }
+
+        IWebResponseToHttpResponseConverter ResponseConverter { get; }
 
         HttpResponse Send(HttpRequest httpRequest);
 

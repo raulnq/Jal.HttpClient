@@ -43,14 +43,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Fluent\HttpHandlerDescriptorExtensions.cs" />
-    <Compile Include="Interface\IHttpHandlerBuilderHttpHandlerSetupDescriptor.cs" />
-    <Compile Include="Interface\IHttpHandlerBuilderSetupDescriptor.cs" />
+    <Compile Include="Interface\Fluent\IHttpHandlerBuilderStartFluentBuilder.cs" />
+    <Compile Include="Interface\Fluent\IHttpHandlerBuilderSetupDescriptor.cs" />
     <Compile Include="Impl\AbstractHttpInterceptor.cs" />
     <Compile Include="Impl\HttpHandler.cs" />
     <Compile Include="Impl\HttpHandlerBuilder.cs" />
     <Compile Include="Fluent\HttpHandlerDescriptor.cs" />
-    <Compile Include="Fluent\HttpHandlerSetupDescriptor.cs" />
-    <Compile Include="Fluent\HttpHandlerBuilderSetupDescriptor.cs" />
+    <Compile Include="Fluent\HttpHandlerFluentBuilder.cs" />
+    <Compile Include="Fluent\HttpHandlerBuilderFluentBuilder.cs" />
     <Compile Include="Impl\HttpMethodMapper.cs" />
     <Compile Include="Impl\HttpRequestToWebRequestConverter.cs" />
     <Compile Include="Interface\IHttpHandlerBuilder.cs" />

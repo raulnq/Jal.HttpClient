@@ -3,7 +3,7 @@ using Jal.HttpClient.Interface;
 
 namespace Jal.HttpClient.Fluent
 {
-    public class HttpHandlerSetupDescriptor
+    public class HttpHandlerFluentBuilder
     {
         private IHttpRequestToWebRequestConverter _httpRequestToWebRequestConverter;
 
@@ -15,31 +15,31 @@ namespace Jal.HttpClient.Fluent
 
         private int _timeout = 5000;
 
-        public HttpHandlerSetupDescriptor UseHttpRequestToWebRequestConverter(IHttpRequestToWebRequestConverter converter)
+        public HttpHandlerFluentBuilder UseHttpRequestToWebRequestConverter(IHttpRequestToWebRequestConverter converter)
         {
             _httpRequestToWebRequestConverter = converter;
             return this;
         }
 
-        public HttpHandlerSetupDescriptor UseWebResponseToHttpResponseConverter(IWebResponseToHttpResponseConverter converter)
+        public HttpHandlerFluentBuilder UseWebResponseToHttpResponseConverter(IWebResponseToHttpResponseConverter converter)
         {
             _responseToHttpResponseConverter = converter;
             return this;
         }
 
-        public HttpHandlerSetupDescriptor UseHttpInterceptor(IHttpInterceptor interceptor)
+        public HttpHandlerFluentBuilder UseHttpInterceptor(IHttpInterceptor interceptor)
         {
             _httpInterceptor = interceptor;
             return this;
         }
 
-        public HttpHandlerSetupDescriptor UseHttpHandler(IHttpHandler httphandler)
+        public HttpHandlerFluentBuilder UseHttpHandler(IHttpHandler httphandler)
         {
             _httpHandler = httphandler;
             return this;
         }
 
-        public HttpHandlerSetupDescriptor WithTimeout(int timeout)
+        public HttpHandlerFluentBuilder WithTimeout(int timeout)
         {
             _timeout = timeout;
             return this;
@@ -67,7 +67,7 @@ namespace Jal.HttpClient.Fluent
 
                 if (_httpInterceptor != null)
                 {
-                    httphandler.HttpInterceptor = _httpInterceptor;
+                    httphandler.Interceptor = _httpInterceptor;
                 }
 
                 if (_timeout>0)

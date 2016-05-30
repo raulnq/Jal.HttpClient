@@ -4,6 +4,8 @@ namespace Jal.HttpClient.Interface
 {
     public interface IHttpHandlerBuilder
     {
+        IHttpHandler Handler { get; }
+
         HttpHandlerDescriptor Get(string url);
 
         HttpHandlerDescriptor Post(string url);

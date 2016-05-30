@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Threading.Tasks;
 using Jal.HttpClient.Fluent;
 using Jal.HttpClient.Interface;
@@ -9,96 +8,96 @@ namespace Jal.HttpClient.Impl
 {
     public class HttpHandler : IHttpHandler
     {
-        public IHttpInterceptor HttpInterceptor { get; set; }
+        public IHttpInterceptor Interceptor { get; set; }
 
-        private readonly IHttpRequestToWebRequestConverter _httpRequestToWebRequestConverter;
+        public IHttpRequestToWebRequestConverter RequestConverter { get; set; }
 
-        private readonly IWebResponseToHttpResponseConverter _webResponseToHttpResponseConverter;
+        public IWebResponseToHttpResponseConverter ResponseConverter { get; set; }
 
         public int Timeout { get; set; }
 
         public static IHttpHandler Current;
 
-        public static HttpHandlerSetupDescriptor Setup
+        public static HttpHandlerFluentBuilder Builder
         {
             get
             {
-                return new HttpHandlerSetupDescriptor();
+                return new HttpHandlerFluentBuilder();
             } 
         }
 
         public HttpHandler(IHttpRequestToWebRequestConverter httpRequestToWebRequestConverter, IWebResponseToHttpResponseConverter webResponseToHttpResponseConverter)
         {
-            HttpInterceptor = AbstractHttpInterceptor.Instance;
+            Interceptor = AbstractHttpInterceptor.Instance;
 
-            _httpRequestToWebRequestConverter = httpRequestToWebRequestConverter;
+            RequestConverter = httpRequestToWebRequestConverter;
 
-            _webResponseToHttpResponseConverter = webResponseToHttpResponseConverter;
+            ResponseConverter = webResponseToHttpResponseConverter;
         }
 
         public HttpResponse Send(HttpRequest httpRequest)
         {
-            HttpInterceptor.OnEntry(httpRequest);
+            Interceptor.OnEntry(httpRequest);
 
             HttpResponse httpResponse = null;
 
-            var request = _httpRequestToWebRequestConverter.Convert(httpRequest, Timeout);
+            var request = RequestConverter.Convert(httpRequest, Timeout);
 
             try
             {
                 using (var response = (HttpWebResponse) request.GetResponse())
                 {
-                    httpResponse = _webResponseToHttpResponseConverter.Convert(response);
+                    httpResponse = ResponseConverter.Convert(response);
 
-                    HttpInterceptor.OnSuccess(httpResponse, httpRequest);
+                    Interceptor.OnSuccess(httpResponse, httpRequest);
 
                     return httpResponse;
                 }
             }
             catch (WebException wex)
             {
-                httpResponse = _webResponseToHttpResponseConverter.Convert(wex);
+                httpResponse = ResponseConverter.Convert(wex);
 
-                HttpInterceptor.OnError(httpResponse, httpRequest, wex);
+                Interceptor.OnError(httpResponse, httpRequest, wex);
 
                 return httpResponse;
             }
             finally
             {
-                HttpInterceptor.OnExit(httpResponse, httpRequest);
+                Interceptor.OnExit(httpResponse, httpRequest);
             }
         }
 
         public async Task<HttpResponse> SendAsync(HttpRequest httpRequest)
         {
-            HttpInterceptor.OnEntry(httpRequest);
+            Interceptor.OnEntry(httpRequest);
 
             HttpResponse httpResponse = null;
 
-            var request = _httpRequestToWebRequestConverter.Convert(httpRequest, Timeout);
+            var request = RequestConverter.Convert(httpRequest, Timeout);
 
             try
             {
                using (var response = (HttpWebResponse) await request.GetResponseAsync())
                 {
-                    httpResponse = _webResponseToHttpResponseConverter.Convert(response);
+                    httpResponse = ResponseConverter.Convert(response);
 
-                    HttpInterceptor.OnSuccess(httpResponse, httpRequest);
+                    Interceptor.OnSuccess(httpResponse, httpRequest);
 
                     return httpResponse;
                 }
             }
             catch (WebException wex)
             {
-                httpResponse = _webResponseToHttpResponseConverter.Convert(wex);
+                httpResponse = ResponseConverter.Convert(wex);
 
-                HttpInterceptor.OnError(httpResponse, httpRequest, wex);
+                Interceptor.OnError(httpResponse, httpRequest, wex);
 
                 return httpResponse;
             }
             finally
             {
-                HttpInterceptor.OnExit(httpResponse, httpRequest);
+                Interceptor.OnExit(httpResponse, httpRequest);
             }
         }
     }

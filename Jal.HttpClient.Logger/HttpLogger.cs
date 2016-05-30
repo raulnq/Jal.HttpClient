@@ -1,8 +1,6 @@
-﻿using System.Net;
-using System.Text;
+﻿using System.Text;
 using Common.Logging;
 using Jal.HttpClient.Impl;
-using Jal.HttpClient.Interface;
 using Jal.HttpClient.Model;
 
 namespace Jal.HttpClient.Logger

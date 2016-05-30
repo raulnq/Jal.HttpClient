@@ -6,7 +6,7 @@ namespace Jal.HttpClient.Impl
 {
     public abstract class AbstractHttpInterceptor : IHttpInterceptor
     {
-        public static NullHttpInterceptor Instance = new NullHttpInterceptor();
+        public static IHttpInterceptor Instance = new NullHttpInterceptor();
 
         public virtual void OnEntry(HttpRequest request)
         {
