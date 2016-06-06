@@ -39,6 +39,7 @@ namespace Jal.HttpClient.Logger
         {
             var builder = new StringBuilder();
             builder.Append(string.Format("Response Url:{0}", response.Url));
+            builder.Append(string.Format(",Duration:{0}", response.Duration));
             builder.Append(string.Format(",ContentType:{0}", response.ContentType));
             builder.Append(string.Format(",ContentLength:{0}", response.ContentLength));
             builder.Append(string.Format(",HttpStatusCode:{0}", response.HttpStatusCode));

@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Diagnostics;
+using System.Net;
 using System.Threading.Tasks;
 using Jal.HttpClient.Fluent;
 using Jal.HttpClient.Interface;
@@ -37,6 +38,9 @@ namespace Jal.HttpClient.Impl
 
         public HttpResponse Send(HttpRequest httpRequest)
         {
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+
             Interceptor.OnEntry(httpRequest);
 
             HttpResponse httpResponse = null;
@@ -64,6 +68,10 @@ namespace Jal.HttpClient.Impl
             }
             finally
             {
+                stopWatch.Stop();
+
+                httpResponse.Duration = stopWatch.Elapsed.TotalMilliseconds;
+
                 Interceptor.OnExit(httpResponse, httpRequest);
             }
         }

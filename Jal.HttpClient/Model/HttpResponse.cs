@@ -21,6 +21,8 @@ namespace Jal.HttpClient.Model
 
         public WebException WebException { get; set; }
 
+        public double Duration { get; set; }
+
         public HttpResponse()
         {
             Headers=new List<HttpHeader>();
