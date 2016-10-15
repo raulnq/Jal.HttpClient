@@ -65,7 +65,7 @@ namespace Jal.HttpClient.Impl
 
             foreach (var httpQueryParameter in httpQueryParameters.Where(httpQueryParameter => !string.IsNullOrWhiteSpace(httpQueryParameter.Value)))
             {
-                builder.AppendFormat("{0}={1}&", httpQueryParameter.Name, httpQueryParameter.Value);
+                builder.AppendFormat("{0}={1}&", WebUtility.UrlEncode(httpQueryParameter.Name), WebUtility.UrlEncode(httpQueryParameter.Value));
             }
 
             var parameter = builder.ToString();
@@ -99,7 +99,7 @@ namespace Jal.HttpClient.Impl
                 if (!string.IsNullOrEmpty(httpRequest.CharacterSet))
                 {
                     
-                    request.ContentType = string.Format("{0}; {1}", httpRequest.ContentType, httpRequest.CharacterSet);
+                    request.ContentType = $"{httpRequest.ContentType}; {httpRequest.CharacterSet}";
                     encoding=Encoding.GetEncoding(httpRequest.CharacterSet.Replace("charset=", ""));
                 }
                 else
@@ -112,7 +112,7 @@ namespace Jal.HttpClient.Impl
             {
                 if (!string.IsNullOrEmpty(httpRequest.CharacterSet))
                 {
-                    request.ContentType = string.Format("text/plain; {0}", httpRequest.CharacterSet);
+                    request.ContentType = $"text/plain; {httpRequest.CharacterSet}";
                     encoding = Encoding.GetEncoding(httpRequest.CharacterSet.Replace("charset=", ""));
                 }
                 else

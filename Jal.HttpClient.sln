@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jal.HttpClient", "Jal.HttpClient\Jal.HttpClient.csproj", "{5BBE156D-E724-47D0-88B8-0EC6B0FB7E33}"
 EndProject
@@ -17,6 +17,19 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jal.HttpClient.Logger.Installer", "Jal.HttpClient.Logger.Installer\Jal.HttpClient.Logger.Installer.csproj", "{957A4780-55A8-4232-9575-F9CF6B650EFF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jal.HttpClient.Tests", "Jal.HttpClient.Tests\Jal.HttpClient.Tests.csproj", "{DB277486-93E6-4887-BDAE-C820E1E2C26B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jal.HttpClient.LightInject.Installer", "Jal.HttpClient.LightInject.Installer\Jal.HttpClient.LightInject.Installer.csproj", "{9990C0E8-E3E2-486F-A5BC-2D1CF34D0ADF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CastleWindsor", "CastleWindsor", "{13B12CCA-569D-409A-B929-24D0B0BDF600}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LightInject", "LightInject", "{4D14FCEB-7FDB-44DA-BFFC-DEF027223362}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jal.HttpClient.LightInject.Logger.Installer", "Jal.HttpClient.LightInject.Logger.Installer\Jal.HttpClient.LightInject.Logger.Installer.csproj", "{A1AE9C4B-4EA1-4CA5-A139-0E633C2EB2F8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{328D38A0-3EBC-40F3-91D9-A20E74AE729F}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,8 +57,22 @@ Global
 		{DB277486-93E6-4887-BDAE-C820E1E2C26B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB277486-93E6-4887-BDAE-C820E1E2C26B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB277486-93E6-4887-BDAE-C820E1E2C26B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9990C0E8-E3E2-486F-A5BC-2D1CF34D0ADF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9990C0E8-E3E2-486F-A5BC-2D1CF34D0ADF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9990C0E8-E3E2-486F-A5BC-2D1CF34D0ADF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9990C0E8-E3E2-486F-A5BC-2D1CF34D0ADF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1AE9C4B-4EA1-4CA5-A139-0E633C2EB2F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1AE9C4B-4EA1-4CA5-A139-0E633C2EB2F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1AE9C4B-4EA1-4CA5-A139-0E633C2EB2F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1AE9C4B-4EA1-4CA5-A139-0E633C2EB2F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CF1F1EE3-47F7-4F53-9AAE-C6AAB6BE7598} = {13B12CCA-569D-409A-B929-24D0B0BDF600}
+		{957A4780-55A8-4232-9575-F9CF6B650EFF} = {13B12CCA-569D-409A-B929-24D0B0BDF600}
+		{9990C0E8-E3E2-486F-A5BC-2D1CF34D0ADF} = {4D14FCEB-7FDB-44DA-BFFC-DEF027223362}
+		{A1AE9C4B-4EA1-4CA5-A139-0E633C2EB2F8} = {4D14FCEB-7FDB-44DA-BFFC-DEF027223362}
 	EndGlobalSection
 EndGlobal

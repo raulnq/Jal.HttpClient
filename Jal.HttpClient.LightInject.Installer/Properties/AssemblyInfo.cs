@@ -5,14 +5,15 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Jal.HttpClient.Logger.Installer")]
-[assembly: AssemblyDescription("Castle Windsor installer for the Jal.HttpClient.Logger library")]
+[assembly: AssemblyTitle("Jal.HttpClient.LightInject.Installer")]
+[assembly: AssemblyDescription("LightInject installer for the Jal.HttpClient library")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Raul Naupari")]
-[assembly: AssemblyProduct("Jal.HttpClient.Logger.Installer")]
-[assembly: AssemblyCopyright("Copyright © 2015")]
+[assembly: AssemblyProduct("Jal.HttpClient.LightInject.Installer")]
+[assembly: AssemblyCopyright("Copyright © 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
+
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -20,7 +21,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("80e294d5-339b-4f9e-8b7b-cd68e88a0965")]
+[assembly: Guid("9990c0e8-e3e2-486f-a5bc-2d1cf34d0adf")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -32,5 +33,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.3.2.0")]
-[assembly: AssemblyFileVersion("1.3.2.0")]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]

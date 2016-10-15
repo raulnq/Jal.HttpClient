@@ -2,7 +2,9 @@
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using Jal.HttpClient.Impl;
+using Jal.HttpClient.Impl.Fluent;
 using Jal.HttpClient.Interface;
+using Jal.HttpClient.Interface.Fluent;
 
 namespace Jal.HttpClient.Installer
 {
@@ -22,7 +24,7 @@ namespace Jal.HttpClient.Installer
                 Component.For<IHttpRequestToWebRequestConverter>().ImplementedBy<HttpRequestToWebRequestConverter>(),
                 Component.For<IWebResponseToHttpResponseConverter>().ImplementedBy<WebResponseToHttpResponseConverter>(),
                 Component.For<IHttpMethodMapper>().ImplementedBy<HttpMethodMapper>(),
-                Component.For<IHttpHandlerBuilder>().ImplementedBy<HttpHandlerBuilder>()
+                Component.For<IHttpFluentHandler>().ImplementedBy<HttpFluentHandler>()
                 
                 );
         }

@@ -1,8 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Net;
 using System.Threading.Tasks;
-using Jal.HttpClient.Fluent;
+using Jal.HttpClient.Impl.Fluent;
 using Jal.HttpClient.Interface;
+using Jal.HttpClient.Interface.Fluent;
 using Jal.HttpClient.Model;
 
 namespace Jal.HttpClient.Impl
@@ -19,13 +20,7 @@ namespace Jal.HttpClient.Impl
 
         public static IHttpHandler Current;
 
-        public static HttpHandlerFluentBuilder Builder
-        {
-            get
-            {
-                return new HttpHandlerFluentBuilder();
-            } 
-        }
+        public static IHttpHandlerBuilder Builder => new HttpHandlerBuilder();
 
         public HttpHandler(IHttpRequestToWebRequestConverter httpRequestToWebRequestConverter, IWebResponseToHttpResponseConverter webResponseToHttpResponseConverter)
         {

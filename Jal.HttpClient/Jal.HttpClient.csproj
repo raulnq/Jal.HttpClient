@@ -42,18 +42,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Fluent\HttpHandlerDescriptorExtensions.cs" />
-    <Compile Include="Interface\Fluent\IHttpHandlerBuilderStartFluentBuilder.cs" />
-    <Compile Include="Interface\Fluent\IHttpHandlerBuilderSetupDescriptor.cs" />
+    <Compile Include="Impl\Fluent\HeaderDescriptor.cs" />
+    <Compile Include="Impl\Fluent\HttpHandlerDescriptorExtensions.cs" />
+    <Compile Include="Interface\Fluent\IHttpHandlerBuilder.cs" />
+    <Compile Include="Interface\Fluent\IHttpHandlerDescriptor.cs" />
+    <Compile Include="Interface\Fluent\IHeaderDescriptor.cs" />
+    <Compile Include="Interface\Fluent\IQueryParameterDescriptor.cs" />
+    <Compile Include="Impl\Fluent\QueryParameterDescriptor.cs" />
+    <Compile Include="Interface\Fluent\IHttpFluentHandlerStartBuilder.cs" />
+    <Compile Include="Interface\Fluent\IHttpFluentHandlerEndBuilder.cs" />
     <Compile Include="Impl\AbstractHttpInterceptor.cs" />
     <Compile Include="Impl\HttpHandler.cs" />
-    <Compile Include="Impl\HttpHandlerBuilder.cs" />
-    <Compile Include="Fluent\HttpHandlerDescriptor.cs" />
-    <Compile Include="Fluent\HttpHandlerFluentBuilder.cs" />
-    <Compile Include="Fluent\HttpHandlerBuilderFluentBuilder.cs" />
+    <Compile Include="Impl\Fluent\HttpFluentHandler.cs" />
+    <Compile Include="Impl\Fluent\HttpHandlerDescriptor.cs" />
+    <Compile Include="Impl\Fluent\HttpHandlerBuilder.cs" />
+    <Compile Include="Impl\Fluent\HttpFluentHandlerBuilder.cs" />
     <Compile Include="Impl\HttpMethodMapper.cs" />
     <Compile Include="Impl\HttpRequestToWebRequestConverter.cs" />
-    <Compile Include="Interface\IHttpHandlerBuilder.cs" />
+    <Compile Include="Interface\Fluent\IHttpFluentHandler.cs" />
     <Compile Include="Impl\NullHttpInterceptor.cs" />
     <Compile Include="Impl\WebResponseToHttpResponseConverter.cs" />
     <Compile Include="Interface\IHttpHandler.cs" />
@@ -68,7 +74,9 @@
     <Compile Include="Model\HttpResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Jal.HttpClient.nuspec" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

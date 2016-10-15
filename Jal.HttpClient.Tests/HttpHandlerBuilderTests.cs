@@ -1,8 +1,10 @@
 ﻿using System.Net;
 using Castle.Windsor;
-using Jal.HttpClient.Fluent;
+using Jal.HttpClient.Impl;
+using Jal.HttpClient.Impl.Fluent;
 using Jal.HttpClient.Installer;
 using Jal.HttpClient.Interface;
+using Jal.HttpClient.Interface.Fluent;
 using NUnit.Framework;
 using Shouldly;
 
@@ -18,9 +20,11 @@ namespace Jal.HttpClient.Tests
 
             container.Install(new HttpClientInstaller());
 
-            var httpclientbuilder = container.Resolve<IHttpHandlerBuilder>();
+            var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
 
-            var response = httpclientbuilder.Get("http://httpbin.org/ip").Send();
+            var response = httpclientbuilder.Get("http://httpbin.org/ip").Send;
+
+            var r = httpclientbuilder.Get("http://httpbin.org/ip").WithQueryParameters(x=> { x.Add("x", "x"); x.Add("y","y"); }).WithHeaders(y=>y.Add("f","f")).Send;
 
             response.Content.ShouldContain("origin");
 
@@ -38,9 +42,9 @@ namespace Jal.HttpClient.Tests
 
             container.Install(new HttpClientInstaller());
 
-            var httpclientbuilder = container.Resolve<IHttpHandlerBuilder>();
+            var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
 
-            var task = httpclientbuilder.Get("http://httpbin.org//get").SendAsync();
+            var task = httpclientbuilder.Get("http://httpbin.org//get").SendAsync;
 
             var response = task.Result;
 
@@ -60,9 +64,9 @@ namespace Jal.HttpClient.Tests
 
             container.Install(new HttpClientInstaller());
 
-            var httpclientbuilder = container.Resolve<IHttpHandlerBuilder>();
+            var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
 
-            var response = httpclientbuilder.Get("http://httpbin.org/xml").Send();
+            var response = httpclientbuilder.Get("http://httpbin.org/xml").Send;
 
             response.Content.ShouldContain("xml");
 
@@ -80,9 +84,9 @@ namespace Jal.HttpClient.Tests
 
             container.Install(new HttpClientInstaller());
 
-            var httpclientbuilder = container.Resolve<IHttpHandlerBuilder>();
+            var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
 
-            var response = httpclientbuilder.Get("http://httpbin.org/html").Send();
+            var response = httpclientbuilder.Get("http://httpbin.org/html").Send;
         }
 
         [Test]
@@ -92,9 +96,9 @@ namespace Jal.HttpClient.Tests
 
             container.Install(new HttpClientInstaller());
 
-            var httpclientbuilder = container.Resolve<IHttpHandlerBuilder>();
+            var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
 
-            var response = httpclientbuilder.Get("http://httpbin.org/image/png").Send();
+            var response = httpclientbuilder.Get("http://httpbin.org/image/png").Send;
         }
 
         [Test]
@@ -104,9 +108,9 @@ namespace Jal.HttpClient.Tests
 
             container.Install(new HttpClientInstaller());
 
-            var httpclientbuilder = container.Resolve<IHttpHandlerBuilder>();
+            var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
 
-            var response = httpclientbuilder.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").Utf8().Send();
+            var response = httpclientbuilder.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").Utf8().Send;
         }
 
         [Test]
@@ -116,9 +120,9 @@ namespace Jal.HttpClient.Tests
 
             container.Install(new HttpClientInstaller());
 
-            var httpclientbuilder = container.Resolve<IHttpHandlerBuilder>();
+            var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
 
-            var response = httpclientbuilder.Post("http://httpbin.org/post").Xml(@"<message>Hello World!!</message>").Utf8().Send();
+            var response = httpclientbuilder.Post("http://httpbin.org/post").Xml(@"<message>Hello World!!</message>").Utf8().Send;
         }
 
         [Test]
@@ -128,9 +132,9 @@ namespace Jal.HttpClient.Tests
 
             container.Install(new HttpClientInstaller());
 
-            var httpclientbuilder = container.Resolve<IHttpHandlerBuilder>();
+            var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
 
-            var response = httpclientbuilder.Post("http://httpbin.org/post").FormUrlEncoded(@"message=Hello%World!!").Utf8().Send();
+            var response = httpclientbuilder.Post("http://httpbin.org/post").FormUrlEncoded(@"message=Hello%World!!").Utf8().Send;
         }
 
         [Test]
@@ -140,9 +144,9 @@ namespace Jal.HttpClient.Tests
 
             container.Install(new HttpClientInstaller());
 
-            var httpclientbuilder = container.Resolve<IHttpHandlerBuilder>();
+            var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
 
-            var response = httpclientbuilder.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").Utf16().Send();
+            var response = httpclientbuilder.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").Utf16().Send;
         }
 
         [Test]
@@ -152,9 +156,9 @@ namespace Jal.HttpClient.Tests
 
             container.Install(new HttpClientInstaller());
 
-            var httpclientbuilder = container.Resolve<IHttpHandlerBuilder>();
+            var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
 
-            var response = httpclientbuilder.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").Utf8().Send();
+            var response = httpclientbuilder.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").Utf8().Send;
         }
 
         [Test]
@@ -164,9 +168,9 @@ namespace Jal.HttpClient.Tests
 
             container.Install(new HttpClientInstaller());
 
-            var httpclientbuilder = container.Resolve<IHttpHandlerBuilder>();
+            var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
 
-            var response = httpclientbuilder.Delete("http://httpbin.org/delete").Send();
+            var response = httpclientbuilder.Delete("http://httpbin.org/delete").Send;
         }
 
         [Test]
@@ -176,9 +180,9 @@ namespace Jal.HttpClient.Tests
 
             container.Install(new HttpClientInstaller());
 
-            var httpclientbuilder = container.Resolve<IHttpHandlerBuilder>();
+            var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
 
-            var response = httpclientbuilder.Get("http://httpbin.org/delay/5").WithTimeout(10).Send();
+            var response = httpclientbuilder.Get("http://httpbin.org/delay/5").WithTimeout(10).Send;
         }
 
         [Test]
@@ -188,21 +192,25 @@ namespace Jal.HttpClient.Tests
 
             container.Install(new HttpClientInstaller());
 
-            var httpclientbuilder = container.Resolve<IHttpHandlerBuilder>();
+            var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
 
-            var response = httpclientbuilder.Get("http://httpbin.org/gzip").GZip().Send();
+            var response = httpclientbuilder.Get("http://httpbin.org/gzip").GZip().Send;
         }
 
         [Test]
         public void Send_GetDeflate_Ok()
         {
-            var container = new WindsorContainer();
+            //var container = new WindsorContainer();
 
-            container.Install(new HttpClientInstaller());
+            //container.Install(new HttpClientInstaller());
 
-            var httpclientbuilder = container.Resolve<IHttpHandlerBuilder>();
+            
 
-            var response = httpclientbuilder.Get("http://httpbin.org/deflate").Send();
+            var httpclient = HttpHandler.Builder.Create;
+
+            var httpclientfluent = HttpFluentHandler.Builder.UseHttpHandler(httpclient).Create;
+
+            var response = httpclientfluent.Get("http://httpbin.org/deflate").Send;
         }
     }
 }
