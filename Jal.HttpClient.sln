@@ -24,7 +24,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CastleWindsor", "CastleWind
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LightInject", "LightInject", "{4D14FCEB-7FDB-44DA-BFFC-DEF027223362}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jal.HttpClient.LightInject.Logger.Installer", "Jal.HttpClient.LightInject.Logger.Installer\Jal.HttpClient.LightInject.Logger.Installer.csproj", "{A1AE9C4B-4EA1-4CA5-A139-0E633C2EB2F8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jal.HttpClient.Logger.LightInject.Installer", "Jal.HttpClient.LightInject.Logger.Installer\Jal.HttpClient.Logger.LightInject.Installer.csproj", "{A1AE9C4B-4EA1-4CA5-A139-0E633C2EB2F8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{328D38A0-3EBC-40F3-91D9-A20E74AE729F}"
 	ProjectSection(SolutionItems) = preProject

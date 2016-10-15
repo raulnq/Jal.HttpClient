@@ -7,7 +7,7 @@ Just another library to send HTTP requests and receve HTTP responses from a reso
 
     var httpclient = HttpHandler.Builder.Create;
 
-### Castle Windsor Integration
+### Castle Windsor Implementation
 
 Setup the Castle Windsor container
 
@@ -25,7 +25,7 @@ Send a request to https://github.com/raulnq
 
     var response = httpclient.Send(new HttpRequest("https://github.com/raulnq", HttpMethod.Get));
 
-### LightInject Integration
+### LightInject Implementation
 
 Setup the LightInject container
 
@@ -50,6 +50,7 @@ Resolve an instance of IHttpFluentHandler.
     var httpclientfluent = HttpFluentHandler.Builder.UseHttpHandler(httpclient).Create;
 
 Or
+
     var httpfluenthandler = container.Resolve<IHttpFluentHandler>();
 
 Or

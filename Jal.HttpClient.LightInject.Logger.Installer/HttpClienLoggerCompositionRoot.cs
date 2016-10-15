@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Jal.HttpClient.Interface;
-using Jal.HttpClient.Logger;
+﻿using Jal.HttpClient.Interface;
 using LightInject;
 
-namespace Jal.HttpClient.LightInject.Logger.Installer
+namespace Jal.HttpClient.Logger.LightInject.Installer
 {
     public class HttpClienLoggerCompositionRoot : ICompositionRoot
     {
