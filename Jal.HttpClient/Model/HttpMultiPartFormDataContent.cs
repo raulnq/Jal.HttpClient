@@ -38,6 +38,11 @@ namespace Jal.HttpClient.Model
 
                 needsClrf = true;
 
+                //            content - disposition: form - data; name = "field1"
+                //content - type: text / plain; charset = windows - 1250
+                //content - transfer - encoding: quoted - printable
+                //https://tools.ietf.org/html/rfc2388
+
                 if (!string.IsNullOrWhiteSpace(content.Disposition.FileName))
                 {
                     var header = $"--{_boundary}\r\nContent-Disposition: form-data; name=\"{content.Disposition.Name}\"; filename=\"{content.Disposition.FileName}\"\r\nContent-Type: {content.ContentType ?? "application/octet-stream"}\r\n\r\n";
