@@ -42,19 +42,31 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Impl\Fluent\HeaderDescriptor.cs" />
-    <Compile Include="Impl\Fluent\HttpHandlerDescriptorExtensions.cs" />
+    <Compile Include="Impl\Fluent\HttpContentDescriptor.cs" />
+    <Compile Include="Impl\Fluent\HttpContentDescriptorExtensions.cs" />
+    <Compile Include="Impl\Fluent\HttpContentTypeDescriptorExtensions.cs" />
+    <Compile Include="Impl\Fluent\HttpMultiPartFormDataContentDescriptor.cs" />
+    <Compile Include="Impl\Fluent\HttpHeaderDescriptor.cs" />
+    <Compile Include="Impl\Fluent\HttpDescriptorExtensions.cs" />
+    <Compile Include="Impl\Fluent\HttpMultiPartFormDataContentDescriptorExtensions.cs" />
+    <Compile Include="Impl\Fluent\HttpMultiPartFormDataContentTypeDescriptor.cs" />
+    <Compile Include="Impl\Fluent\HttpMultiPartFormDataContentTypeDescriptorExtensions.cs" />
+    <Compile Include="Interface\Fluent\IHttpContentTypeDescriptor.cs" />
+    <Compile Include="Interface\Fluent\IHttpContentDescriptor.cs" />
     <Compile Include="Interface\Fluent\IHttpHandlerBuilder.cs" />
-    <Compile Include="Interface\Fluent\IHttpHandlerDescriptor.cs" />
-    <Compile Include="Interface\Fluent\IHeaderDescriptor.cs" />
-    <Compile Include="Interface\Fluent\IQueryParameterDescriptor.cs" />
-    <Compile Include="Impl\Fluent\QueryParameterDescriptor.cs" />
+    <Compile Include="Interface\Fluent\IHttpDescriptor.cs" />
+    <Compile Include="Interface\Fluent\IHttpHeaderDescriptor.cs" />
+    <Compile Include="Interface\Fluent\IHttpMultiPartFormDataContentDescriptor.cs" />
+    <Compile Include="Interface\Fluent\IHttpMultiPartFormDataContentTypeDescriptor.cs" />
+    <Compile Include="Interface\Fluent\IHttpSenderDescriptor.cs" />
+    <Compile Include="Interface\Fluent\IHttpQueryParameterDescriptor.cs" />
+    <Compile Include="Impl\Fluent\HttpQueryParameterDescriptor.cs" />
     <Compile Include="Interface\Fluent\IHttpFluentHandlerStartBuilder.cs" />
     <Compile Include="Interface\Fluent\IHttpFluentHandlerEndBuilder.cs" />
     <Compile Include="Impl\AbstractHttpInterceptor.cs" />
     <Compile Include="Impl\HttpHandler.cs" />
     <Compile Include="Impl\Fluent\HttpFluentHandler.cs" />
-    <Compile Include="Impl\Fluent\HttpHandlerDescriptor.cs" />
+    <Compile Include="Impl\Fluent\HttpDescriptor.cs" />
     <Compile Include="Impl\Fluent\HttpHandlerBuilder.cs" />
     <Compile Include="Impl\Fluent\HttpFluentHandlerBuilder.cs" />
     <Compile Include="Impl\HttpMethodMapper.cs" />
@@ -67,11 +79,18 @@
     <Compile Include="Interface\IHttpMethodMapper.cs" />
     <Compile Include="Interface\IHttpRequestToWebRequestConverter.cs" />
     <Compile Include="Interface\IWebResponseToHttpResponseConverter.cs" />
+    <Compile Include="Model\HttpContent.cs" />
+    <Compile Include="Model\HttpContentDisposition.cs" />
+    <Compile Include="Model\HttpContext.cs" />
+    <Compile Include="Model\HttpEmptyContent.cs" />
     <Compile Include="Model\HttpHeader.cs" />
     <Compile Include="Model\HttpMethod.cs" />
+    <Compile Include="Model\HttpMultiPartFormDataContent.cs" />
     <Compile Include="Model\HttpQueryParameter.cs" />
     <Compile Include="Model\HttpRequest.cs" />
     <Compile Include="Model\HttpResponse.cs" />
+    <Compile Include="Model\HttpStreamContent.cs" />
+    <Compile Include="Model\HttpStringContent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

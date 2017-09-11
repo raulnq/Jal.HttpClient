@@ -4,19 +4,19 @@
     {
         IHttpHandler Handler { get; }
 
-        IHttpHandlerDescriptor Get(string url);
+        IHttpDescriptor Get(string url);
 
-        IHttpHandlerDescriptor Post(string url);
+        IHttpDescriptor Post(string url);
 
-        IHttpHandlerDescriptor Put(string url);
+        IHttpDescriptor Put(string url);
 
-        IHttpHandlerDescriptor Head(string url);
+        IHttpDescriptor Head(string url);
 
-        IHttpHandlerDescriptor Delete(string url);
+        IHttpDescriptor Delete(string url);
 
-        IHttpHandlerDescriptor Patch(string url);
+        IHttpDescriptor Patch(string url);
 
-        IHttpHandlerDescriptor Options(string url);
+        IHttpDescriptor Options(string url);
 
     }
 }

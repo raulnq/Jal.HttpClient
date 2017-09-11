@@ -17,39 +17,39 @@ namespace Jal.HttpClient.Impl.Fluent
             Handler = httpHandler;
         }
 
-        public IHttpHandlerDescriptor Get(string url)
+        public IHttpDescriptor Get(string url)
         {
-            return new HttpHandlerDescriptor(url, Handler, HttpMethod.Get);
+            return new HttpDescriptor(url, Handler, HttpMethod.Get);
         }
 
-        public IHttpHandlerDescriptor Post(string url)
+        public IHttpDescriptor Post(string url)
         {
-            return new HttpHandlerDescriptor(url, Handler, HttpMethod.Post);
+            return new HttpDescriptor(url, Handler, HttpMethod.Post);
         }
 
-        public IHttpHandlerDescriptor Put(string url)
+        public IHttpDescriptor Put(string url)
         {
-            return new HttpHandlerDescriptor(url, Handler, HttpMethod.Put);
+            return new HttpDescriptor(url, Handler, HttpMethod.Put);
         }
 
-        public IHttpHandlerDescriptor Head(string url)
+        public IHttpDescriptor Head(string url)
         {
-            return new HttpHandlerDescriptor(url, Handler, HttpMethod.Head);
+            return new HttpDescriptor(url, Handler, HttpMethod.Head);
         }
 
-        public IHttpHandlerDescriptor Delete(string url)
+        public IHttpDescriptor Delete(string url)
         {
-            return new HttpHandlerDescriptor(url, Handler, HttpMethod.Delete);
+            return new HttpDescriptor(url, Handler, HttpMethod.Delete);
         }
 
-        public IHttpHandlerDescriptor Patch(string url)
+        public IHttpDescriptor Patch(string url)
         {
-            return new HttpHandlerDescriptor(url, Handler, HttpMethod.Patch);
+            return new HttpDescriptor(url, Handler, HttpMethod.Patch);
         }
 
-        public IHttpHandlerDescriptor Options(string url)
+        public IHttpDescriptor Options(string url)
         {
-            return new HttpHandlerDescriptor(url, Handler, HttpMethod.Options);
+            return new HttpDescriptor(url, Handler, HttpMethod.Options);
         }
     }
 

@@ -18,8 +18,7 @@ namespace Jal.HttpClient.Logger
         {
             var builder = new StringBuilder();
             builder.Append($"Request Url:{request.Url}");
-            builder.Append($",ContentType:{request.ContentType}");
-            builder.Append($",CharacterSet:{request.CharacterSet}");
+
             builder.Append($",Method:{request.HttpMethod}");
             builder.Append(",QueryParameters: ");
             foreach (var queryParameter in request.QueryParameters)
@@ -31,7 +30,10 @@ namespace Jal.HttpClient.Logger
             {
                 builder.Append($"{httpHeader.Name}:{httpHeader.Value} ");
             }
+            builder.Append($",ContentType:{request.Content.ContentType}");
+            builder.Append($",CharacterSet:{request.Content.CharacterSet}");
             builder.Append($",Content:{request.Content}");
+
             _log.Info(builder.ToString());
         }
 

@@ -12,15 +12,9 @@ namespace Jal.HttpClient.Impl
     {
         private readonly IHttpMethodMapper _httpMethodMapper;
 
-        private readonly Encoding _defaultEncoding;
-
-        private readonly string _defaultContentType;
-
         public HttpRequestToWebRequestConverter(IHttpMethodMapper httpMethodMapper)
         {
             _httpMethodMapper = httpMethodMapper;
-            _defaultEncoding = Encoding.UTF8;
-            _defaultContentType = "text/plain";
         }
 
         public WebRequest Convert(HttpRequest httpRequest, int timeout)
@@ -33,6 +27,8 @@ namespace Jal.HttpClient.Impl
             }
 
             var request = (HttpWebRequest) WebRequest.Create(new Uri(url));
+
+            request.AllowWriteStreamBuffering = httpRequest.AllowWriteStreamBuffering;
 
             request.Method = _httpMethodMapper.Map(httpRequest.HttpMethod);
 
@@ -50,10 +46,8 @@ namespace Jal.HttpClient.Impl
                 WriteHeaders(httpRequest, request);
             }
 
-            if (!string.IsNullOrWhiteSpace(httpRequest.Content))
-            {
-                WriteContent(httpRequest, request);
-            }
+            httpRequest.Content.Write(request);
+            
 
             return request;
 
@@ -88,50 +82,6 @@ namespace Jal.HttpClient.Impl
                 }
                 webRequest.Headers.Add(header.Name, header.Value);
             }
-        }
-
-        private void WriteContent(HttpRequest httpRequest, WebRequest request)
-        {
-            Encoding encoding;
-
-            if (!string.IsNullOrEmpty(httpRequest.ContentType))
-            {
-                if (!string.IsNullOrEmpty(httpRequest.CharacterSet))
-                {
-                    
-                    request.ContentType = $"{httpRequest.ContentType}; {httpRequest.CharacterSet}";
-                    encoding=Encoding.GetEncoding(httpRequest.CharacterSet.Replace("charset=", ""));
-                }
-                else
-                {
-                    request.ContentType = httpRequest.ContentType;
-                    encoding = _defaultEncoding;
-                }
-            }
-            else
-            {
-                if (!string.IsNullOrEmpty(httpRequest.CharacterSet))
-                {
-                    request.ContentType = $"text/plain; {httpRequest.CharacterSet}";
-                    encoding = Encoding.GetEncoding(httpRequest.CharacterSet.Replace("charset=", ""));
-                }
-                else
-                {
-                    request.ContentType = _defaultContentType;
-                    encoding = _defaultEncoding;
-                }
-            }
-
-            request.ContentLength = encoding.GetByteCount(httpRequest.Content);
-
-            using (var writeStream = request.GetRequestStream())
-            {
-                var bytes = encoding.GetBytes(httpRequest.Content);
-
-                writeStream.Write(bytes, 0, bytes.Length);
-
-                writeStream.Flush();
-            }
-        }
+        }        
     }
 }

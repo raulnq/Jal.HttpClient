@@ -26,7 +26,7 @@ namespace Jal.HttpClient.Impl
         {
             var httpResponse = new HttpResponse()
             {
-                HttpStatusCode = HttpStatusCode.InternalServerError,
+                HttpExceptionStatus = webException.Status,
 
                 WebException = webException
             };
@@ -40,23 +40,23 @@ namespace Jal.HttpClient.Impl
 
         private void ReadContent(HttpWebResponse response, HttpResponse httpResponse)
         {
+            httpResponse.Url = response.ResponseUri.ToString();
+
+            httpResponse.HttpStatusCode = response.StatusCode;
+
+            httpResponse.ContentType = response.ContentType;
+
+            httpResponse.ContentLength = response.ContentLength;
+
+            foreach (var headerName in response.Headers.AllKeys)
+            {
+                var headerValue = response.Headers[headerName];
+
+                httpResponse.Headers.Add(new HttpHeader { Name = headerName, Value = headerValue });
+            }
+
             using (var responseStream = response.GetResponseStream())
             {
-                httpResponse.Url = response.ResponseUri.ToString();
-
-                httpResponse.HttpStatusCode = response.StatusCode;
-
-                httpResponse.ContentType = response.ContentType;
-
-                httpResponse.ContentLength = response.ContentLength;
-
-                foreach (var headerName in response.Headers.AllKeys)
-                {
-                    var headerValue = response.Headers[headerName];
-
-                    httpResponse.Headers.Add(new HttpHeader {Name = headerName, Value = headerValue});
-                }
-
                 if (responseStream != null)
                 {
                     var encoding = string.IsNullOrEmpty(response.CharacterSet) ? Encoding.UTF8 : Encoding.GetEncoding(response.CharacterSet);

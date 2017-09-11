@@ -34,16 +34,17 @@ namespace Jal.HttpClient.Impl
         public HttpResponse Send(HttpRequest httpRequest)
         {
             var stopWatch = new Stopwatch();
+
             stopWatch.Start();
 
             Interceptor.OnEntry(httpRequest);
 
             HttpResponse httpResponse = null;
 
-            var request = RequestConverter.Convert(httpRequest, Timeout);
-
             try
             {
+                var request = RequestConverter.Convert(httpRequest, Timeout);
+
                 using (var response = (HttpWebResponse) request.GetResponse())
                 {
                     httpResponse = ResponseConverter.Convert(response);
@@ -65,23 +66,30 @@ namespace Jal.HttpClient.Impl
             {
                 stopWatch.Stop();
 
-                httpResponse.Duration = stopWatch.Elapsed.TotalMilliseconds;
+                if (httpResponse != null)
+                {
+                    httpResponse.Duration = stopWatch.Elapsed.TotalMilliseconds;
 
-                Interceptor.OnExit(httpResponse, httpRequest);
+                    Interceptor.OnExit(httpResponse, httpRequest);
+                }
             }
         }
 
         public async Task<HttpResponse> SendAsync(HttpRequest httpRequest)
         {
+            var stopWatch = new Stopwatch();
+
+            stopWatch.Start();
+
             Interceptor.OnEntry(httpRequest);
 
             HttpResponse httpResponse = null;
 
-            var request = RequestConverter.Convert(httpRequest, Timeout);
-
             try
             {
-               using (var response = (HttpWebResponse) await request.GetResponseAsync())
+                var request = RequestConverter.Convert(httpRequest, Timeout);
+
+                using (var response = (HttpWebResponse) await request.GetResponseAsync())
                 {
                     httpResponse = ResponseConverter.Convert(response);
 
@@ -100,7 +108,14 @@ namespace Jal.HttpClient.Impl
             }
             finally
             {
-                Interceptor.OnExit(httpResponse, httpRequest);
+                stopWatch.Stop();
+
+                if (httpResponse != null)
+                {
+                    httpResponse.Duration = stopWatch.Elapsed.TotalMilliseconds;
+
+                    Interceptor.OnExit(httpResponse, httpRequest);
+                }
             }
         }
     }

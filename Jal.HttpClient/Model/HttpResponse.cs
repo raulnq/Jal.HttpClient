@@ -17,7 +17,9 @@ namespace Jal.HttpClient.Model
 
         public List<HttpHeader> Headers { get; set; }
 
-        public HttpStatusCode HttpStatusCode { get; set; }
+        public HttpStatusCode? HttpStatusCode { get; set; }
+
+        public WebExceptionStatus? HttpExceptionStatus { get; set; }
 
         public WebException WebException { get; set; }
 

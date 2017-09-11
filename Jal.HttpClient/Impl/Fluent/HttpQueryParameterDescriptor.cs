@@ -3,11 +3,11 @@ using Jal.HttpClient.Model;
 
 namespace Jal.HttpClient.Impl.Fluent
 {
-    public class QueryParameterDescriptor : IQueryParameterDescriptor
+    public class HttpQueryParameterDescriptor : IHttpQueryParameterDescriptor
     {
         private readonly HttpRequest _httpRequest;
 
-        public QueryParameterDescriptor(HttpRequest httpRequest)
+        public HttpQueryParameterDescriptor(HttpRequest httpRequest)
         {
             _httpRequest = httpRequest;
         }

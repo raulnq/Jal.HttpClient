@@ -4,11 +4,11 @@ using Jal.HttpClient.Model;
 
 namespace Jal.HttpClient.Impl.Fluent
 {
-    public class HeaderDescriptor : IHeaderDescriptor
+    public class HttpHeaderDescriptor : IHttpHeaderDescriptor
     {
         private readonly HttpRequest _httpRequest;
 
-        public HeaderDescriptor(HttpRequest httpRequest)
+        public HttpHeaderDescriptor(HttpRequest httpRequest)
         {
             _httpRequest = httpRequest;
         }

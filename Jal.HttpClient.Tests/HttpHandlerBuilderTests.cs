@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using System.IO;
+using System.Net;
+using System.Text;
 using Castle.Windsor;
 using Jal.HttpClient.Impl;
 using Jal.HttpClient.Impl.Fluent;
@@ -110,7 +112,7 @@ namespace Jal.HttpClient.Tests
 
             var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
 
-            var response = httpclientbuilder.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").Utf8().Send;
+            var response = httpclientbuilder.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").Send;
         }
 
         [Test]
@@ -122,7 +124,7 @@ namespace Jal.HttpClient.Tests
 
             var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
 
-            var response = httpclientbuilder.Post("http://httpbin.org/post").Xml(@"<message>Hello World!!</message>").Utf8().Send;
+            var response = httpclientbuilder.Post("http://httpbin.org/post").Xml(@"<message>Hello World!!</message>").Send;
         }
 
         [Test]
@@ -134,7 +136,35 @@ namespace Jal.HttpClient.Tests
 
             var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
 
-            var response = httpclientbuilder.Post("http://httpbin.org/post").FormUrlEncoded(@"message=Hello%World!!").Utf8().Send;
+            var response = httpclientbuilder.Post("http://httpbin.org/post").FormUrlEncoded(@"message=Hello%World!!").Send;
+        }
+
+        [Test]
+        public void Send_PostFormUrlEncodedUtf86_Ok()
+        {
+            var container = new WindsorContainer();
+
+            container.Install(new HttpClientInstaller());
+
+            var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
+
+            var response = httpclientbuilder.Post("http://httpbin.org/post").MultiPartFormData(x =>
+            {
+                x.Json(@"{""message1"":""Hello World1!!""}").Utf8().WithDisposition("nombre1");
+                x.Json(@"{""message2"":""Hello World2!!""}").Utf8().WithDisposition("nombre2");
+                x.Xml("<saludo>hola mundo</saludo>").Utf8().WithDisposition("nombre3", "file.xml");
+                x.WithContent(new MemoryStream(Encoding.UTF8.GetBytes(@"{""message"":""Hello World!!""}"))).WithDisposition("file","file.json");
+            }).Send;
+
+            var response1 = httpclientbuilder.Post("http://httpbin.org/post").MultiPartFormData(x =>
+            {
+                x.Xml("<saludo>hola mundo</saludo>").Utf8().WithDisposition("nombre3", "file.xml");
+            }).Send;
+
+            var response2 = httpclientbuilder.Post("http://httpbin.org/post").MultiPartFormData(x =>
+            {
+                x.Xml("<saludo>hola mundo</saludo>").Utf8().WithDisposition("nombre3", "file.xml");
+            }).Send;
         }
 
         [Test]
@@ -146,7 +176,7 @@ namespace Jal.HttpClient.Tests
 
             var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
 
-            var response = httpclientbuilder.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").Utf16().Send;
+            var response = httpclientbuilder.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").Send;
         }
 
         [Test]
@@ -158,7 +188,7 @@ namespace Jal.HttpClient.Tests
 
             var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
 
-            var response = httpclientbuilder.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").Utf8().Send;
+            var response = httpclientbuilder.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").Send;
         }
 
         [Test]

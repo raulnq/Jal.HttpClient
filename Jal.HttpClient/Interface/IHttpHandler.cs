@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
-using HttpRequest = Jal.HttpClient.Model.HttpRequest;
-using HttpResponse = Jal.HttpClient.Model.HttpResponse;
+using Jal.HttpClient.Model;
 
 namespace Jal.HttpClient.Interface
 {
