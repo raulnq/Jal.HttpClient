@@ -1,11 +1,14 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Text;
 
 namespace Jal.HttpClient.Model
 {
     public class HttpStreamContent : HttpContent
     {
+        protected static readonly string ApplicationOctectStream = "application/octet-stream";
+
         public Stream Content { get; set; }
 
         public long BufferLenght { get; set; }
@@ -25,13 +28,30 @@ namespace Jal.HttpClient.Model
         {
             if (Content != null)
             {
-                WriteContentType();
+                ContentType = GetContentType();
+
+                request.ContentLength = GetByteCount();
 
                 using (var writeStream = request.GetRequestStream())
                 {
                     WriteStream(writeStream);
                 }
             }
+        }
+
+        public override long GetByteCount()
+        {
+            return Content.Length;
+        }
+
+        public override string GetDefaultContentType()
+        {
+            return ApplicationOctectStream;
+        }
+
+        public override Encoding GetDefaultEncoding()
+        {
+            return Encoding.UTF8;
         }
 
         public override void WriteStream(Stream writeStream)

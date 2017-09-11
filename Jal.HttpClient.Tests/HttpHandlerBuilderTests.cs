@@ -148,22 +148,22 @@ namespace Jal.HttpClient.Tests
 
             var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
 
-            var response = httpclientbuilder.Post("http://httpbin.org/post").MultiPartFormData(x =>
+            var response = httpclientbuilder.Post("http://httpbin.org/post").WithAllowWriteStreamBuffering(true).MultiPartFormData(x =>
             {
-                x.Json(@"{""message1"":""Hello World1!!""}").Utf8().WithDisposition("nombre1");
-                x.Json(@"{""message2"":""Hello World2!!""}").Utf8().WithDisposition("nombre2");
-                x.Xml("<saludo>hola mundo</saludo>").Utf8().WithDisposition("nombre3", "file.xml");
+                x.Json(@"{""message1"":""Hello World1!!""}").WithDisposition("nombre1");
+                x.Json(@"{""message2"":""Hello World2!!""}").WithDisposition("nombre2");
+                x.Xml("<saludo>hola mundo</saludo>").WithDisposition("nombre3", "file.xml");
                 x.WithContent(new MemoryStream(Encoding.UTF8.GetBytes(@"{""message"":""Hello World!!""}"))).WithDisposition("file","file.json");
             }).Send;
 
             var response1 = httpclientbuilder.Post("http://httpbin.org/post").MultiPartFormData(x =>
             {
-                x.Xml("<saludo>hola mundo</saludo>").Utf8().WithDisposition("nombre3", "file.xml");
+                x.Xml("<saludo>hola mundo</saludo>").WithDisposition("nombre3", "file.xml");
             }).Send;
 
             var response2 = httpclientbuilder.Post("http://httpbin.org/post").MultiPartFormData(x =>
             {
-                x.Xml("<saludo>hola mundo</saludo>").Utf8().WithDisposition("nombre3", "file.xml");
+                x.Xml("<saludo>hola mundo</saludo>").WithDisposition("nombre3", "file.xml");
             }).Send;
         }
 

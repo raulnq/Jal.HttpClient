@@ -8,10 +8,6 @@ namespace Jal.HttpClient.Model
     {
         public static readonly HttpContent Instance = new HttpEmptyContent();
 
-        protected static readonly Encoding DefaultEncoding = Encoding.UTF8;
-
-        protected static readonly string DefaultContentType = "text/plain";
-        
         public string ContentType { get; set; }
 
         public string CharacterSet { get; set; }
@@ -29,16 +25,27 @@ namespace Jal.HttpClient.Model
 
         public abstract void Write(WebRequest request);
 
-        public void WriteContentType()
+        public abstract long GetByteCount();
+
+        public abstract string GetDefaultContentType();
+
+        public abstract Encoding GetDefaultEncoding();
+
+        public string GetContentType()
         {
             if (!string.IsNullOrEmpty(ContentType))
             {
-                ContentType = !string.IsNullOrEmpty(CharacterSet) ? $"{ContentType}; {CharacterSet}" : ContentType;
+                return !string.IsNullOrEmpty(CharacterSet) ? $"{ContentType}; {CharacterSet}" : ContentType;
             }
             else
             {
-                ContentType = !string.IsNullOrEmpty(CharacterSet) ? $"text/plain; {CharacterSet}" : DefaultContentType;
+                return !string.IsNullOrEmpty(CharacterSet) ? $"{GetDefaultContentType()}; {CharacterSet}" : GetDefaultContentType();
             }
+        }
+
+        public Encoding GetEncoding()
+        {
+            return !string.IsNullOrEmpty(CharacterSet) ? Encoding.GetEncoding(CharacterSet.Replace("charset=", "")) : GetDefaultEncoding();
         }
     }
 }

@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 
 namespace Jal.HttpClient.Model
 {
     public class HttpMultiPartFormDataContent : HttpContent
     {
+        protected static readonly string ApplicationOctectStream = "application/octet-stream";
         public List<HttpContent> Contents { get; set; }
 
         private string _boundary; 
@@ -30,9 +32,9 @@ namespace Jal.HttpClient.Model
             {
                 if (needsClrf)
                 {
-                    var bytes = DefaultEncoding.GetBytes("\r\n");
+                    var clrfbytes = GetDefaultEncoding().GetBytes("\r\n");
 
-                    writeStream.Write(bytes, 0, bytes.Length);
+                    writeStream.Write(clrfbytes, 0, clrfbytes.Length);
                 }
 
 
@@ -43,11 +45,15 @@ namespace Jal.HttpClient.Model
                 //content - transfer - encoding: quoted - printable
                 //https://tools.ietf.org/html/rfc2388
 
+                var contenttype = content.GetContentType();
+
+                var encoding = content.GetEncoding();
+
                 if (!string.IsNullOrWhiteSpace(content.Disposition.FileName))
                 {
-                    var header = $"--{_boundary}\r\nContent-Disposition: form-data; name=\"{content.Disposition.Name}\"; filename=\"{content.Disposition.FileName}\"\r\nContent-Type: {content.ContentType ?? "application/octet-stream"}\r\n\r\n";
+                    var header = $"--{_boundary}\r\nContent-Disposition: form-data; name=\"{content.Disposition.Name}\"; filename=\"{content.Disposition.FileName}\"\r\nContent-Type: {content.ContentType ?? GetDefaultContentType()}\r\n\r\n";
 
-                    var bytes = DefaultEncoding.GetBytes(header);
+                    var bytes = encoding.GetBytes(header);
 
                     writeStream.Write(bytes, 0, bytes.Length);
 
@@ -57,9 +63,11 @@ namespace Jal.HttpClient.Model
                 {
                     string header = $"--{_boundary}\r\nContent-Disposition: form-data; name=\"{content.Disposition.Name}\"\r\n\r\n";
 
-                    var bytes = DefaultEncoding.GetBytes(header);
+                    var bytes = encoding.GetBytes(header);
 
-                    writeStream.Write(bytes, 0, bytes.Length);
+                    var length = encoding.GetByteCount(header);
+
+                    writeStream.Write(bytes, 0, length);
 
                     content.WriteStream(writeStream);
                 }
@@ -67,9 +75,9 @@ namespace Jal.HttpClient.Model
 
             var footer = "\r\n--" + _boundary + "--\r\n";
 
-            var footerbytecount = DefaultEncoding.GetByteCount(footer);
+            var footerbytes = GetDefaultEncoding().GetBytes(footer);
 
-            writeStream.Write(DefaultEncoding.GetBytes(footer), 0, footerbytecount);
+            writeStream.Write(footerbytes, 0, footerbytes.Length);
 
             writeStream.Flush();
         }
@@ -82,11 +90,75 @@ namespace Jal.HttpClient.Model
 
                 request.ContentType = "multipart/form-data; boundary=" + _boundary;
 
+                request.ContentLength = GetByteCount();
+
                 using (var writeStream = request.GetRequestStream())
                 {
                     WriteStream(writeStream);
                 }
             }
+        }
+
+        public override long GetByteCount()
+        {
+            long total = 0;
+
+            var needsClrf = false;
+
+            foreach (var content in Contents)
+            {
+                if (needsClrf)
+                {
+                    var clrfbytes = GetDefaultEncoding().GetByteCount("\r\n");
+
+                    total = total + clrfbytes;
+                }
+
+                needsClrf = true;
+
+                var contenttype = content.GetContentType();
+
+                var encoding = content.GetEncoding();
+
+                if (!string.IsNullOrWhiteSpace(content.Disposition.FileName))
+                {
+                    var header = $"--{_boundary}\r\nContent-Disposition: form-data; name=\"{content.Disposition.Name}\"; filename=\"{content.Disposition.FileName}\"\r\nContent-Type: {content.ContentType ?? GetDefaultContentType()}\r\n\r\n";
+
+                    var bytes = encoding.GetByteCount(header);
+
+                    total = total + bytes;
+
+                    total = total + content.GetByteCount();
+                }
+                else
+                {
+                    string header = $"--{_boundary}\r\nContent-Disposition: form-data; name=\"{content.Disposition.Name}\"\r\n\r\n";
+
+                    var bytes = encoding.GetByteCount(header);
+
+                    total = total + bytes;
+
+                    total = total + content.GetByteCount();
+                }
+            }
+
+            var footer = "\r\n--" + _boundary + "--\r\n";
+
+            var footerbytes = GetDefaultEncoding().GetByteCount(footer);
+
+            total = total + footerbytes;
+
+            return total;
+        }
+
+        public override string GetDefaultContentType()
+        {
+            return ApplicationOctectStream;
+        }
+
+        public override Encoding GetDefaultEncoding()
+        {
+            return Encoding.UTF8;
         }
     }
 }

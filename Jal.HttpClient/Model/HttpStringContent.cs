@@ -6,6 +6,8 @@ namespace Jal.HttpClient.Model
 {
     public class HttpStringContent : HttpContent
     {
+        protected static readonly string TextPlain = "text/plain";
+
         public HttpStringContent(string content)
         {
             Content = content;
@@ -21,7 +23,9 @@ namespace Jal.HttpClient.Model
         {
             if (!string.IsNullOrWhiteSpace(Content))
             {
-                WriteContentType();
+                ContentType = GetContentType();
+
+                request.ContentLength = GetByteCount();
 
                 using (var writeStream = request.GetRequestStream())
                 {
@@ -30,9 +34,26 @@ namespace Jal.HttpClient.Model
             }
         }
 
+        public override long GetByteCount()
+        {
+            var encoding = GetEncoding();
+
+            return encoding.GetByteCount(Content);
+        }
+
+        public override string GetDefaultContentType()
+        {
+            return TextPlain;
+        }
+
+        public override Encoding GetDefaultEncoding()
+        {
+            return Encoding.UTF8;
+        }
+
         public override void WriteStream(Stream writeStream)
         {
-            var encoding = !string.IsNullOrEmpty(CharacterSet) ? Encoding.GetEncoding(CharacterSet.Replace("charset=", "")) : DefaultEncoding;
+            var encoding = GetEncoding();
 
             var bytes = encoding.GetBytes(Content);
 

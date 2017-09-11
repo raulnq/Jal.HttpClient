@@ -8,22 +8,22 @@ namespace Jal.HttpClient.Impl.Fluent
     {
         public static IHttpMultiPartFormDataContentTypeDescriptor Json(this IHttpMultiPartFormDataContentDescriptor descriptor, string content)
         {
-            return descriptor.WithContent(content).WithContentType("application/json");
+            return descriptor.WithContent(content).WithContentType("application/json").Utf8();
         }
 
         public static IHttpMultiPartFormDataContentTypeDescriptor Xml(this IHttpMultiPartFormDataContentDescriptor descriptor, string content)
         {
-            return descriptor.WithContent(content).WithContentType("text/xml");
+            return descriptor.WithContent(content).WithContentType("text/xml").Utf8();
         }
 
         public static IHttpMultiPartFormDataContentTypeDescriptor Text(this IHttpMultiPartFormDataContentDescriptor descriptor, string content)
         {
-            return descriptor.WithContent(content).WithContentType("text/plain");
+            return descriptor.WithContent(content).WithContentType("text/plain").Utf8();
         }
 
         public static IHttpMultiPartFormDataContentTypeDescriptor Html(this IHttpMultiPartFormDataContentDescriptor descriptor, string content)
         {
-            return descriptor.WithContent(content).WithContentType("text/html");
+            return descriptor.WithContent(content).WithContentType("text/html").Utf8();
         }
 
         public static IHttpMultiPartFormDataContentTypeDescriptor WithContent(this IHttpMultiPartFormDataContentDescriptor descriptor, string content)
