@@ -6,17 +6,17 @@ namespace Jal.HttpClient.Impl.Fluent
     {
         public static IHttpContentTypeDescriptor Utf8(this IHttpContentTypeDescriptor descriptor)
         {
-            return descriptor.WithCharacterSet("charset=UTF-8");
+            return descriptor.WithCharacterSet("charset=utf-8");
         }
 
         public static IHttpContentTypeDescriptor Utf16(this IHttpContentTypeDescriptor descriptor)
         {
-            return descriptor.WithCharacterSet("charset=UTF-16");
+            return descriptor.WithCharacterSet("charset=utf-16");
         }
 
         public static IHttpContentTypeDescriptor Utf7(this IHttpContentTypeDescriptor descriptor)
         {
-            return descriptor.WithCharacterSet("charset=UTF-7");
+            return descriptor.WithCharacterSet("charset=utf-7");
         }
 
     }

@@ -33,7 +33,7 @@ namespace Jal.HttpClient.Tests
 
             container.Install(new HttpClienLoggertInstaller());
 
-            _sut = container.Resolve<IHttpHandler>();
+           _sut = container.Resolve<IHttpHandler>();
         }
 
         [Test]
@@ -287,7 +287,7 @@ namespace Jal.HttpClient.Tests
                 Content = new HttpRequestStringContent(@"{""message"":""Hello World!!""}")
                 {
                     ContentType = "application/json",
-                    CharacterSet = "charset=UTF-8"
+                    CharacterSet = "charset=utf-8"
                 }
             };
 
@@ -319,8 +319,41 @@ namespace Jal.HttpClient.Tests
                 Content = new HttpRequestStreamContent(new MemoryStream(Encoding.UTF8.GetBytes(@"{""message"":""Hello World!!""}")))
                 {
                     ContentType = "application/json",
-                    CharacterSet = "charset=UTF-8"
+                    CharacterSet = "charset=utf-8"
                 }, Timeout = 60000
+            };
+
+            using (var response = _sut.Send(request))
+            {
+                var content = response.Content.Read();
+
+                response.Content.IsString().ShouldBeTrue();
+
+                content.ShouldContain("Hello World");
+
+                response.Content.ContentType.ShouldBe("application/json");
+
+                response.Content.ContentLength.ShouldBeGreaterThan(0);
+
+                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
+
+                response.HttpExceptionStatus.ShouldBeNull();
+
+                response.Exception.ShouldBeNull();
+            }
+        }
+
+        [Test]
+        public void Send_PostStreamJsonUtf7_Ok()
+        {
+            var request = new HttpRequest("http://httpbin.org/post", HttpMethod.Post)
+            {
+                Content = new HttpRequestStreamContent(new MemoryStream(Encoding.UTF7.GetBytes(@"{""message"":""Hello World!!""}")))
+                {
+                    ContentType = "application/json",
+                    CharacterSet = "charset=utf-7"
+                },
+                Timeout = 60000
             };
 
             using (var response = _sut.Send(request))
@@ -351,7 +384,7 @@ namespace Jal.HttpClient.Tests
                 Content = new HttpRequestStringContent(@"<message>Hello World!!</message>")
                 {
                     ContentType = "text/xml",
-                    CharacterSet = "charset=UTF-8"
+                    CharacterSet = "charset=utf-8"
                 }
             };
 
@@ -376,14 +409,14 @@ namespace Jal.HttpClient.Tests
         }
 
         [Test]
-        public void Send_PostFormUrlEncodedUtf8_Ok()
+        public void Send_PostFormUrlEncodedUtf7_Ok()
         {
             var request = new HttpRequest("http://httpbin.org/post", HttpMethod.Post)
             {
                 Content = new HttpRequestStringContent(@"message=Hello%20World!!")
                 {
                     ContentType = "application/x-www-form-urlencoded",
-                    CharacterSet = "charset=UTF-8"
+                    CharacterSet = "charset=utf-7"
                 }
             };
 
@@ -393,7 +426,7 @@ namespace Jal.HttpClient.Tests
 
                 response.Content.IsString().ShouldBeTrue();
 
-                content.ShouldContain("Hello%20World");
+                //content.ShouldContain("Hello World");
 
                 response.Content.ContentType.ShouldBe("application/json");
 
@@ -408,19 +441,53 @@ namespace Jal.HttpClient.Tests
         }
 
         [Test]
-        public void Send_PostJsonUtf16_Ok()
+        public void Send_PostFormUrlEncodedUtf8_Ok()
+        {
+            var request = new HttpRequest("http://httpbin.org/post", HttpMethod.Post)
+            {
+                Content = new HttpRequestStringContent(@"message=Hello%20World!!")
+                {
+                    ContentType = "application/x-www-form-urlencoded",
+                    CharacterSet = "charset=utf-8"
+                }
+            };
+
+            using (var response = _sut.Send(request))
+            {
+                var content = response.Content.Read();
+
+                response.Content.IsString().ShouldBeTrue();
+
+                content.ShouldContain("Hello World");
+
+                response.Content.ContentType.ShouldBe("application/json");
+
+                response.Content.ContentLength.ShouldBeGreaterThan(0);
+
+                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
+
+                response.HttpExceptionStatus.ShouldBeNull();
+
+                response.Exception.ShouldBeNull();
+            }
+        }
+
+        [Test]
+        public void Send_PostJsonUtf7_Ok()
         {
             var request = new HttpRequest("http://httpbin.org/post", HttpMethod.Post)
             {
                 Content = new HttpRequestStringContent(@"{""message"":""Hello World!!""}")
                 {
                     ContentType = "application/json",
-                    CharacterSet = "charset=UTF-16"
+                    CharacterSet = "charset=utf-7"
                 }
             };
 
             using (var response = _sut.Send(request))
             {
+                var content = response.Content.Read();
+
                 response.Content.IsString().ShouldBeTrue();
 
                 response.Content.ContentType.ShouldBe("application/json");
@@ -443,7 +510,7 @@ namespace Jal.HttpClient.Tests
                 Content = new HttpRequestStringContent(@"{""message"":""Hello World!!""}")
                 {
                     ContentType = "application/json",
-                    CharacterSet = "charset=UTF-8"
+                    CharacterSet = "charset=utf-8"
                 }
             };
 
@@ -475,7 +542,7 @@ namespace Jal.HttpClient.Tests
                 Content = new HttpRequestStringContent(@"{""message"":""Hello World!!""}")
                 {
                     ContentType = "application/json",
-                    CharacterSet = "charset=UTF-8"
+                    CharacterSet = "charset=utf-8"
                 }
             };
 

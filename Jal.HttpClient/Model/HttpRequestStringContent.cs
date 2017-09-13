@@ -22,7 +22,7 @@ namespace Jal.HttpClient.Model
         {
             if (!string.IsNullOrWhiteSpace(Content))
             {
-                ContentType = GetContentType();
+                request.ContentType = GetContentType();
 
                 request.ContentLength = GetByteCount();
 

@@ -26,7 +26,7 @@ namespace Jal.HttpClient.Model
         {
             if (Content != null)
             {
-                ContentType = GetContentType();
+                request.ContentType = GetContentType();
 
                 request.ContentLength = GetByteCount();
 

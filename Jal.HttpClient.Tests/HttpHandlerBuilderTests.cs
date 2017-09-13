@@ -135,7 +135,7 @@ namespace Jal.HttpClient.Tests
 
                 response.Content.IsString().ShouldBeTrue();
 
-                content.ShouldContain("Hello%20World");
+                content.ShouldContain("Hello World");
 
                 response.Content.ContentType.ShouldBe("application/json");
 

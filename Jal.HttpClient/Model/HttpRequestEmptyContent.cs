@@ -21,6 +21,11 @@ namespace Jal.HttpClient.Model
             return 0;
         }
 
+        public override string ToString()
+        {
+            return "[Empty]";
+        }
+
         public override string GetDefaultContentType()
         {
             return string.Empty;
