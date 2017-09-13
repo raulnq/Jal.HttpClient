@@ -20,7 +20,7 @@ namespace Jal.HttpClient.Impl.Fluent
             {
                 _httpRequest.Headers.Remove(item);
             }
-            _httpRequest.Headers.Add(new HttpHeader() { Value = value, Name = name });
+            _httpRequest.Headers.Add(new HttpHeader(name, value));
         }
     }
 }

@@ -9,16 +9,16 @@ namespace Jal.HttpClient.Impl.Fluent
 {
     public class HttpDescriptor : IHttpDescriptor
     {
-        private readonly HttpContext _httpcontext;
+        private readonly HttpDescriptorContext _httpcontext;
         
         public HttpDescriptor(string url, IHttpHandler httpHandler, HttpMethod httpMethod)
         {
-            _httpcontext = new HttpContext(new HttpRequest(url, httpMethod), httpHandler);
+            _httpcontext = new HttpDescriptorContext(new HttpRequest(url, httpMethod), httpHandler);
         }
 
-        public IHttpDescriptor WithDecompressionMethods(DecompressionMethods decompressionmethods)
+        public IHttpDescriptor WithDecompression(DecompressionMethods decompression)
         {
-            _httpcontext.HttpRequest.DecompressionMethods = decompressionmethods;
+            _httpcontext.HttpRequest.Decompression = decompression;
             return this;
         }
 
@@ -36,9 +36,9 @@ namespace Jal.HttpClient.Impl.Fluent
             return this;
         }
 
-        public IHttpContentTypeDescriptor WithContent(HttpContent content)
+        public IHttpContentTypeDescriptor WithContent(HttpRequestContent requestContent)
         {
-            _httpcontext.HttpRequest.Content = content;
+            _httpcontext.HttpRequest.Content = requestContent;
             return new HttpContentDescriptor(_httpcontext.HttpRequest.Content, _httpcontext);
         }
 

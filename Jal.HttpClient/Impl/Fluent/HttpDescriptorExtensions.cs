@@ -10,28 +10,28 @@ namespace Jal.HttpClient.Impl.Fluent
     {
         public static IHttpDescriptor GZip(this IHttpDescriptor descriptor)
         {
-            return descriptor.WithDecompressionMethods(DecompressionMethods.GZip);
+            return descriptor.WithDecompression(DecompressionMethods.GZip);
         }
 
         public static IHttpDescriptor Deflate(this IHttpDescriptor descriptor)
         {
-            return descriptor.WithDecompressionMethods(DecompressionMethods.Deflate);
+            return descriptor.WithDecompression(DecompressionMethods.Deflate);
         }
 
         public static IHttpDescriptor DeflateGZip(this IHttpDescriptor descriptor)
         {
-            return descriptor.WithDecompressionMethods(DecompressionMethods.GZip | DecompressionMethods.Deflate);
+            return descriptor.WithDecompression(DecompressionMethods.GZip | DecompressionMethods.Deflate);
         }
 
         public static IHttpDescriptor MultiPartFormData(this IHttpDescriptor descriptor, Action<IHttpMultiPartFormDataContentDescriptor> contentTypeDescriptorAction)
         {
-            var content = new HttpMultiPartFormDataContent();
+            var content = new HttpRequestMultiPartFormDataContent();
 
             var contentdescriptor = new HttpMultiPartFormDataContentDescriptor(content);
 
             contentTypeDescriptorAction(contentdescriptor);
 
-            descriptor.WithContent(content).WithContentType("multipart/form-data").Utf8();
+            descriptor.WithContent(content).WithContentType("multipart/form-data");
 
             return descriptor;
         }
@@ -65,12 +65,12 @@ namespace Jal.HttpClient.Impl.Fluent
 
         public static IHttpContentTypeDescriptor WithContent(this IHttpDescriptor descriptor, string content)
         {
-            return descriptor.WithContent(new HttpStringContent(content));
+            return descriptor.WithContent(new HttpRequestStringContent(content));
         }
 
         public static IHttpContentTypeDescriptor WithContent(this IHttpDescriptor descriptor, Stream content, long bufferlenght = 4096)
         {
-            return descriptor.WithContent(new HttpStreamContent(content, bufferlenght));
+            return descriptor.WithContent(new HttpRequestStreamContent(content, bufferlenght));
         }
 
         public static IHttpDescriptor WithQueryParameters(this IHttpDescriptor descriptor, object queryParams)

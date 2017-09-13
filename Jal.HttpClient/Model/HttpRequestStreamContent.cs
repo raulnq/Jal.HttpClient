@@ -1,27 +1,30 @@
+using System;
 using System.IO;
 using System.Net;
 using System.Text;
 
 namespace Jal.HttpClient.Model
 {
-    public class HttpStringContent : HttpContent
+    public class HttpRequestStreamContent : HttpRequestSimpleDataContent
     {
-        protected static readonly string TextPlain = "text/plain";
+        public Stream Content { get; set; }
 
-        public HttpStringContent(string content)
+        public long BufferLenght { get; set; }
+
+        public HttpRequestStreamContent(Stream content, long bufferlenght= 4096)
         {
+            BufferLenght = bufferlenght;
             Content = content;
         }
-        public string Content { get; set; }
 
         public override string ToString()
         {
-            return Content;
+            return "[Stream]";
         }
 
         public override void Write(WebRequest request)
         {
-            if (!string.IsNullOrWhiteSpace(Content))
+            if (Content != null)
             {
                 ContentType = GetContentType();
 
@@ -36,14 +39,12 @@ namespace Jal.HttpClient.Model
 
         public override long GetByteCount()
         {
-            var encoding = GetEncoding();
-
-            return encoding.GetByteCount(Content);
+            return Content.Length;
         }
 
         public override string GetDefaultContentType()
         {
-            return TextPlain;
+            return ApplicationOctectStream;
         }
 
         public override Encoding GetDefaultEncoding()
@@ -53,11 +54,14 @@ namespace Jal.HttpClient.Model
 
         public override void WriteStream(Stream writeStream)
         {
-            var encoding = GetEncoding();
+            var buffer = new byte[checked(Math.Min(BufferLenght, Content.Length))];
 
-            var bytes = encoding.GetBytes(Content);
+            int bytesread;
 
-            writeStream.Write(bytes, 0, bytes.Length);
+            while ((bytesread = Content.Read(buffer, 0, buffer.Length)) != 0)
+            {
+                writeStream.Write(buffer, 0, bytesread);
+            }
 
             writeStream.Flush();
         }

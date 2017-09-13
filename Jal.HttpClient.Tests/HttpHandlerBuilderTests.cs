@@ -1,12 +1,13 @@
 ﻿using System.IO;
 using System.Net;
-using System.Text;
+using Castle.MicroKernel.Registration;
 using Castle.Windsor;
+using Common.Logging;
 using Jal.HttpClient.Impl;
 using Jal.HttpClient.Impl.Fluent;
 using Jal.HttpClient.Installer;
-using Jal.HttpClient.Interface;
 using Jal.HttpClient.Interface.Fluent;
+using Jal.HttpClient.Logger.Installer;
 using NUnit.Framework;
 using Shouldly;
 
@@ -15,180 +16,204 @@ namespace Jal.HttpClient.Tests
     [TestFixture]
     public class HttpHandlerBuilderTests
     {
+        private IHttpFluentHandler _sut;
+
+        [SetUp]
+        public void Setup()
+        {
+            var log = LogManager.GetLogger("logger");
+
+            var container = new WindsorContainer();
+
+            container.Register(Component.For<ILog>().Instance(log));
+
+            container.Install(new HttpClientInstaller());
+
+            container.Install(new HttpClienLoggertInstaller());
+
+            _sut = container.Resolve<IHttpFluentHandler>();
+        }
+
         [Test]
         public void Send_Get_Ok()
         {
-            var container = new WindsorContainer();
+            using (var response = _sut.Get("http://httpbin.org/ip").Send)
+            {
+                var content = response.Content.Read();
 
-            container.Install(new HttpClientInstaller());
+                response.Content.IsString().ShouldBeTrue();
 
-            var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
+                content.ShouldContain("origin");
 
-            var response = httpclientbuilder.Get("http://httpbin.org/ip").Send;
+                response.Content.ContentType.ShouldBe("application/json");
 
-            var r = httpclientbuilder.Get("http://httpbin.org/ip").WithQueryParameters(x=> { x.Add("x", "x"); x.Add("y","y"); }).WithHeaders(y=>y.Add("f","f")).Send;
+                response.Content.ContentLength.ShouldBeGreaterThan(0);
 
-            response.Content.ShouldContain("origin");
+                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
 
-            response.Bytes.ShouldNotBeNull();
+                response.HttpExceptionStatus.ShouldBeNull();
 
-            response.WebException.ShouldBeNull();
-
-            response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
+                response.Exception.ShouldBeNull();
+            }
         }
 
         [Test]
-        public void SendAsync_Get_Ok()
+        public async void SendAsync_Get_Ok()
         {
-            var container = new WindsorContainer();
+            using (var response = await _sut.Get("http://httpbin.org/ip").SendAsync)
+            {
+                var content = response.Content.Read();
 
-            container.Install(new HttpClientInstaller());
+                response.Content.IsString().ShouldBeTrue();
 
-            var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
+                content.ShouldContain("origin");
 
-            var task = httpclientbuilder.Get("http://httpbin.org//get").SendAsync;
+                response.Content.ContentType.ShouldBe("application/json");
 
-            var response = task.Result;
+                response.Content.ContentLength.ShouldBeGreaterThan(0);
 
-            response.Content.ShouldContain("origin");
+                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
 
-            response.Bytes.ShouldNotBeNull();
+                response.HttpExceptionStatus.ShouldBeNull();
 
-            response.WebException.ShouldBeNull();
-
-            response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-        }
-
-        [Test]
-        public void Send_GetXml_Ok()
-        {
-            var container = new WindsorContainer();
-
-            container.Install(new HttpClientInstaller());
-
-            var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
-
-            var response = httpclientbuilder.Get("http://httpbin.org/xml").Send;
-
-            response.Content.ShouldContain("xml");
-
-            response.Bytes.ShouldNotBeNull();
-
-            response.WebException.ShouldBeNull();
-
-            response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-        }
-
-        [Test]
-        public void Send_GetHtml_Ok()
-        {
-            var container = new WindsorContainer();
-
-            container.Install(new HttpClientInstaller());
-
-            var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
-
-            var response = httpclientbuilder.Get("http://httpbin.org/html").Send;
-        }
-
-        [Test]
-        public void Send_GetImagePng_Ok()
-        {
-            var container = new WindsorContainer();
-
-            container.Install(new HttpClientInstaller());
-
-            var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
-
-            var response = httpclientbuilder.Get("http://httpbin.org/image/png").Send;
+                response.Exception.ShouldBeNull();
+            }
         }
 
         [Test]
         public void Send_PostJsonUtf8_Ok()
         {
-            var container = new WindsorContainer();
+            using (var response = _sut.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").Send)
+            {
+                var content = response.Content.Read();
 
-            container.Install(new HttpClientInstaller());
+                response.Content.IsString().ShouldBeTrue();
 
-            var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
+                content.ShouldContain("Hello World");
 
-            var response = httpclientbuilder.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").Send;
+                response.Content.ContentType.ShouldBe("application/json");
+
+                response.Content.ContentLength.ShouldBeGreaterThan(0);
+
+                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
+
+                response.HttpExceptionStatus.ShouldBeNull();
+
+                response.Exception.ShouldBeNull();
+            }
         }
 
         [Test]
         public void Send_PostXmlUtf8_Ok()
         {
-            var container = new WindsorContainer();
+            using (var response = _sut.Post("http://httpbin.org/post").Xml(@"<message>Hello World!!</message>").Send)
+            {
+                var content = response.Content.Read();
 
-            container.Install(new HttpClientInstaller());
+                response.Content.IsString().ShouldBeTrue();
 
-            var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
+                content.ShouldContain("Hello World");
 
-            var response = httpclientbuilder.Post("http://httpbin.org/post").Xml(@"<message>Hello World!!</message>").Send;
+                response.Content.ContentType.ShouldBe("application/json");
+
+                response.Content.ContentLength.ShouldBeGreaterThan(0);
+
+                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
+
+                response.HttpExceptionStatus.ShouldBeNull();
+
+                response.Exception.ShouldBeNull();
+            }
         }
 
         [Test]
         public void Send_PostFormUrlEncodedUtf8_Ok()
         {
-            var container = new WindsorContainer();
+            using (var response = _sut.Post("http://httpbin.org/post").FormUrlEncoded(@"message=Hello%20World!!").Send)
+            {
+                var content = response.Content.Read();
 
-            container.Install(new HttpClientInstaller());
+                response.Content.IsString().ShouldBeTrue();
 
-            var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
+                content.ShouldContain("Hello%20World");
 
-            var response = httpclientbuilder.Post("http://httpbin.org/post").FormUrlEncoded(@"message=Hello%World!!").Send;
+                response.Content.ContentType.ShouldBe("application/json");
+
+                response.Content.ContentLength.ShouldBeGreaterThan(0);
+
+                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
+
+                response.HttpExceptionStatus.ShouldBeNull();
+
+                response.Exception.ShouldBeNull();
+            }
         }
 
         [Test]
-        public void Send_PostFormUrlEncodedUtf86_Ok()
+        public void Send_PostMultiPartFormDataUtf8_Ok()
         {
-            var container = new WindsorContainer();
-
-            container.Install(new HttpClientInstaller());
-
-            var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
-
-            var response = httpclientbuilder.Post("http://httpbin.org/post").WithAllowWriteStreamBuffering(true).MultiPartFormData(x =>
+            using (var response = _sut.Post("http://httpbin.org/post").WithTimeout(60000).WithAllowWriteStreamBuffering(false).MultiPartFormData(x =>
+             {
+                 x.Json(@"{""message1"":""Hello World1!!""}", "nombre1");
+                 x.Json(@"{""message2"":""Hello World2!!""}", "nombre2");
+                 x.Xml("<saludo>hola mundo</saludo>", "nombre3", "file.xml");
+                 //x.WithContent(new FileStream("file.zip", FileMode.Open, FileAccess.Read)).WithDisposition("file", "file.zip");
+             }).Send)
             {
-                x.Json(@"{""message1"":""Hello World1!!""}").WithDisposition("nombre1");
-                x.Json(@"{""message2"":""Hello World2!!""}").WithDisposition("nombre2");
-                x.Xml("<saludo>hola mundo</saludo>").WithDisposition("nombre3", "file.xml");
-                x.WithContent(new MemoryStream(Encoding.UTF8.GetBytes(@"{""message"":""Hello World!!""}"))).WithDisposition("file","file.json");
-            }).Send;
+                var content = response.Content.Read();
 
-            var response1 = httpclientbuilder.Post("http://httpbin.org/post").MultiPartFormData(x =>
-            {
-                x.Xml("<saludo>hola mundo</saludo>").WithDisposition("nombre3", "file.xml");
-            }).Send;
-
-            var response2 = httpclientbuilder.Post("http://httpbin.org/post").MultiPartFormData(x =>
-            {
-                x.Xml("<saludo>hola mundo</saludo>").WithDisposition("nombre3", "file.xml");
-            }).Send;
+                response.Content.IsString().ShouldBeTrue();
+            }
         }
 
         [Test]
-        public void Send_PostJsonUtf16_Ok()
+        public void Send_GetWithQueryParameters_Ok()
         {
-            var container = new WindsorContainer();
+            using (var response = _sut.Get("http://httpbin.org/get").WithQueryParameters(x=>x.Add("parameter","value")).Send)
+            {
+                var content = response.Content.Read();
 
-            container.Install(new HttpClientInstaller());
+                response.Content.IsString().ShouldBeTrue();
 
-            var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
+                content.ShouldContain("parameter");
 
-            var response = httpclientbuilder.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").Send;
+                content.ShouldContain("value");
+
+                response.Content.ContentType.ShouldBe("application/json");
+
+                response.Content.ContentLength.ShouldBeGreaterThan(0);
+
+                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
+
+                response.HttpExceptionStatus.ShouldBeNull();
+
+                response.Exception.ShouldBeNull();
+            }
         }
 
         [Test]
-        public void Send_PutJsonUtf8_Ok()
+        public void Send_GetWithHeaders_Ok()
         {
-            var container = new WindsorContainer();
+            using (var response = _sut.Get("http://httpbin.org/get").WithHeaders(x => x.Add("Header1", "value")).Send)
+            {
+                var content = response.Content.Read();
 
-            container.Install(new HttpClientInstaller());
+                response.Content.IsString().ShouldBeTrue();
 
-            var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
+                content.ShouldContain("Header1");
 
-            var response = httpclientbuilder.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").Send;
+                content.ShouldContain("value");
+
+                response.Content.ContentType.ShouldBe("application/json");
+
+                response.Content.ContentLength.ShouldBeGreaterThan(0);
+
+                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
+
+                response.HttpExceptionStatus.ShouldBeNull();
+
+                response.Exception.ShouldBeNull();
+            }
         }
 
         [Test]
@@ -225,22 +250,6 @@ namespace Jal.HttpClient.Tests
             var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
 
             var response = httpclientbuilder.Get("http://httpbin.org/gzip").GZip().Send;
-        }
-
-        [Test]
-        public void Send_GetDeflate_Ok()
-        {
-            //var container = new WindsorContainer();
-
-            //container.Install(new HttpClientInstaller());
-
-            
-
-            var httpclient = HttpHandler.Builder.Create;
-
-            var httpclientfluent = HttpFluentHandler.Builder.UseHttpHandler(httpclient).Create;
-
-            var response = httpclientfluent.Get("http://httpbin.org/deflate").Send;
         }
     }
 }

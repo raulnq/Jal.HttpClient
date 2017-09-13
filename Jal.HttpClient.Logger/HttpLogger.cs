@@ -17,22 +17,18 @@ namespace Jal.HttpClient.Logger
         public override void OnEntry(HttpRequest request)
         {
             var builder = new StringBuilder();
-            builder.Append($"Request Url:{request.Url}");
-
-            builder.Append($",Method:{request.HttpMethod}");
-            builder.Append(",QueryParameters: ");
-            foreach (var queryParameter in request.QueryParameters)
-            {
-                builder.Append($"{queryParameter.Name}:{queryParameter.Value} ");
-            }
-            builder.Append(",Headers: ");
+            builder.AppendLine($"{request.HttpMethod.ToString().ToUpper()} {request.Uri.PathAndQuery} HTTP/1.1");
             foreach (var httpHeader in request.Headers)
             {
-                builder.Append($"{httpHeader.Name}:{httpHeader.Value} ");
+                builder.AppendLine($"{httpHeader.Name}: {httpHeader.Value} ");
             }
-            builder.Append($",ContentType:{request.Content.ContentType}");
-            builder.Append($",CharacterSet:{request.Content.CharacterSet}");
-            builder.Append($",Content:{request.Content}");
+            var contenttype = request.Content.GetContentType();
+            if (!string.IsNullOrWhiteSpace(contenttype))
+            {
+                builder.AppendLine($"Content-Type: {contenttype}");
+            }
+            builder.AppendLine("");
+            builder.AppendLine($"{request.Content}");
 
             _log.Info(builder.ToString());
         }
@@ -40,23 +36,30 @@ namespace Jal.HttpClient.Logger
         public override void OnExit(HttpResponse response, HttpRequest request)
         {
             var builder = new StringBuilder();
-            builder.Append($"Response Url:{response.Url}");
-            builder.Append($",Duration:{response.Duration}");
-            builder.Append($",ContentType:{response.ContentType}");
-            builder.Append($",ContentLength:{response.ContentLength}");
-            builder.Append($",HttpStatusCode:{response.HttpStatusCode}");
-            builder.Append(",Headers: ");
+            builder.AppendLine($"HTTP/1.1 {response.HttpStatusCode}{response.HttpExceptionStatus}");
+            builder.AppendLine($"Duration: {response.Duration} ms");
+            if (response.Exception != null)
+            {
+                builder.AppendLine($"Exception: {response.Exception.Message}");
+            }
             foreach (var httpHeader in response.Headers)
             {
-                builder.Append($"{httpHeader.Name}:{httpHeader.Value} ");
+                builder.AppendLine($"{httpHeader.Name}: {httpHeader.Value} ");
             }
-            builder.Append($",Content:{response.Content}");
-            if (response.WebException != null)
+            builder.AppendLine("");
+
+            if (response.Content.IsString())
             {
-                builder.Append($",WebException:{response.WebException.Message}");
+                builder.AppendLine($"{Truncate(response.Content.Read())}");
             }
+
             _log.Info(builder.ToString());
         }
 
+        public string Truncate(string content)
+        {
+            if (string.IsNullOrEmpty(content)) return content;
+            return content.Length <= 4096 ? content : content.Substring(0, 4096) + "...";
+        }
     }
 }

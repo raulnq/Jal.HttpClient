@@ -1,32 +1,26 @@
-using System;
 using System.IO;
 using System.Net;
 using System.Text;
 
 namespace Jal.HttpClient.Model
 {
-    public class HttpStreamContent : HttpContent
+    public class HttpRequestStringContent : HttpRequestSimpleDataContent
     {
-        protected static readonly string ApplicationOctectStream = "application/octet-stream";
-
-        public Stream Content { get; set; }
-
-        public long BufferLenght { get; set; }
-
-        public HttpStreamContent(Stream content, long bufferlenght= 4096)
+        public HttpRequestStringContent(string content)
         {
-            BufferLenght = bufferlenght;
             Content = content;
         }
+        public string Content { get; set; }
 
         public override string ToString()
         {
-            return "Stream";
+            if (string.IsNullOrEmpty(Content)) return Content;
+            return Content.Length <= 4096 ? Content : Content.Substring(0, 4096)+"...";
         }
 
         public override void Write(WebRequest request)
         {
-            if (Content != null)
+            if (!string.IsNullOrWhiteSpace(Content))
             {
                 ContentType = GetContentType();
 
@@ -41,12 +35,14 @@ namespace Jal.HttpClient.Model
 
         public override long GetByteCount()
         {
-            return Content.Length;
+            var encoding = GetEncoding();
+
+            return encoding.GetByteCount(Content);
         }
 
         public override string GetDefaultContentType()
         {
-            return ApplicationOctectStream;
+            return TextPlain;
         }
 
         public override Encoding GetDefaultEncoding()
@@ -56,14 +52,11 @@ namespace Jal.HttpClient.Model
 
         public override void WriteStream(Stream writeStream)
         {
-            var buffer = new byte[checked(Math.Min(BufferLenght, Content.Length))];
+            var encoding = GetEncoding();
 
-            int bytesread;
+            var bytes = encoding.GetBytes(Content);
 
-            while ((bytesread = Content.Read(buffer, 0, buffer.Length)) != 0)
-            {
-                writeStream.Write(buffer, 0, bytesread);
-            }
+            writeStream.Write(bytes, 0, bytes.Length);
 
             writeStream.Flush();
         }

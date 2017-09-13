@@ -4,21 +4,22 @@ using System.Text;
 
 namespace Jal.HttpClient.Model
 {
-    public abstract class HttpContent
+    public abstract class HttpRequestContent
     {
-        public static readonly HttpContent Instance = new HttpEmptyContent();
+        public static readonly HttpRequestContent Instance = new HttpRequestEmptyContent();
+
+        protected static readonly string TextPlain = "text/plain";
+
+        protected static readonly string ApplicationOctectStream = "application/octet-stream";
 
         public string ContentType { get; set; }
 
         public string CharacterSet { get; set; }
 
-        public HttpContentDisposition Disposition { get; set; }
-
-        protected HttpContent()
+        protected HttpRequestContent()
         {
             ContentType = string.Empty;
             CharacterSet = string.Empty;
-            Disposition = new HttpContentDisposition();
         }
 
         public abstract void WriteStream(Stream writeStream);
@@ -41,11 +42,6 @@ namespace Jal.HttpClient.Model
             {
                 return !string.IsNullOrEmpty(CharacterSet) ? $"{GetDefaultContentType()}; {CharacterSet}" : GetDefaultContentType();
             }
-        }
-
-        public Encoding GetEncoding()
-        {
-            return !string.IsNullOrEmpty(CharacterSet) ? Encoding.GetEncoding(CharacterSet.Replace("charset=", "")) : GetDefaultEncoding();
         }
     }
 }

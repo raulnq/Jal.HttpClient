@@ -7,21 +7,20 @@ using System.Text;
 
 namespace Jal.HttpClient.Model
 {
-    public class HttpMultiPartFormDataContent : HttpContent
+    public class HttpRequestMultiPartFormDataContent : HttpRequestContent
     {
-        protected static readonly string ApplicationOctectStream = "application/octet-stream";
-        public List<HttpContent> Contents { get; set; }
+        public List<HttpRequestSimpleDataContent> Contents { get; set; }
 
         private string _boundary; 
 
-        public HttpMultiPartFormDataContent()
+        public HttpRequestMultiPartFormDataContent()
         {
-            Contents = new List<HttpContent>();
+            Contents = new List<HttpRequestSimpleDataContent>();
         }
 
         public override string ToString()
         {
-            return "MultiPartFormData";
+            return "[MultiPartFormData]";
         }
 
         public override void WriteStream(Stream writeStream)
@@ -39,11 +38,6 @@ namespace Jal.HttpClient.Model
 
 
                 needsClrf = true;
-
-                //            content - disposition: form - data; name = "field1"
-                //content - type: text / plain; charset = windows - 1250
-                //content - transfer - encoding: quoted - printable
-                //https://tools.ietf.org/html/rfc2388
 
                 var contenttype = content.GetContentType();
 

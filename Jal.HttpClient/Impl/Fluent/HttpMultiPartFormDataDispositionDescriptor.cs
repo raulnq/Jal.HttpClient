@@ -3,11 +3,11 @@ using Jal.HttpClient.Model;
 
 namespace Jal.HttpClient.Impl.Fluent
 {
-    public class HttpMultiPartFormDataContentTypeDescriptor : IHttpMultiPartFormDataContentTypeDescriptor
+    public class HttpMultiPartFormDataDispositionDescriptor : IHttpMultiPartFormDataDispositionDescriptor, IHttpMultiPartFormDataContentTypeDescriptor
     {
-        private readonly HttpContent _httpcontent;
+        private readonly HttpRequestSimpleDataContent _httpcontent;
 
-        public HttpMultiPartFormDataContentTypeDescriptor(HttpContent httpcontent)
+        public HttpMultiPartFormDataDispositionDescriptor(HttpRequestSimpleDataContent httpcontent)
         {
             _httpcontent = httpcontent;
         }

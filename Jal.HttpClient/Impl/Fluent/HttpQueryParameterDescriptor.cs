@@ -14,7 +14,7 @@ namespace Jal.HttpClient.Impl.Fluent
 
         public void Add(string name, string value)
         {
-            _httpRequest.QueryParameters.Add(new HttpQueryParameter() { Name = name, Value = value });
+            _httpRequest.QueryParameters.Add(new HttpQueryParameter(name, value));
         }
     }
 }

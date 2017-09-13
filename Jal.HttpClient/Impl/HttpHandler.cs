@@ -37,13 +37,13 @@ namespace Jal.HttpClient.Impl
 
             stopWatch.Start();
 
-            Interceptor.OnEntry(httpRequest);
-
             HttpResponse httpResponse = null;
 
             try
             {
                 var request = RequestConverter.Convert(httpRequest, Timeout);
+
+                Interceptor.OnEntry(httpRequest);
 
                 using (var response = (HttpWebResponse) request.GetResponse())
                 {
@@ -81,13 +81,13 @@ namespace Jal.HttpClient.Impl
 
             stopWatch.Start();
 
-            Interceptor.OnEntry(httpRequest);
-
             HttpResponse httpResponse = null;
 
             try
             {
                 var request = RequestConverter.Convert(httpRequest, Timeout);
+
+                Interceptor.OnEntry(httpRequest);
 
                 using (var response = (HttpWebResponse) await request.GetResponseAsync())
                 {

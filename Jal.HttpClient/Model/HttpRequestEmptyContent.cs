@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Jal.HttpClient.Model
 {
-    public class HttpEmptyContent : HttpContent
+    public class HttpRequestEmptyContent : HttpRequestContent
     {
         public override void WriteStream(Stream writeStream)
         {

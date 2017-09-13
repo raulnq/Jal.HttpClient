@@ -8,7 +8,7 @@ namespace Jal.HttpClient.Model
     {
         public string AcceptedType { get; set; }
 
-        public DecompressionMethods DecompressionMethods { get; set; }
+        public DecompressionMethods Decompression { get; set; }
 
         public HttpMethod HttpMethod { get; set; }
 
@@ -16,21 +16,23 @@ namespace Jal.HttpClient.Model
 
         public List<HttpQueryParameter> QueryParameters { get; set; }
 
-        public HttpContent Content { get; set; }
+        public HttpRequestContent Content { get; set; }
             
-        public string Url { get; set; }
+        public string Url { get; set; } //TODO Try to Use just Uri
 
         public int Timeout { get; set; }
 
         public bool AllowWriteStreamBuffering { get; set; }
 
+        public Uri Uri { get; set; }
+
         public HttpRequest(string url, HttpMethod httpMethod)
         {
             Url = url;
-            DecompressionMethods = DecompressionMethods.None;
+            Decompression = DecompressionMethods.None;
             QueryParameters = new List<HttpQueryParameter>();
             Headers = new List<HttpHeader>();
-            Content = HttpContent.Instance;
+            Content = HttpRequestContent.Instance;
             HttpMethod = httpMethod;
             AcceptedType = string.Empty;
             Timeout = -1;

@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Net;
-using System.Text;
 using Jal.HttpClient.Interface;
 using Jal.HttpClient.Model;
 
@@ -28,7 +27,7 @@ namespace Jal.HttpClient.Impl
             {
                 HttpExceptionStatus = webException.Status,
 
-                WebException = webException
+                Exception = webException
             };
 
             if (webException.Status == WebExceptionStatus.ProtocolError)
@@ -40,35 +39,29 @@ namespace Jal.HttpClient.Impl
 
         private void ReadContent(HttpWebResponse response, HttpResponse httpResponse)
         {
-            httpResponse.Url = response.ResponseUri.ToString();
+            httpResponse.Uri = response.ResponseUri;
 
             httpResponse.HttpStatusCode = response.StatusCode;
 
-            httpResponse.ContentType = response.ContentType;
+            httpResponse.Content.ContentType = response.ContentType;
 
-            httpResponse.ContentLength = response.ContentLength;
+            httpResponse.Content.ContentLength = response.ContentLength;
+
+            httpResponse.Content.CharacterSet = response.CharacterSet;
 
             foreach (var headerName in response.Headers.AllKeys)
             {
                 var headerValue = response.Headers[headerName];
 
-                httpResponse.Headers.Add(new HttpHeader { Name = headerName, Value = headerValue });
+                httpResponse.Headers.Add(new HttpHeader(headerName, headerValue));
             }
 
             using (var responseStream = response.GetResponseStream())
             {
                 if (responseStream != null)
                 {
-                    var encoding = string.IsNullOrEmpty(response.CharacterSet) ? Encoding.UTF8 : Encoding.GetEncoding(response.CharacterSet);
-
-                    using (var ms = new MemoryStream())
-                    {
-                        responseStream.CopyTo(ms);
-
-                        httpResponse.Bytes = ms.ToArray();
-
-                        httpResponse.Content = encoding.GetString(httpResponse.Bytes);
-                    }
+                    httpResponse.Content.Stream = new MemoryStream();
+                    responseStream.CopyTo(httpResponse.Content.Stream);
                 }
             }
         }

@@ -57,44 +57,72 @@ Or
 
     var httpfluenthandler = container.GetInstance<IHttpFluentHandler>();
 
-Sned data
+Get data
 
-    var response = httpfluenthandler.Get("https://github.com/raulnq").Send;
+    using (var response = httpfluenthandler.Get("https://github.com/raulnq").Send)
+    {
+        var content = response.Content.Read();
+    }
 
 Post Json data
 
-    var response = httpfluenthandler.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").Send;
+    using (var response = httpfluenthandler.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").Send)
+    {
+        var code = response.HttpStatusCode;
+    }
     
 Post Xml data
 
-    var response = httpfluenthandler.Post("http://httpbin.org/post").Xml(@"<message>Hello World!!</message>").Send;
+    using (var response = httpfluenthandler.Post("http://httpbin.org/post").Xml(@"<message>Hello World!!</message>").Send)
+    {
+        
+    }
     
 Post Form url encoded data
 
-    var response = httpfluenthandler.Post("http://httpbin.org/post").FormUrlEncoded(@"message=Hello%World!!").Send()
+    using (var response = httpfluenthandler.Post("http://httpbin.org/post").FormUrlEncoded(@"message=Hello%World!!").Send())
+    {
+
+    }
     
 Get Async data
 
-    var task = httpfluenthandler.Get("http://httpbin.org//get").SendAsync;
+    using (var response = await _sut.Get("http://httpbin.org/ip").SendAsync)
+    {
 
-    var response = task.Result;
+    }
     
 Post UTF-16 character set data
 
-    var response = httpfluenthandler.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").Utf16().Send;
+    using (var response = httpfluenthandler.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").Utf16().Send)
+    {
+
+    }
 
 Post UTF-16 character set data
 
-    var response = httpfluenthandler.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").Utf8().Send;
+    using (var response = httpfluenthandler.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").Utf8().Send)
+    {
+
+    }
 
 Setup timeout
 
-    var response = httpclientbuilder.Get("http://httpbin.org/delay/5").WithTimeout(10).Send;
+    using (var response = httpclientbuilder.Get("http://httpbin.org/delay/5").WithTimeout(10).Send)
+    {
+        
+    }
 
 Send query parameters
 
-    var r = httpclientbuilder.Get("http://httpbin.org/ip").WithQueryParameters( x=> { x.Add("x", "x"); x.Add("y","y"); }).Send;
+    using (var r = httpclientbuilder.Get("http://httpbin.org/ip").WithQueryParameters( x=> { x.Add("x", "x"); x.Add("y","y"); }).Send)
+    {
+
+    }
 
 Send headers
 
-    var r = httpclientbuilder.Get("http://httpbin.org/ip").WithHeaders(x=> { x.Add("x", "x"); x.Add("y","y"); }).Send;
+    using (var r = httpclientbuilder.Get("http://httpbin.org/ip").WithHeaders(x=> { x.Add("x", "x"); x.Add("y","y"); }).Send)
+    {
+
+    }

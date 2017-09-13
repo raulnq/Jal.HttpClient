@@ -4,6 +4,6 @@ namespace Jal.HttpClient.Interface.Fluent
 {
     public interface IHttpMultiPartFormDataContentDescriptor
     {
-        IHttpMultiPartFormDataContentTypeDescriptor WithContent(HttpContent content);
+        IHttpMultiPartFormDataDispositionDescriptor WithContent(HttpRequestSimpleDataContent requestContent);
     }
 }

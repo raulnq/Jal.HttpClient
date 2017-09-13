@@ -4,7 +4,7 @@ using Jal.HttpClient.Interface.Fluent;
 
 namespace Jal.HttpClient.Model
 {
-    public class HttpContext
+    public class HttpDescriptorContext
     {
         public HttpRequest HttpRequest { get; set; }
 
@@ -14,7 +14,7 @@ namespace Jal.HttpClient.Model
 
         public Action<IHttpHeaderDescriptor> HeaderDescriptorAction { get; set; }
 
-        public HttpContext(HttpRequest httprequest, IHttpHandler httphandler)
+        public HttpDescriptorContext(HttpRequest httprequest, IHttpHandler httphandler)
         {
             HttpRequest = httprequest;
             HttpHandler = httphandler;

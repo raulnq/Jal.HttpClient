@@ -5,18 +5,18 @@ namespace Jal.HttpClient.Impl.Fluent
 {
     public class HttpMultiPartFormDataContentDescriptor : IHttpMultiPartFormDataContentDescriptor
     {
-        private readonly HttpMultiPartFormDataContent _httpcontent;
+        private readonly HttpRequestMultiPartFormDataContent _httpcontent;
 
-        public HttpMultiPartFormDataContentDescriptor(HttpMultiPartFormDataContent httpcontent)
+        public HttpMultiPartFormDataContentDescriptor(HttpRequestMultiPartFormDataContent httpcontent)
         {
             _httpcontent = httpcontent;
         }
 
 
-        public IHttpMultiPartFormDataContentTypeDescriptor WithContent(HttpContent content)
+        public IHttpMultiPartFormDataDispositionDescriptor WithContent(HttpRequestSimpleDataContent requestContent)
         {
-            _httpcontent.Contents.Add(content);
-            return new HttpMultiPartFormDataContentTypeDescriptor(content);
+            _httpcontent.Contents.Add(requestContent);
+            return new HttpMultiPartFormDataDispositionDescriptor(requestContent);
         }
     }
 }

@@ -43,13 +43,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Impl\Fluent\HttpContentDescriptor.cs" />
-    <Compile Include="Impl\Fluent\HttpContentDescriptorExtensions.cs" />
     <Compile Include="Impl\Fluent\HttpContentTypeDescriptorExtensions.cs" />
     <Compile Include="Impl\Fluent\HttpMultiPartFormDataContentDescriptor.cs" />
     <Compile Include="Impl\Fluent\HttpHeaderDescriptor.cs" />
     <Compile Include="Impl\Fluent\HttpDescriptorExtensions.cs" />
     <Compile Include="Impl\Fluent\HttpMultiPartFormDataContentDescriptorExtensions.cs" />
-    <Compile Include="Impl\Fluent\HttpMultiPartFormDataContentTypeDescriptor.cs" />
+    <Compile Include="Impl\Fluent\HttpMultiPartFormDataDispositionDescriptor.cs" />
     <Compile Include="Impl\Fluent\HttpMultiPartFormDataContentTypeDescriptorExtensions.cs" />
     <Compile Include="Interface\Fluent\IHttpContentTypeDescriptor.cs" />
     <Compile Include="Interface\Fluent\IHttpContentDescriptor.cs" />
@@ -57,7 +56,7 @@
     <Compile Include="Interface\Fluent\IHttpDescriptor.cs" />
     <Compile Include="Interface\Fluent\IHttpHeaderDescriptor.cs" />
     <Compile Include="Interface\Fluent\IHttpMultiPartFormDataContentDescriptor.cs" />
-    <Compile Include="Interface\Fluent\IHttpMultiPartFormDataContentTypeDescriptor.cs" />
+    <Compile Include="Interface\Fluent\IHttpMultiPartFormDataDispositionDescriptor.cs" />
     <Compile Include="Interface\Fluent\IHttpSenderDescriptor.cs" />
     <Compile Include="Interface\Fluent\IHttpQueryParameterDescriptor.cs" />
     <Compile Include="Impl\Fluent\HttpQueryParameterDescriptor.cs" />
@@ -79,18 +78,20 @@
     <Compile Include="Interface\IHttpMethodMapper.cs" />
     <Compile Include="Interface\IHttpRequestToWebRequestConverter.cs" />
     <Compile Include="Interface\IWebResponseToHttpResponseConverter.cs" />
-    <Compile Include="Model\HttpContent.cs" />
+    <Compile Include="Model\HttpRequestContent.cs" />
     <Compile Include="Model\HttpContentDisposition.cs" />
-    <Compile Include="Model\HttpContext.cs" />
-    <Compile Include="Model\HttpEmptyContent.cs" />
+    <Compile Include="Model\HttpDescriptorContext.cs" />
+    <Compile Include="Model\HttpRequestEmptyContent.cs" />
     <Compile Include="Model\HttpHeader.cs" />
     <Compile Include="Model\HttpMethod.cs" />
-    <Compile Include="Model\HttpMultiPartFormDataContent.cs" />
+    <Compile Include="Model\HttpRequestMultiPartFormDataContent.cs" />
     <Compile Include="Model\HttpQueryParameter.cs" />
     <Compile Include="Model\HttpRequest.cs" />
+    <Compile Include="Model\HttpRequestSimpleDataContent.cs" />
     <Compile Include="Model\HttpResponse.cs" />
-    <Compile Include="Model\HttpStreamContent.cs" />
-    <Compile Include="Model\HttpStringContent.cs" />
+    <Compile Include="Model\HttpResponseContent.cs" />
+    <Compile Include="Model\HttpRequestStreamContent.cs" />
+    <Compile Include="Model\HttpRequestStringContent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

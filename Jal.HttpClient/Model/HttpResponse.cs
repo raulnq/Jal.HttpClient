@@ -1,19 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 
 namespace Jal.HttpClient.Model
 {
-    public class HttpResponse
+    public class HttpResponse : IDisposable
     {
-        public string Url { get; set; }
+        public Uri Uri { get; set; }
 
-        public string Content { get; set; }
-
-        public byte[] Bytes { get; set; }
-
-        public long ContentLength { get; set; }
-
-        public string ContentType { get; set; }
+        public HttpResponseContent Content { get; set; }
 
         public List<HttpHeader> Headers { get; set; }
 
@@ -21,13 +16,29 @@ namespace Jal.HttpClient.Model
 
         public WebExceptionStatus? HttpExceptionStatus { get; set; }
 
-        public WebException WebException { get; set; }
+        public WebException Exception { get; set; }
 
         public double Duration { get; set; }
 
         public HttpResponse()
         {
-            Headers=new List<HttpHeader>();
+            Headers= new List<HttpHeader>();
+            Content = new HttpResponseContent();
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Content?.Dispose();
+                Content = null;
+                Headers = null;
+            }
         }
     }
 }

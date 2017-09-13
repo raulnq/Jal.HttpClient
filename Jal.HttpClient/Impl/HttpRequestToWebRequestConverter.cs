@@ -26,7 +26,9 @@ namespace Jal.HttpClient.Impl
                 url = new UriBuilder(url) { Query = BuildQueryParameters(httpRequest.QueryParameters) }.Uri.ToString();
             }
 
-            var request = (HttpWebRequest) WebRequest.Create(new Uri(url));
+            httpRequest.Uri = new Uri(url);
+
+            var request = (HttpWebRequest) WebRequest.Create(httpRequest.Uri);
 
             request.AllowWriteStreamBuffering = httpRequest.AllowWriteStreamBuffering;
 
@@ -39,7 +41,7 @@ namespace Jal.HttpClient.Impl
                 request.Accept = httpRequest.AcceptedType;
             }
 
-            request.AutomaticDecompression = httpRequest.DecompressionMethods;
+            request.AutomaticDecompression = httpRequest.Decompression;
 
             if (httpRequest.Headers.Count > 0)
             {
@@ -48,7 +50,6 @@ namespace Jal.HttpClient.Impl
 
             httpRequest.Content.Write(request);
             
-
             return request;
 
         }

@@ -5,7 +5,7 @@ namespace Jal.HttpClient.Interface.Fluent
 {
     public interface IHttpDescriptor : IHttpContentDescriptor, IHttpSenderDescriptor
     {
-        IHttpDescriptor WithDecompressionMethods(DecompressionMethods decompressionmethods);
+        IHttpDescriptor WithDecompression(DecompressionMethods decompression);
 
         IHttpDescriptor WithTimeout(int timeout);
 

@@ -4,6 +4,6 @@ namespace Jal.HttpClient.Interface.Fluent
 {
     public interface IHttpContentDescriptor
     {
-        IHttpContentTypeDescriptor WithContent(HttpContent content);
+        IHttpContentTypeDescriptor WithContent(HttpRequestContent requestContent);
     }
 }
