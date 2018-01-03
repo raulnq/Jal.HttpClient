@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Text;
 using Jal.HttpClient.Interface.Fluent;
 using Jal.HttpClient.Model;
 
@@ -37,8 +39,25 @@ namespace Jal.HttpClient.Impl.Fluent
         }
 
 
-        public static IHttpContentTypeDescriptor FormUrlEncoded(this IHttpDescriptor descriptor, string content)
+        public static IHttpContentTypeDescriptor FormUrlEncoded(this IHttpDescriptor descriptor, KeyValuePair<string,string>[] data)
         {
+            var content = string.Empty;
+
+            var first = true;
+
+            foreach (var keyvalue in data)
+            {
+                if (first)
+                {
+                    content = content + $"{WebUtility.UrlEncode(keyvalue.Key)}={WebUtility.UrlEncode(keyvalue.Value)}";
+                    first = false;
+                }
+                else
+                {
+                    content = content + $"&{WebUtility.UrlEncode(keyvalue.Key)}={WebUtility.UrlEncode(keyvalue.Value)}";
+                }
+            }
+
             return descriptor.WithContent(content).WithContentType("application/x-www-form-urlencoded").Utf8();
         }
 

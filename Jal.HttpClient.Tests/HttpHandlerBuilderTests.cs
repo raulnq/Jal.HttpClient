@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Net;
+using System.Runtime.InteropServices;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Common.Logging;
@@ -8,6 +10,7 @@ using Jal.HttpClient.Impl.Fluent;
 using Jal.HttpClient.Installer;
 using Jal.HttpClient.Interface.Fluent;
 using Jal.HttpClient.Logger.Installer;
+using Jal.HttpClient.Model;
 using NUnit.Framework;
 using Shouldly;
 
@@ -127,9 +130,32 @@ namespace Jal.HttpClient.Tests
         }
 
         [Test]
+        public void Send_PostFormUrlEncodedArrayUtf8_Ok()
+        {
+            using (var response = _sut.Post("http://httpbin.org/post").FormUrlEncoded(new[] { new KeyValuePair<string, string>("message", "Hello World"), new KeyValuePair<string, string>("array", "a a"), new KeyValuePair<string, string>("array", "bbb"), new KeyValuePair<string, string>("array", "c c"), }).Send)
+            {
+                var content = response.Content.Read();
+
+                response.Content.IsString().ShouldBeTrue();
+
+                content.ShouldContain("Hello World");
+
+                response.Content.ContentType.ShouldBe("application/json");
+
+                response.Content.ContentLength.ShouldBeGreaterThan(0);
+
+                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
+
+                response.HttpExceptionStatus.ShouldBeNull();
+
+                response.Exception.ShouldBeNull();
+            }
+        }
+
+        [Test]
         public void Send_PostFormUrlEncodedUtf8_Ok()
         {
-            using (var response = _sut.Post("http://httpbin.org/post").FormUrlEncoded(@"message=Hello%20World!!").Send)
+            using (var response = _sut.Post("http://httpbin.org/post").FormUrlEncoded(new [] {new KeyValuePair<string, string>("message", "Hello World") }).Send)
             {
                 var content = response.Content.Read();
 
@@ -157,6 +183,10 @@ namespace Jal.HttpClient.Tests
                  x.Json(@"{""message1"":""Hello World1!!""}", "nombre1");
                  x.Json(@"{""message2"":""Hello World2!!""}", "nombre2");
                  x.Xml("<saludo>hola mundo</saludo>", "nombre3", "file.xml");
+                 x.WithContent("message3").WithDisposition("x x");
+                 x.UrlEncoded("a", "message4");
+                 x.UrlEncoded("b", "message4");
+                 x.UrlEncoded("c c", "message4");
                  //x.WithContent(new FileStream("file.zip", FileMode.Open, FileAccess.Read)).WithDisposition("file", "file.zip");
              }).Send)
             {

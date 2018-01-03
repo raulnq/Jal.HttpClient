@@ -1,4 +1,5 @@
 using System.IO;
+using System.Net;
 using Jal.HttpClient.Interface.Fluent;
 using Jal.HttpClient.Model;
 
@@ -24,6 +25,11 @@ namespace Jal.HttpClient.Impl.Fluent
         public static IHttpMultiPartFormDataContentTypeDescriptor Html(this IHttpMultiPartFormDataContentDescriptor descriptor, string content, string name, string filename = "")
         {
             return descriptor.WithContent(content).WithDisposition(name, filename).WithContentType("text/html").Utf8();
+        }
+
+        public static IHttpMultiPartFormDataContentTypeDescriptor UrlEncoded(this IHttpMultiPartFormDataContentDescriptor descriptor, string content, string name, string filename = "")
+        {
+            return descriptor.WithContent(WebUtility.UrlEncode(content)).WithDisposition(WebUtility.UrlEncode(name), filename);
         }
 
         public static IHttpMultiPartFormDataDispositionDescriptor WithContent(this IHttpMultiPartFormDataContentDescriptor descriptor, string content)
