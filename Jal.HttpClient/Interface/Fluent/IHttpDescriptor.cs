@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using Jal.HttpClient.Model;
 
 namespace Jal.HttpClient.Interface.Fluent
 {
@@ -14,6 +15,8 @@ namespace Jal.HttpClient.Interface.Fluent
         IHttpDescriptor WithAcceptedType(string acceptedtype);
 
         IHttpDescriptor WithHeaders(Action<IHttpHeaderDescriptor> action);
+
+        IHttpDescriptor AuthorizedBy(Action<HttpRequest> authenticator);
 
         IHttpDescriptor WithQueryParameters(Action<IHttpQueryParameterDescriptor> action);
     }

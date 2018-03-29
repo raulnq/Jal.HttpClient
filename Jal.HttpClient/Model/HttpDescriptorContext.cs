@@ -14,6 +14,8 @@ namespace Jal.HttpClient.Model
 
         public Action<IHttpHeaderDescriptor> HeaderDescriptorAction { get; set; }
 
+        public Action<HttpRequest> Authenticator { get; set; }
+
         public HttpDescriptorContext(HttpRequest httprequest, IHttpHandler httphandler)
         {
             HttpRequest = httprequest;

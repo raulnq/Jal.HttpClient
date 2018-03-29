@@ -54,6 +54,18 @@ namespace Jal.HttpClient.Impl.Fluent
             return this;
         }
 
+        public IHttpDescriptor AuthorizedBy(Action<HttpRequest> authenticator)
+        {
+            if (authenticator == null)
+            {
+                throw new ArgumentNullException(nameof(authenticator));
+            }
+
+            _httpcontext.Authenticator = authenticator;
+
+            return this;
+        }
+
         public IHttpDescriptor WithQueryParameters(Action<IHttpQueryParameterDescriptor> action)
         {
             _httpcontext.QueryParemeterDescriptorAction = action;
@@ -77,6 +89,8 @@ namespace Jal.HttpClient.Impl.Fluent
                     _httpcontext.HeaderDescriptorAction(headerDescriptor);
                 }
 
+                _httpcontext.Authenticator?.Invoke(_httpcontext.HttpRequest);
+
                 return _httpcontext.HttpHandler.Send(_httpcontext.HttpRequest);
             }
 
@@ -97,6 +111,8 @@ namespace Jal.HttpClient.Impl.Fluent
                     var headerDescriptor = new HttpHeaderDescriptor(_httpcontext.HttpRequest);
                     _httpcontext.HeaderDescriptorAction(headerDescriptor);
                 }
+
+                _httpcontext.Authenticator?.Invoke(_httpcontext.HttpRequest);
 
                 return _httpcontext.HttpHandler.SendAsync(_httpcontext.HttpRequest);
             }
