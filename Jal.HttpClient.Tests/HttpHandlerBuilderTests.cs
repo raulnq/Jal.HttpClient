@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Common.Logging;
@@ -61,7 +62,7 @@ namespace Jal.HttpClient.Tests
         }
 
         [Test]
-        public async void SendAsync_Get_Ok()
+        public async Task SendAsync_Get_Ok()
         {
             using (var response = await _sut.Get("http://httpbin.org/ip").SendAsync())
             {
