@@ -63,7 +63,7 @@ namespace Jal.HttpClient.Tests
         [Test]
         public async void SendAsync_Get_Ok()
         {
-            using (var response = await _sut.Get("http://httpbin.org/ip").SendAsync)
+            using (var response = await _sut.Get("http://httpbin.org/ip").SendAsync())
             {
                 var content = response.Content.Read();
 

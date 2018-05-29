@@ -3,6 +3,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Common.Logging;
@@ -60,7 +61,7 @@ namespace Jal.HttpClient.Tests
         }
 
         [Test]
-        public async void SendAsync_Get_Ok()
+        public async Task SendAsync_Get_Ok()
         {
             using (var response = await _sut.SendAsync(new HttpRequest("http://httpbin.org/get", HttpMethod.Get)))
             {

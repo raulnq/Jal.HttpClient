@@ -96,26 +96,23 @@ namespace Jal.HttpClient.Impl.Fluent
 
         }
 
-        public Task<HttpResponse> SendAsync
+        public async Task<HttpResponse> SendAsync()
         {
-            get
+            if (_httpcontext.QueryParemeterDescriptorAction != null)
             {
-                if (_httpcontext.QueryParemeterDescriptorAction != null)
-                {
-                    var queryParemeterDescriptor = new HttpQueryParameterDescriptor(_httpcontext.HttpRequest);
-                    _httpcontext.QueryParemeterDescriptorAction(queryParemeterDescriptor);
-                }
-
-                if (_httpcontext.HeaderDescriptorAction != null)
-                {
-                    var headerDescriptor = new HttpHeaderDescriptor(_httpcontext.HttpRequest);
-                    _httpcontext.HeaderDescriptorAction(headerDescriptor);
-                }
-
-                _httpcontext.Authenticator?.Invoke(_httpcontext.HttpRequest);
-
-                return _httpcontext.HttpHandler.SendAsync(_httpcontext.HttpRequest);
+                var queryParemeterDescriptor = new HttpQueryParameterDescriptor(_httpcontext.HttpRequest);
+                _httpcontext.QueryParemeterDescriptorAction(queryParemeterDescriptor);
             }
+
+            if (_httpcontext.HeaderDescriptorAction != null)
+            {
+                var headerDescriptor = new HttpHeaderDescriptor(_httpcontext.HttpRequest);
+                _httpcontext.HeaderDescriptorAction(headerDescriptor);
+            }
+
+            _httpcontext.Authenticator?.Invoke(_httpcontext.HttpRequest);
+
+            return await _httpcontext.HttpHandler.SendAsync(_httpcontext.HttpRequest);
         }
 
     }

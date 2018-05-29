@@ -1,108 +1,16 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5BBE156D-E724-47D0-88B8-0EC6B0FB7E33}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Jal.HttpClient</RootNamespace>
-    <AssemblyName>Jal.HttpClient</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
+    <Authors>Raul Naupari</Authors>
+    <Version>2.1.0</Version>
+    <Company>Raul Naupari</Company>
+    <Description>Just another library to send HTTP requests and receive HTTP responses</Description>
+    <Copyright />
+    <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/raulnq/Jal.HttpClient</PackageProjectUrl>
+    <RepositoryUrl></RepositoryUrl>
+    <PackageTags />
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Impl\Fluent\HttpContentDescriptor.cs" />
-    <Compile Include="Impl\Fluent\HttpContentTypeDescriptorExtensions.cs" />
-    <Compile Include="Impl\Fluent\HttpMultiPartFormDataContentDescriptor.cs" />
-    <Compile Include="Impl\Fluent\HttpHeaderDescriptor.cs" />
-    <Compile Include="Impl\Fluent\HttpDescriptorExtensions.cs" />
-    <Compile Include="Impl\Fluent\HttpMultiPartFormDataContentDescriptorExtensions.cs" />
-    <Compile Include="Impl\Fluent\HttpMultiPartFormDataDispositionDescriptor.cs" />
-    <Compile Include="Impl\Fluent\HttpMultiPartFormDataContentTypeDescriptorExtensions.cs" />
-    <Compile Include="Interface\Fluent\IHttpContentTypeDescriptor.cs" />
-    <Compile Include="Interface\Fluent\IHttpContentDescriptor.cs" />
-    <Compile Include="Interface\Fluent\IHttpHandlerBuilder.cs" />
-    <Compile Include="Interface\Fluent\IHttpDescriptor.cs" />
-    <Compile Include="Interface\Fluent\IHttpHeaderDescriptor.cs" />
-    <Compile Include="Interface\Fluent\IHttpMultiPartFormDataContentDescriptor.cs" />
-    <Compile Include="Interface\Fluent\IHttpMultiPartFormDataDispositionDescriptor.cs" />
-    <Compile Include="Interface\Fluent\IHttpSenderDescriptor.cs" />
-    <Compile Include="Interface\Fluent\IHttpQueryParameterDescriptor.cs" />
-    <Compile Include="Impl\Fluent\HttpQueryParameterDescriptor.cs" />
-    <Compile Include="Interface\Fluent\IHttpFluentHandlerStartBuilder.cs" />
-    <Compile Include="Interface\Fluent\IHttpFluentHandlerEndBuilder.cs" />
-    <Compile Include="Impl\AbstractHttpInterceptor.cs" />
-    <Compile Include="Impl\HttpHandler.cs" />
-    <Compile Include="Impl\Fluent\HttpFluentHandler.cs" />
-    <Compile Include="Impl\Fluent\HttpDescriptor.cs" />
-    <Compile Include="Impl\Fluent\HttpHandlerBuilder.cs" />
-    <Compile Include="Impl\Fluent\HttpFluentHandlerBuilder.cs" />
-    <Compile Include="Impl\HttpMethodMapper.cs" />
-    <Compile Include="Impl\HttpRequestToWebRequestConverter.cs" />
-    <Compile Include="Interface\Fluent\IHttpFluentHandler.cs" />
-    <Compile Include="Impl\NullHttpInterceptor.cs" />
-    <Compile Include="Impl\WebResponseToHttpResponseConverter.cs" />
-    <Compile Include="Interface\IHttpHandler.cs" />
-    <Compile Include="Interface\IHttpInterceptor.cs" />
-    <Compile Include="Interface\IHttpMethodMapper.cs" />
-    <Compile Include="Interface\IHttpRequestToWebRequestConverter.cs" />
-    <Compile Include="Interface\IWebResponseToHttpResponseConverter.cs" />
-    <Compile Include="Model\HttpRequestContent.cs" />
-    <Compile Include="Model\HttpContentDisposition.cs" />
-    <Compile Include="Model\HttpDescriptorContext.cs" />
-    <Compile Include="Model\HttpRequestEmptyContent.cs" />
-    <Compile Include="Model\HttpHeader.cs" />
-    <Compile Include="Model\HttpMethod.cs" />
-    <Compile Include="Model\HttpRequestMultiPartFormDataContent.cs" />
-    <Compile Include="Model\HttpQueryParameter.cs" />
-    <Compile Include="Model\HttpRequest.cs" />
-    <Compile Include="Model\HttpRequestSimpleDataContent.cs" />
-    <Compile Include="Model\HttpResponse.cs" />
-    <Compile Include="Model\HttpResponseContent.cs" />
-    <Compile Include="Model\HttpRequestStreamContent.cs" />
-    <Compile Include="Model\HttpRequestStringContent.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Jal.HttpClient.nuspec" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  
 </Project>

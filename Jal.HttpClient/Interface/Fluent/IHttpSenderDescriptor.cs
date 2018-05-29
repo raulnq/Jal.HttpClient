@@ -7,6 +7,6 @@ namespace Jal.HttpClient.Interface.Fluent
     {
         HttpResponse Send { get; }
 
-        Task<HttpResponse> SendAsync { get; }
+        Task<HttpResponse> SendAsync();
     }
 }
