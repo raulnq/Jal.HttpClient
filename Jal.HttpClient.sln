@@ -1,14 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jal.HttpClient", "Jal.HttpClient\Jal.HttpClient.csproj", "{5BBE156D-E724-47D0-88B8-0EC6B0FB7E33}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{EA399F90-F8E1-4C43-838E-3AD8CB6DF853}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\packages.config = .nuget\packages.config
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jal.HttpClient.Installer", "Jal.HttpClient.Installer\Jal.HttpClient.Installer.csproj", "{CF1F1EE3-47F7-4F53-9AAE-C6AAB6BE7598}"
 EndProject
@@ -74,5 +69,8 @@ Global
 		{957A4780-55A8-4232-9575-F9CF6B650EFF} = {13B12CCA-569D-409A-B929-24D0B0BDF600}
 		{9990C0E8-E3E2-486F-A5BC-2D1CF34D0ADF} = {4D14FCEB-7FDB-44DA-BFFC-DEF027223362}
 		{A1AE9C4B-4EA1-4CA5-A139-0E633C2EB2F8} = {4D14FCEB-7FDB-44DA-BFFC-DEF027223362}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AFB58E5F-D0DD-45A1-9BA6-EC2FB94D7EA4}
 	EndGlobalSection
 EndGlobal
