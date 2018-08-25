@@ -18,7 +18,9 @@ namespace Jal.HttpClient.Interface.Fluent
 
         IHttpDescriptor WithHeaders(Action<IHttpHeaderDescriptor> action);
 
-        IHttpDescriptor WithMiddlewares(Action<IHttpMiddlewareDescriptor> action);
+        IHttpDescriptor WithMiddleware(Action<IHttpMiddlewareDescriptor> action);
+
+        IHttpDescriptor WithData(Action<IHttpDataDescriptor> action);
 
         IHttpDescriptor WithQueryParameters(Action<IHttpQueryParameterDescriptor> action);
     }

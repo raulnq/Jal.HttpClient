@@ -45,7 +45,7 @@ namespace Jal.HttpClient.Tests
         [Test]
         public void Send_Get_Ok()
         {
-            using (var response = _sut.Get("http://httpbin.org/ip").WithMiddlewares(x=>x.AddCommonLogging()).Send)
+            using (var response = _sut.Get("http://httpbin.org/ip").WithMiddleware(x=>x.AddCommonLogging()).Send)
             {
                 var content = response.Content.Read();
 

@@ -15,6 +15,8 @@ namespace Jal.HttpClient.Model
 
         public List<Type> MiddlewareTypes { get; set; }
 
+        public Dictionary<string,string> Data { get; set; }
+
         public List<HttpHeader> Headers { get; set; }
 
         public List<HttpQueryParameter> QueryParameters { get; set; }
@@ -44,6 +46,7 @@ namespace Jal.HttpClient.Model
             Timeout = -1;
             AllowWriteStreamBuffering = true;
             Identity = new HttpIdentity(Guid.NewGuid().ToString());
+            Data = new Dictionary<string, string>();
         }
     }
 }
