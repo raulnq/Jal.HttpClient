@@ -16,7 +16,7 @@ namespace Jal.HttpClient.Model
 
         public WebExceptionStatus? HttpExceptionStatus { get; set; }
 
-        public WebException Exception { get; set; }
+        public Exception Exception { get; set; }
 
         public double Duration { get; set; }
 

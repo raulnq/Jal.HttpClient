@@ -20,8 +20,10 @@ namespace Jal.HttpClient.Installer
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             container.Register(
-                Component.For<IHttpHandler>().ImplementedBy<HttpHandler>().DependsOn(new { Timeout = _timeout }),
-                Component.For<IHttpRequestToWebRequestConverter>().ImplementedBy<HttpRequestToWebRequestConverter>(),
+                Component.For<IHttpHandler>().ImplementedBy<HttpHandler>(),
+                Component.For<IHttpMiddleware>().ImplementedBy<HttpMiddelware>().Named(typeof(HttpMiddelware).FullName),
+                Component.For<IHttpMiddlewareFactory>().ImplementedBy<HttpMiddlewareFactory>(),
+                Component.For<IHttpRequestToWebRequestConverter>().ImplementedBy<HttpRequestToWebRequestConverter>().DependsOn(new { timeout = _timeout }),
                 Component.For<IWebResponseToHttpResponseConverter>().ImplementedBy<WebResponseToHttpResponseConverter>(),
                 Component.For<IHttpMethodMapper>().ImplementedBy<HttpMethodMapper>(),
                 Component.For<IHttpFluentHandler>().ImplementedBy<HttpFluentHandler>()

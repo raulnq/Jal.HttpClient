@@ -22,8 +22,6 @@ namespace Jal.HttpClient.Impl.Fluent
             return this;
         }
 
-
-
         public IHttpDescriptor WithAllowWriteStreamBuffering(bool allowwritestreambuffering)
         {
             _httpcontext.HttpRequest.AllowWriteStreamBuffering = allowwritestreambuffering;
@@ -54,18 +52,6 @@ namespace Jal.HttpClient.Impl.Fluent
             return this;
         }
 
-        public IHttpDescriptor AuthorizedBy(Action<HttpRequest> authenticator)
-        {
-            if (authenticator == null)
-            {
-                throw new ArgumentNullException(nameof(authenticator));
-            }
-
-            _httpcontext.Authenticator = authenticator;
-
-            return this;
-        }
-
         public IHttpDescriptor WithQueryParameters(Action<IHttpQueryParameterDescriptor> action)
         {
             _httpcontext.QueryParemeterDescriptorAction = action;
@@ -83,13 +69,17 @@ namespace Jal.HttpClient.Impl.Fluent
                     _httpcontext.QueryParemeterDescriptorAction(queryParemeterDescriptor);
                 }
 
+                if (_httpcontext.MiddlewareDescriptorAction != null)
+                {
+                    var middlewareParemeterDescriptor = new HttpMiddlewareDescriptor(_httpcontext.HttpRequest);
+                    _httpcontext.MiddlewareDescriptorAction(middlewareParemeterDescriptor);
+                }
+
                 if (_httpcontext.HeaderDescriptorAction != null)
                 {
                     var headerDescriptor = new HttpHeaderDescriptor(_httpcontext.HttpRequest);
                     _httpcontext.HeaderDescriptorAction(headerDescriptor);
                 }
-
-                _httpcontext.Authenticator?.Invoke(_httpcontext.HttpRequest);
 
                 return _httpcontext.HttpHandler.Send(_httpcontext.HttpRequest);
             }
@@ -104,16 +94,31 @@ namespace Jal.HttpClient.Impl.Fluent
                 _httpcontext.QueryParemeterDescriptorAction(queryParemeterDescriptor);
             }
 
+            if (_httpcontext.MiddlewareDescriptorAction != null)
+            {
+                var middlewareParemeterDescriptor = new HttpMiddlewareDescriptor(_httpcontext.HttpRequest);
+                _httpcontext.MiddlewareDescriptorAction(middlewareParemeterDescriptor);
+            }
+
             if (_httpcontext.HeaderDescriptorAction != null)
             {
                 var headerDescriptor = new HttpHeaderDescriptor(_httpcontext.HttpRequest);
                 _httpcontext.HeaderDescriptorAction(headerDescriptor);
             }
 
-            _httpcontext.Authenticator?.Invoke(_httpcontext.HttpRequest);
-
             return await _httpcontext.HttpHandler.SendAsync(_httpcontext.HttpRequest);
         }
 
+        public IHttpDescriptor WithMiddlewares(Action<IHttpMiddlewareDescriptor> action)
+        {
+            _httpcontext.MiddlewareDescriptorAction = action;
+            return this;
+        }
+
+        public IHttpDescriptor WithIdentity(HttpIdentity identity)
+        {
+            _httpcontext.HttpRequest.Identity = identity;
+            return this;
+        }
     }
 }

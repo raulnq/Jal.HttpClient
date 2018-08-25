@@ -10,7 +10,7 @@ namespace Jal.HttpClient.Logger.Installer
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             container.Register(
-                Component.For<IHttpInterceptor>().ImplementedBy<HttpLogger>()
+                Component.For<IHttpMiddleware>().ImplementedBy<CommonLoggingMiddelware>().Named(typeof(CommonLoggingMiddelware).FullName)
                 );
         }
 

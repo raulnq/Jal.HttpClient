@@ -10,13 +10,15 @@ namespace Jal.HttpClient.Interface.Fluent
 
         IHttpDescriptor WithTimeout(int timeout);
 
+        IHttpDescriptor WithIdentity(HttpIdentity identity);
+
         IHttpDescriptor WithAllowWriteStreamBuffering(bool allowwritestreambuffering);
 
         IHttpDescriptor WithAcceptedType(string acceptedtype);
 
         IHttpDescriptor WithHeaders(Action<IHttpHeaderDescriptor> action);
 
-        IHttpDescriptor AuthorizedBy(Action<HttpRequest> authenticator);
+        IHttpDescriptor WithMiddlewares(Action<IHttpMiddlewareDescriptor> action);
 
         IHttpDescriptor WithQueryParameters(Action<IHttpQueryParameterDescriptor> action);
     }

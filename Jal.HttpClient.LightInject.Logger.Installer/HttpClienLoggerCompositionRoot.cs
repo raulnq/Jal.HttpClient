@@ -7,7 +7,7 @@ namespace Jal.HttpClient.Logger.LightInject.Installer
     {
         public void Compose(IServiceRegistry serviceRegistry)
         {
-            serviceRegistry.Register<IHttpInterceptor, HttpLogger>(new PerContainerLifetime());
+            serviceRegistry.Register<IHttpMiddleware, CommonLoggingMiddelware>(typeof(CommonLoggingMiddelware).FullName, new PerContainerLifetime());
         }
     }
 }

@@ -1,121 +1,113 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
-using Jal.HttpClient.Impl.Fluent;
 using Jal.HttpClient.Interface;
-using Jal.HttpClient.Interface.Fluent;
 using Jal.HttpClient.Model;
 
 namespace Jal.HttpClient.Impl
 {
     public class HttpHandler : IHttpHandler
     {
-        public IHttpInterceptor Interceptor { get; set; }
-
-        public IHttpRequestToWebRequestConverter RequestConverter { get; set; }
-
-        public IWebResponseToHttpResponseConverter ResponseConverter { get; set; }
-
-        public int Timeout { get; set; }
-
         public static IHttpHandler Current;
 
-        public static IHttpHandlerBuilder Builder => new HttpHandlerBuilder();
+        private readonly IHttpMiddlewareFactory _factory;
 
-        public HttpHandler(IHttpRequestToWebRequestConverter httpRequestToWebRequestConverter, IWebResponseToHttpResponseConverter webResponseToHttpResponseConverter)
+        public static IHttpHandler Create(int timeout = 5000)
         {
-            Interceptor = AbstractHttpInterceptor.Instance;
+            var requestconverter = new HttpRequestToWebRequestConverter(new HttpMethodMapper(), timeout);
 
-            RequestConverter = httpRequestToWebRequestConverter;
+            var responseconverter = new WebResponseToHttpResponseConverter();
 
-            ResponseConverter = webResponseToHttpResponseConverter;
+            var httphandler = new HttpHandler(new HttpMiddlewareFactory(new IHttpMiddleware[] { new HttpMiddelware(requestconverter, responseconverter) }));
+
+            return httphandler;
+        }
+
+        public HttpHandler(IHttpMiddlewareFactory factory)
+        {
+            _factory = factory;
         }
 
         public HttpResponse Send(HttpRequest httpRequest)
         {
-            var stopWatch = new Stopwatch();
-
-            stopWatch.Start();
-
-            HttpResponse httpResponse = null;
-
             try
             {
-                var request = RequestConverter.Convert(httpRequest, Timeout);
+                var types = new List<Type>();
 
-                Interceptor.OnEntry(httpRequest);
+                types.AddRange(httpRequest.MiddlewareTypes);
 
-                using (var response = (HttpWebResponse) request.GetResponse())
-                {
-                    httpResponse = ResponseConverter.Convert(response);
+                types.Add(typeof(HttpMiddelware));
 
-                    Interceptor.OnSuccess(httpResponse, httpRequest);
+                UpdateRequestUri(httpRequest);
 
-                    return httpResponse;
-                }
+                var pipeline = new HttpPipeline(types.ToArray(), _factory, httpRequest);
+
+                return pipeline.Send();
             }
-            catch (WebException wex)
+            catch (Exception ex)
             {
-                httpResponse = ResponseConverter.Convert(wex);
-
-                Interceptor.OnError(httpResponse, httpRequest, wex);
-
-                return httpResponse;
-            }
-            finally
-            {
-                stopWatch.Stop();
-
-                if (httpResponse != null)
+                return new HttpResponse()
                 {
-                    httpResponse.Duration = stopWatch.Elapsed.TotalMilliseconds;
-
-                    Interceptor.OnExit(httpResponse, httpRequest);
-                }
+                    Exception = ex
+                };
             }
+        }
+
+        private void UpdateRequestUri(HttpRequest httpRequest)
+        {
+            var url = httpRequest.Url;
+
+            if (httpRequest.QueryParameters.Count > 0)
+            {
+                url = new UriBuilder(url) { Query = BuildQueryParameters(httpRequest.QueryParameters) }.Uri.ToString();
+            }
+
+            httpRequest.Uri = new Uri(url);
+        }
+
+        private string BuildQueryParameters(List<HttpQueryParameter> httpQueryParameters)
+        {
+            var builder = new StringBuilder();
+
+            foreach (var httpQueryParameter in httpQueryParameters.Where(httpQueryParameter => !string.IsNullOrWhiteSpace(httpQueryParameter.Value)))
+            {
+                builder.AppendFormat("{0}={1}&", WebUtility.UrlEncode(httpQueryParameter.Name), WebUtility.UrlEncode(httpQueryParameter.Value));
+            }
+
+            var parameter = builder.ToString();
+
+            if (!string.IsNullOrWhiteSpace(parameter))
+            {
+                parameter = parameter.Substring(0, parameter.Length - 1);
+            }
+            return parameter;
         }
 
         public async Task<HttpResponse> SendAsync(HttpRequest httpRequest)
         {
-            var stopWatch = new Stopwatch();
-
-            stopWatch.Start();
-
-            HttpResponse httpResponse = null;
-
             try
             {
-                var request = RequestConverter.Convert(httpRequest, Timeout);
+                var types = new List<Type>();
 
-                Interceptor.OnEntry(httpRequest);
+                types.AddRange(httpRequest.MiddlewareTypes);
 
-                using (var response = (HttpWebResponse) await request.GetResponseAsync())
-                {
-                    httpResponse = ResponseConverter.Convert(response);
+                types.Add(typeof(HttpMiddelware));
 
-                    Interceptor.OnSuccess(httpResponse, httpRequest);
+                UpdateRequestUri(httpRequest);
 
-                    return httpResponse;
-                }
+                var pipeline = new HttpPipeline(types.ToArray(), _factory, httpRequest);
+
+                return await pipeline.SendAsync();
             }
-            catch (WebException wex)
+            catch (Exception ex)
             {
-                httpResponse = ResponseConverter.Convert(wex);
-
-                Interceptor.OnError(httpResponse, httpRequest, wex);
-
-                return httpResponse;
-            }
-            finally
-            {
-                stopWatch.Stop();
-
-                if (httpResponse != null)
+                return new HttpResponse()
                 {
-                    httpResponse.Duration = stopWatch.Elapsed.TotalMilliseconds;
-
-                    Interceptor.OnExit(httpResponse, httpRequest);
-                }
+                    Exception = ex
+                };
             }
         }
     }

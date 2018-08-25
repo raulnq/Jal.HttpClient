@@ -4,12 +4,14 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Castle.MicroKernel.Registration;
+using Castle.MicroKernel.Resolvers.SpecializedResolvers;
 using Castle.Windsor;
 using Common.Logging;
 using Jal.HttpClient.Impl;
 using Jal.HttpClient.Impl.Fluent;
 using Jal.HttpClient.Installer;
 using Jal.HttpClient.Interface.Fluent;
+using Jal.HttpClient.Logger;
 using Jal.HttpClient.Logger.Installer;
 using Jal.HttpClient.Model;
 using NUnit.Framework;
@@ -29,6 +31,8 @@ namespace Jal.HttpClient.Tests
 
             var container = new WindsorContainer();
 
+            container.Kernel.Resolver.AddSubResolver(new ArrayResolver(container.Kernel));
+
             container.Register(Component.For<ILog>().Instance(log));
 
             container.Install(new HttpClientInstaller());
@@ -41,7 +45,7 @@ namespace Jal.HttpClient.Tests
         [Test]
         public void Send_Get_Ok()
         {
-            using (var response = _sut.Get("http://httpbin.org/ip").Send)
+            using (var response = _sut.Get("http://httpbin.org/ip").WithMiddlewares(x=>x.AddCommonLogging()).Send)
             {
                 var content = response.Content.Read();
 
@@ -252,6 +256,8 @@ namespace Jal.HttpClient.Tests
         {
             var container = new WindsorContainer();
 
+            container.Kernel.Resolver.AddSubResolver(new ArrayResolver(container.Kernel));
+
             container.Install(new HttpClientInstaller());
 
             var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
@@ -264,6 +270,8 @@ namespace Jal.HttpClient.Tests
         {
             var container = new WindsorContainer();
 
+            container.Kernel.Resolver.AddSubResolver(new ArrayResolver(container.Kernel));
+
             container.Install(new HttpClientInstaller());
 
             var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
@@ -275,6 +283,8 @@ namespace Jal.HttpClient.Tests
         public void Send_GetGzip_Ok()
         {
             var container = new WindsorContainer();
+
+            container.Kernel.Resolver.AddSubResolver(new ArrayResolver(container.Kernel));
 
             container.Install(new HttpClientInstaller());
 

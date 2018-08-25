@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
-using System.Text;
 using Jal.HttpClient.Interface;
 using Jal.HttpClient.Model;
 
@@ -12,29 +9,23 @@ namespace Jal.HttpClient.Impl
     {
         private readonly IHttpMethodMapper _httpMethodMapper;
 
-        public HttpRequestToWebRequestConverter(IHttpMethodMapper httpMethodMapper)
+        private readonly int _timeout;
+
+        public HttpRequestToWebRequestConverter(IHttpMethodMapper httpMethodMapper, int timeout)
         {
             _httpMethodMapper = httpMethodMapper;
+            _timeout = timeout;
         }
 
-        public WebRequest Convert(HttpRequest httpRequest, int timeout)
+        public WebRequest Convert(HttpRequest httpRequest)
         {
-            var url = httpRequest.Url;
-
-            if (httpRequest.QueryParameters.Count > 0)
-            {
-                url = new UriBuilder(url) { Query = BuildQueryParameters(httpRequest.QueryParameters) }.Uri.ToString();
-            }
-
-            httpRequest.Uri = new Uri(url);
-
             var request = (HttpWebRequest) WebRequest.Create(httpRequest.Uri);
 
             request.AllowWriteStreamBuffering = httpRequest.AllowWriteStreamBuffering;
 
             request.Method = _httpMethodMapper.Map(httpRequest.HttpMethod);
 
-            request.Timeout = httpRequest.Timeout < 0 ? timeout : httpRequest.Timeout;
+            request.Timeout = httpRequest.Timeout < 0 ? _timeout : httpRequest.Timeout;
 
             if (!string.IsNullOrEmpty(httpRequest.AcceptedType))
             {
@@ -53,25 +44,6 @@ namespace Jal.HttpClient.Impl
             return request;
 
         }
-
-        private string BuildQueryParameters(List<HttpQueryParameter> httpQueryParameters)
-        {
-            var builder = new StringBuilder();
-
-            foreach (var httpQueryParameter in httpQueryParameters.Where(httpQueryParameter => !string.IsNullOrWhiteSpace(httpQueryParameter.Value)))
-            {
-                builder.AppendFormat("{0}={1}&", WebUtility.UrlEncode(httpQueryParameter.Name), WebUtility.UrlEncode(httpQueryParameter.Value));
-            }
-
-            var parameter = builder.ToString();
-
-            if (!string.IsNullOrWhiteSpace(parameter))
-            {
-                parameter = parameter.Substring(0, parameter.Length - 1);
-            }
-            return parameter;
-        }
-
 
         private void WriteHeaders(HttpRequest httpRequest, WebRequest webRequest)
         {

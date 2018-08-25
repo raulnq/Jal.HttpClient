@@ -1,3 +1,5 @@
+using System;
+
 namespace Jal.HttpClient.Interface.Fluent
 {
     public interface IHttpHeaderDescriptor

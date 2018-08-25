@@ -5,6 +5,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Castle.MicroKernel.Registration;
+using Castle.MicroKernel.Resolvers.SpecializedResolvers;
 using Castle.Windsor;
 using Common.Logging;
 using Jal.HttpClient.Installer;
@@ -27,6 +28,8 @@ namespace Jal.HttpClient.Tests
             var log = LogManager.GetLogger("logger");
 
             var container = new WindsorContainer();
+
+            container.Kernel.Resolver.AddSubResolver(new ArrayResolver(container.Kernel));
 
             container.Register(Component.For<ILog>().Instance(log));
 

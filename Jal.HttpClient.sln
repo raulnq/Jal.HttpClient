@@ -3,28 +3,34 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jal.HttpClient", "Jal.HttpClient\Jal.HttpClient.csproj", "{5BBE156D-E724-47D0-88B8-0EC6B0FB7E33}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jal.HttpClient", "Jal.HttpClient\Jal.HttpClient.csproj", "{5BBE156D-E724-47D0-88B8-0EC6B0FB7E33}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jal.HttpClient.Installer", "Jal.HttpClient.Installer\Jal.HttpClient.Installer.csproj", "{CF1F1EE3-47F7-4F53-9AAE-C6AAB6BE7598}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jal.HttpClient.Installer", "Jal.HttpClient.Installer\Jal.HttpClient.Installer.csproj", "{CF1F1EE3-47F7-4F53-9AAE-C6AAB6BE7598}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jal.HttpClient.Logger", "Jal.HttpClient.Logger\Jal.HttpClient.Logger.csproj", "{A4FB5D41-F423-4977-B44F-480B2A5E5976}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jal.HttpClient.Logger", "Jal.HttpClient.Logger\Jal.HttpClient.Logger.csproj", "{A4FB5D41-F423-4977-B44F-480B2A5E5976}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jal.HttpClient.Logger.Installer", "Jal.HttpClient.Logger.Installer\Jal.HttpClient.Logger.Installer.csproj", "{957A4780-55A8-4232-9575-F9CF6B650EFF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jal.HttpClient.Logger.Installer", "Jal.HttpClient.Logger.Installer\Jal.HttpClient.Logger.Installer.csproj", "{957A4780-55A8-4232-9575-F9CF6B650EFF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jal.HttpClient.Tests", "Jal.HttpClient.Tests\Jal.HttpClient.Tests.csproj", "{DB277486-93E6-4887-BDAE-C820E1E2C26B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jal.HttpClient.LightInject.Installer", "Jal.HttpClient.LightInject.Installer\Jal.HttpClient.LightInject.Installer.csproj", "{9990C0E8-E3E2-486F-A5BC-2D1CF34D0ADF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jal.HttpClient.LightInject.Installer", "Jal.HttpClient.LightInject.Installer\Jal.HttpClient.LightInject.Installer.csproj", "{9990C0E8-E3E2-486F-A5BC-2D1CF34D0ADF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CastleWindsor", "CastleWindsor", "{13B12CCA-569D-409A-B929-24D0B0BDF600}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LightInject", "LightInject", "{4D14FCEB-7FDB-44DA-BFFC-DEF027223362}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jal.HttpClient.Logger.LightInject.Installer", "Jal.HttpClient.LightInject.Logger.Installer\Jal.HttpClient.Logger.LightInject.Installer.csproj", "{A1AE9C4B-4EA1-4CA5-A139-0E633C2EB2F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jal.HttpClient.Logger.LightInject.Installer", "Jal.HttpClient.LightInject.Logger.Installer\Jal.HttpClient.Logger.LightInject.Installer.csproj", "{A1AE9C4B-4EA1-4CA5-A139-0E633C2EB2F8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{328D38A0-3EBC-40F3-91D9-A20E74AE729F}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jal.HttpClient.ApplicationInsights", "Jal.HttpClient.ApplicationInsights\Jal.HttpClient.ApplicationInsights.csproj", "{7009D698-DC51-4ADC-8A6A-8578216492C0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jal.HttpClient.ApplicationInsights.Installer", "Jal.HttpClient.ApplicationInsights.Installer\Jal.HttpClient.ApplicationInsights.Installer.csproj", "{B00342B6-73DB-4E18-969E-38AC0B24FE2F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jal.HttpClient.LightInject.ApplicationInsights.Installer", "Jal.HttpClient.LightInject.ApplicationInsights.Installer\Jal.HttpClient.LightInject.ApplicationInsights.Installer.csproj", "{E58D2E68-5A38-4664-A8AE-C9385DE7CC91}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -60,6 +66,18 @@ Global
 		{A1AE9C4B-4EA1-4CA5-A139-0E633C2EB2F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1AE9C4B-4EA1-4CA5-A139-0E633C2EB2F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1AE9C4B-4EA1-4CA5-A139-0E633C2EB2F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7009D698-DC51-4ADC-8A6A-8578216492C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7009D698-DC51-4ADC-8A6A-8578216492C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7009D698-DC51-4ADC-8A6A-8578216492C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7009D698-DC51-4ADC-8A6A-8578216492C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B00342B6-73DB-4E18-969E-38AC0B24FE2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B00342B6-73DB-4E18-969E-38AC0B24FE2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B00342B6-73DB-4E18-969E-38AC0B24FE2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B00342B6-73DB-4E18-969E-38AC0B24FE2F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E58D2E68-5A38-4664-A8AE-C9385DE7CC91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E58D2E68-5A38-4664-A8AE-C9385DE7CC91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E58D2E68-5A38-4664-A8AE-C9385DE7CC91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E58D2E68-5A38-4664-A8AE-C9385DE7CC91}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -69,6 +87,8 @@ Global
 		{957A4780-55A8-4232-9575-F9CF6B650EFF} = {13B12CCA-569D-409A-B929-24D0B0BDF600}
 		{9990C0E8-E3E2-486F-A5BC-2D1CF34D0ADF} = {4D14FCEB-7FDB-44DA-BFFC-DEF027223362}
 		{A1AE9C4B-4EA1-4CA5-A139-0E633C2EB2F8} = {4D14FCEB-7FDB-44DA-BFFC-DEF027223362}
+		{B00342B6-73DB-4E18-969E-38AC0B24FE2F} = {13B12CCA-569D-409A-B929-24D0B0BDF600}
+		{E58D2E68-5A38-4664-A8AE-C9385DE7CC91} = {4D14FCEB-7FDB-44DA-BFFC-DEF027223362}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AFB58E5F-D0DD-45A1-9BA6-EC2FB94D7EA4}
