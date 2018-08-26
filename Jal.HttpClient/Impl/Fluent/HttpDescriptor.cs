@@ -81,12 +81,6 @@ namespace Jal.HttpClient.Impl.Fluent
                     _httpcontext.HeaderDescriptorAction(headerDescriptor);
                 }
 
-                if (_httpcontext.DataDescriptorAction != null)
-                {
-                    var dataDescriptor = new HttpDataDescriptor(_httpcontext.HttpRequest);
-                    _httpcontext.DataDescriptorAction(dataDescriptor);
-                }
-
                 return _httpcontext.HttpHandler.Send(_httpcontext.HttpRequest);
             }
 
@@ -112,12 +106,6 @@ namespace Jal.HttpClient.Impl.Fluent
                 _httpcontext.HeaderDescriptorAction(headerDescriptor);
             }
 
-            if (_httpcontext.DataDescriptorAction != null)
-            {
-                var dataDescriptor = new HttpDataDescriptor(_httpcontext.HttpRequest);
-                _httpcontext.DataDescriptorAction(dataDescriptor);
-            }
-
             return await _httpcontext.HttpHandler.SendAsync(_httpcontext.HttpRequest);
         }
 
@@ -131,11 +119,6 @@ namespace Jal.HttpClient.Impl.Fluent
         {
             _httpcontext.HttpRequest.Identity = identity;
             return this;
-        }
-
-        public IHttpDescriptor WithData(Action<IHttpDataDescriptor> action)
-        {
-            throw new NotImplementedException();
         }
     }
 }

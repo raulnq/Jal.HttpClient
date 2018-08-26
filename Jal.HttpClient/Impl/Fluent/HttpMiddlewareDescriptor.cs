@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Jal.HttpClient.Interface;
 using Jal.HttpClient.Interface.Fluent;
 using Jal.HttpClient.Model;
@@ -14,13 +15,18 @@ namespace Jal.HttpClient.Impl.Fluent
             _httpRequest = httpRequest;
         }
 
-        public void Add<THttpMiddlewareType>() where THttpMiddlewareType : IHttpMiddleware
+        public void Add<THttpMiddlewareType>(Action<IHttpDataDescriptor> action = null) where THttpMiddlewareType : IHttpMiddleware
         {
             var type = typeof(THttpMiddlewareType);
             var item = _httpRequest.MiddlewareTypes.FirstOrDefault(x => x == type);
             if (item == null)
             {
                 _httpRequest.MiddlewareTypes.Add(type);
+            }
+            if(action!=null)
+            {
+                var descriptor = new HttpDataDescriptor(_httpRequest);
+                action(descriptor);
             }
         }
     }

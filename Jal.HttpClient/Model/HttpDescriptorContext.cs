@@ -16,8 +16,6 @@ namespace Jal.HttpClient.Model
 
         public Action<IHttpMiddlewareDescriptor> MiddlewareDescriptorAction { get; set; }
 
-        public Action<IHttpDataDescriptor> DataDescriptorAction { get; set; }
-
         public HttpDescriptorContext(HttpRequest httprequest, IHttpHandler httphandler)
         {
             HttpRequest = httprequest;

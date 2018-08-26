@@ -1,7 +1,9 @@
-﻿namespace Jal.HttpClient.Interface.Fluent
+﻿using System;
+
+namespace Jal.HttpClient.Interface.Fluent
 {
     public interface IHttpMiddlewareDescriptor
     {
-        void Add<THttpMiddlewareType>() where THttpMiddlewareType : IHttpMiddleware;
+        void Add<THttpMiddlewareType>(Action<IHttpDataDescriptor> action=null) where THttpMiddlewareType : IHttpMiddleware;
     }
 }
