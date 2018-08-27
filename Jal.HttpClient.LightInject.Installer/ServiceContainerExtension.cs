@@ -17,6 +17,8 @@ namespace Jal.HttpClient.LightInject.Installer
             container.Register<IHttpMiddleware, HttpMiddelware>(typeof(HttpMiddelware).FullName, new PerContainerLifetime());
             container.Register<IHttpMiddlewareFactory, HttpMiddlewareFactory>(new PerContainerLifetime());
             container.Register<IHttpHandler, HttpHandler>(new PerContainerLifetime());
+            container.Register<IHttpMiddleware, BasicHttpAuthenticatorHttpMiddleware>(typeof(BasicHttpAuthenticatorHttpMiddleware).FullName, new PerContainerLifetime());
+            container.Register<IHttpMiddleware, TokenAuthenticatorHttpMiddleware>(typeof(TokenAuthenticatorHttpMiddleware).FullName, new PerContainerLifetime());
         }
     }
 }

@@ -27,8 +27,10 @@ namespace Jal.HttpClient.Installer
                 Component.For<IWebResponseToHttpResponseConverter>().ImplementedBy<WebResponseToHttpResponseConverter>(),
                 Component.For<IHttpMethodMapper>().ImplementedBy<HttpMethodMapper>(),
                 Component.For<IHttpFluentHandler>().ImplementedBy<HttpFluentHandler>()
-                
                 );
+
+            container.Register(Component.For<IHttpMiddleware>().ImplementedBy<BasicHttpAuthenticatorHttpMiddleware>().Named(typeof(BasicHttpAuthenticatorHttpMiddleware).FullName));
+            container.Register(Component.For<IHttpMiddleware>().ImplementedBy<TokenAuthenticatorHttpMiddleware>().Named(typeof(TokenAuthenticatorHttpMiddleware).FullName));
         }
 
     }
