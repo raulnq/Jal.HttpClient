@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
     <Authors>Raul Naupari</Authors>
-    <Version>2.1.1</Version>
+    <Version>2.1.2</Version>
     <Company>Raul Naupari</Company>
     <Description>Castle Windsor installer for the Jal.HttpClient.Logger library</Description>
     <Copyright />
