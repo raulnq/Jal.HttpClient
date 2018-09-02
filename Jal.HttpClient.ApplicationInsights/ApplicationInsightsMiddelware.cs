@@ -20,7 +20,7 @@ namespace Jal.HttpClient.ApplicationInsights
             _applicationname = applicationname;
         }
 
-        public HttpResponse Send(HttpRequest request, Func<HttpResponse> next)
+        public HttpResponse Send(HttpRequest request, Func<HttpRequest, HttpContext, HttpResponse> next, HttpContext context)
         {
             var telemetry = new DependencyTelemetry()
             {
@@ -56,7 +56,7 @@ namespace Jal.HttpClient.ApplicationInsights
 
             try
             {
-                response = next();
+                response = next(request, context);
 
                 if (response.HttpStatusCode == HttpStatusCode.OK)
                 {
@@ -119,7 +119,7 @@ namespace Jal.HttpClient.ApplicationInsights
         }
 
 
-        public async Task<HttpResponse> SendAsync(HttpRequest request, Func<Task<HttpResponse>> next)
+        public async Task<HttpResponse> SendAsync(HttpRequest request, Func<HttpRequest, HttpContext, Task<HttpResponse>> next, HttpContext context)
         {
 
             var telemetry = new DependencyTelemetry()
@@ -157,7 +157,7 @@ namespace Jal.HttpClient.ApplicationInsights
             try
             {
 
-                response = await next();
+                response = await next(request, context);
 
                 if (response.HttpStatusCode == HttpStatusCode.OK)
                 {

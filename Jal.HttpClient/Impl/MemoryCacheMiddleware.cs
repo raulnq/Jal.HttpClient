@@ -9,7 +9,7 @@ namespace Jal.HttpClient.Impl
 {
     public class MemoryCacheMiddleware : IHttpMiddleware
     {
-        public HttpResponse Send(HttpRequest request, Func<HttpResponse> next)
+        public HttpResponse Send(HttpRequest request, Func<HttpRequest, HttpContext, HttpResponse> next, HttpContext context)
         {
             if (request.Context.ContainsKey("durationinseconds") && request.Context.ContainsKey("cachemode") && request.Context.ContainsKey("keybuilder"))
             {
@@ -44,7 +44,7 @@ namespace Jal.HttpClient.Impl
                         return copyfromcache;
                     }
 
-                    var result = next();
+                    var result = next(request, context);
 
                     var copy = Copy(result);
 
@@ -61,7 +61,7 @@ namespace Jal.HttpClient.Impl
                 }
             }
 
-            return next();
+            return next(request, context);
         }
 
         private static HttpResponse Copy(HttpResponse response)
@@ -88,7 +88,7 @@ namespace Jal.HttpClient.Impl
             return copy;
         }
 
-        public async Task<HttpResponse> SendAsync(HttpRequest request, Func<Task<HttpResponse>> next)
+        public async Task<HttpResponse> SendAsync(HttpRequest request, Func<HttpRequest, HttpContext, Task<HttpResponse>> next, HttpContext context)
         {
             if (request.Context.ContainsKey("durationinseconds") && request.Context.ContainsKey("mode") && request.Context.ContainsKey("keybuilder"))
             {
@@ -123,7 +123,7 @@ namespace Jal.HttpClient.Impl
                         return copyfromcache;
                     }
 
-                    var result = await next();
+                    var result = await next(request, context);
 
                     var copy = Copy(result);
 
@@ -140,7 +140,7 @@ namespace Jal.HttpClient.Impl
                 }
             }
 
-            return await next();
+            return await next(request, context);
         }
     }
 }

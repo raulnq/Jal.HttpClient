@@ -1,8 +1,9 @@
-﻿using Jal.HttpClient.Interface.Fluent;
+﻿using Jal.HttpClient.Impl;
+using Jal.HttpClient.Interface.Fluent;
 using Jal.HttpClient.Model;
 using System;
 
-namespace Jal.HttpClient.Impl.Fluent
+namespace Jal.HttpClient.Extensions
 {
     public static class HttpMiddlewareDescriptorExtensions
     {

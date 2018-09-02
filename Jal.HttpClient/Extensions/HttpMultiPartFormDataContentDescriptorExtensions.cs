@@ -3,7 +3,7 @@ using System.Net;
 using Jal.HttpClient.Interface.Fluent;
 using Jal.HttpClient.Model;
 
-namespace Jal.HttpClient.Impl.Fluent
+namespace Jal.HttpClient.Extensions
 {
     public static class HttpMultiPartFormDataContentDescriptorExtensions
     {

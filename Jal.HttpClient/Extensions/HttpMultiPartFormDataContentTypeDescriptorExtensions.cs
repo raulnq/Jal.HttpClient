@@ -1,6 +1,6 @@
 using Jal.HttpClient.Interface.Fluent;
 
-namespace Jal.HttpClient.Impl.Fluent
+namespace Jal.HttpClient.Extensions
 {
     public static class HttpMultiPartFormDataContentTypeDescriptorExtensions
     {

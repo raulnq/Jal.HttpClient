@@ -13,7 +13,7 @@ namespace Jal.HttpClient.Impl
     {
         public static IHttpHandler Current;
 
-        private readonly IHttpMiddlewareFactory _factory;
+        private readonly IHttpPipeline _pipeline;
 
         public static IHttpHandler Create(int timeout = 5000, IHttpMiddleware[] middlewares = null)
         {
@@ -30,14 +30,14 @@ namespace Jal.HttpClient.Impl
                 all.AddRange(middlewares);
             }
 
-            var httphandler = new HttpHandler(new HttpMiddlewareFactory(middlewares.ToArray()));
+            var httphandler = new HttpHandler(new HttpPipeline(new HttpMiddlewareFactory(middlewares.ToArray())));
 
             return httphandler;
         }
 
-        public HttpHandler(IHttpMiddlewareFactory factory)
+        public HttpHandler(IHttpPipeline pipeline)
         {
-            _factory = factory;
+            _pipeline = pipeline;
         }
 
         public HttpResponse Send(HttpRequest httpRequest)
@@ -52,9 +52,7 @@ namespace Jal.HttpClient.Impl
 
                 UpdateRequestUri(httpRequest);
 
-                var pipeline = new HttpPipeline(types.ToArray(), _factory, httpRequest);
-
-                return pipeline.Send();
+                return _pipeline.Send(httpRequest, types.ToArray());
             }
             catch (Exception ex)
             {
@@ -107,9 +105,7 @@ namespace Jal.HttpClient.Impl
 
                 UpdateRequestUri(httpRequest);
 
-                var pipeline = new HttpPipeline(types.ToArray(), _factory, httpRequest);
-
-                return await pipeline.SendAsync();
+                return await _pipeline.SendAsync(httpRequest, types.ToArray());
             }
             catch (Exception ex)
             {

@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
+using Jal.HttpClient.Impl.Fluent;
 using Jal.HttpClient.Interface.Fluent;
 using Jal.HttpClient.Model;
 
-namespace Jal.HttpClient.Impl.Fluent
+namespace Jal.HttpClient.Extensions
 {
     public static class HttpDescriptorExtensions
     {

@@ -8,8 +8,10 @@ namespace Jal.HttpClient.Polly
 {
     public class OnConditionRetryMiddelware : IHttpMiddleware
     {
-        public HttpResponse Send(HttpRequest request, Func<HttpResponse> next)
+        public HttpResponse Send(HttpRequest request, Func<HttpRequest, HttpContext, HttpResponse> next, HttpContext context)
         {
+            var currentindex = context.Index;
+
             if(request.Context.ContainsKey("retrycount") && request.Context.ContainsKey("retrycondition"))
             {
                 var retrycount = request.Context["retrycount"] as int?;
@@ -27,22 +29,22 @@ namespace Jal.HttpClient.Polly
                         {
                             return Policy
                             .HandleResult<HttpResponse>(retrycondition)
-                            .Retry(retrycount.Value, onretry)
-                            .Execute(() => { return next(); });
+                            .Retry(retrycount.Value, (c, r) => { context.Index = currentindex; onretry(c, r); })
+                            .Execute(() => { return next(request, context); });
                         }
                     }
 
                     return Policy
                     .HandleResult<HttpResponse>(retrycondition)
-                    .Retry(retrycount.Value)
-                    .Execute(() => { return next(); });
+                    .Retry(retrycount.Value, (c,r) => { context.Index = currentindex; })
+                    .Execute(() => { return next(request, context); });
                 }
             }
 
-            return next();
+            return next(request, context);
         }
 
-        public async Task<HttpResponse> SendAsync(HttpRequest request, Func<Task<HttpResponse>> next)
+        public async Task<HttpResponse> SendAsync(HttpRequest request, Func<HttpRequest, HttpContext, Task<HttpResponse>> next, HttpContext context)
         {
             if (request.Context.ContainsKey("retrycount") && request.Context.ContainsKey("retrycondition"))
             {
@@ -61,18 +63,18 @@ namespace Jal.HttpClient.Polly
                             return await Policy
                             .HandleResult<HttpResponse>(retrycondition)
                             .Retry(retrycount.Value, onretry)
-                            .ExecuteAsync(() => { return next(); });
+                            .ExecuteAsync(() => { return next(request, context); });
                         }
                     }
 
                     return await Policy
                     .HandleResult<HttpResponse>(retrycondition)
                     .Retry(retrycount.Value)
-                    .ExecuteAsync(() => { return next(); });
+                    .ExecuteAsync(() => { return next(request, context); });
                 }
             }
 
-            return await next();
+            return await next(request, context);
         }
     }
 }

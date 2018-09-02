@@ -10,11 +10,11 @@ namespace Jal.HttpClient.Impl
 
     public class BasicHttpAuthenticatorMiddleware : IHttpMiddleware
     {
-        public HttpResponse Send(HttpRequest request, Func<HttpResponse> next)
+        public HttpResponse Send(HttpRequest request, Func<HttpRequest, HttpContext, HttpResponse> next, HttpContext context)
         {
             AddAuthorizationHeader(request);
 
-            return next();
+            return next(request, context);
         }
 
         private static void AddAuthorizationHeader(HttpRequest request)
@@ -39,11 +39,11 @@ namespace Jal.HttpClient.Impl
             }
         }
 
-        public async Task<HttpResponse> SendAsync(HttpRequest request, Func<Task<HttpResponse>> next)
+        public async Task<HttpResponse> SendAsync(HttpRequest request, Func<HttpRequest, HttpContext, Task<HttpResponse>> next, HttpContext context)
         {
             AddAuthorizationHeader(request);
 
-            return await next();
+            return await next(request, context);
         }
     }
 }

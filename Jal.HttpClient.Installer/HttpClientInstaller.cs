@@ -21,6 +21,7 @@ namespace Jal.HttpClient.Installer
         {
             container.Register(
                 Component.For<IHttpHandler>().ImplementedBy<HttpHandler>(),
+                Component.For<IHttpPipeline>().ImplementedBy<HttpPipeline>(),
                 Component.For<IHttpMiddleware>().ImplementedBy<HttpMiddelware>().Named(typeof(HttpMiddelware).FullName),
                 Component.For<IHttpMiddlewareFactory>().ImplementedBy<HttpMiddlewareFactory>(),
                 Component.For<IHttpRequestToWebRequestConverter>().ImplementedBy<HttpRequestToWebRequestConverter>().DependsOn(new { timeout = _timeout }),

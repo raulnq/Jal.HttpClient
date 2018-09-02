@@ -22,7 +22,7 @@ namespace Jal.HttpClient.Impl
             _responseconverter = responseconverter;
         }
 
-        public HttpResponse Send(HttpRequest httprequest, Func<HttpResponse> next)
+        public HttpResponse Send(HttpRequest httprequest, Func<HttpRequest, HttpContext, HttpResponse> next, HttpContext context)
         {
             var stopWatch = new Stopwatch();
 
@@ -58,7 +58,7 @@ namespace Jal.HttpClient.Impl
             }
         }
 
-        public async Task<HttpResponse> SendAsync(HttpRequest httprequest, Func<Task<HttpResponse>> next)
+        public async Task<HttpResponse> SendAsync(HttpRequest httprequest, Func<HttpRequest, HttpContext, Task<HttpResponse>> next, HttpContext context)
         {
             var stopWatch = new Stopwatch();
 

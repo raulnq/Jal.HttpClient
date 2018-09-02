@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
     <Authors>Raul Naupari</Authors>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
     <Company>Raul Naupari</Company>
     <Description>Castle Windsor installer for the Jal.HttpClient.ApplicationInsights library</Description>
     <Copyright />

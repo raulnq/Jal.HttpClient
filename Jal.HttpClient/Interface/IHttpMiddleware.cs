@@ -6,8 +6,8 @@ namespace Jal.HttpClient.Interface
 {
     public interface IHttpMiddleware
     {
-        HttpResponse Send(HttpRequest request, Func<HttpResponse> next);
+        HttpResponse Send(HttpRequest request, Func<HttpRequest, HttpContext, HttpResponse> next, HttpContext context);
 
-        Task<HttpResponse> SendAsync(HttpRequest request, Func<Task<HttpResponse>> next);
+        Task<HttpResponse> SendAsync(HttpRequest request, Func<HttpRequest, HttpContext, Task<HttpResponse>> next, HttpContext context);
     }
 }

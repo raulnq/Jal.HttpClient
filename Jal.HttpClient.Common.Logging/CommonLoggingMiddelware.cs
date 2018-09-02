@@ -16,13 +16,13 @@ namespace Jal.HttpClient.Common.Logging
             _log = log;
         }
 
-        public HttpResponse Send(HttpRequest request, Func<HttpResponse> next)
+        public HttpResponse Send(HttpRequest request, Func<HttpRequest, HttpContext, HttpResponse> next, HttpContext context)
         {
             var builder = BuildRequestLog(request);
 
             _log.Info(builder.ToString());
 
-            var response = next();
+            var response = next(request, context);
 
             builder = BuildResponseLog(response, request);
 
@@ -72,13 +72,13 @@ namespace Jal.HttpClient.Common.Logging
             return builder;
         }
 
-        public async Task<HttpResponse> SendAsync(HttpRequest request, Func<Task<HttpResponse>> next)
+        public async Task<HttpResponse> SendAsync(HttpRequest request, Func<HttpRequest, HttpContext, Task<HttpResponse>> next, HttpContext context)
         {
             var builder = BuildRequestLog(request);
 
             _log.Info(builder.ToString());
 
-            var response =  await next();
+            var response =  await next(request, context);
 
             builder = BuildResponseLog(response, request);
 

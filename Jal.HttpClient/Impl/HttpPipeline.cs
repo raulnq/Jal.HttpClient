@@ -7,64 +7,55 @@ namespace Jal.HttpClient.Impl
 {
     public class HttpPipeline : IHttpPipeline
     {
-        private readonly Type[] _middlewaretypes;
-
         private readonly IHttpMiddlewareFactory _factory;
 
-        private int _current;
-
-        private readonly HttpRequest _request;
-
-        public HttpPipeline(Type[] middlewaretypes, IHttpMiddlewareFactory factory, HttpRequest request)
+        public HttpPipeline(IHttpMiddlewareFactory factory)
         {
-            _middlewaretypes = middlewaretypes;
-            _current = 0;
-            _request = request;
             _factory = factory;
         }
 
-        public HttpResponse Send()
+        public HttpResponse Send(HttpRequest request, Type[] MiddelwareTypes)
         {
-            return GetNext().Invoke();
+            return GetNext().Invoke(request, new HttpContext() {  Index = 0, MiddlewareTypes = MiddelwareTypes });
         }
 
-        private Func<HttpResponse> GetNext()
+        private Func<HttpRequest, HttpContext, HttpResponse> GetNext()
         {
-            return () =>
+            return (r,c) =>
             {
-                if (_current < _middlewaretypes.Length)
+                if (c.Index < c.MiddlewareTypes.Length)
                 {
-                    var middleware = _factory.Create(_middlewaretypes[_current]);
-                    _current++;
-                    return middleware.Send(_request, GetNext());
+                    var middleware = _factory.Create(c.MiddlewareTypes[c.Index]);
+                    c.Index++;
+                    return middleware.Send(r, GetNext(), c);
                 }
                 else
                 {
-                    var middleware = _factory.Create(_middlewaretypes[_middlewaretypes.Length-1]);
-                    return middleware.Send(_request, GetNext());
+                    var middleware = _factory.Create(c.MiddlewareTypes[c.MiddlewareTypes.Length - 1]);
+                    return middleware.Send(r, GetNext(), c);
                 }
             };
         }
 
-        public async Task<HttpResponse> SendAsync()
+        public async Task<HttpResponse> SendAsync(HttpRequest request, Type[] MiddelwareTypes)
         {
-            return await GetNextAsync().Invoke();
+            return await GetNextAsync().Invoke(request, new HttpContext() { Index = 0, MiddlewareTypes = MiddelwareTypes });
         }
 
-        private Func<Task<HttpResponse>> GetNextAsync()
+        private Func<HttpRequest, HttpContext, Task<HttpResponse>> GetNextAsync()
         {
-            return () =>
+            return (r,c) =>
             {
-                if (_current < _middlewaretypes.Length)
+                if (c.Index < c.MiddlewareTypes.Length)
                 {
-                    var middleware = _factory.Create(_middlewaretypes[_current]);
-                    _current++;
-                    return middleware.SendAsync(_request, GetNextAsync());
+                    var middleware = _factory.Create(c.MiddlewareTypes[c.Index]);
+                    c.Index++;
+                    return middleware.SendAsync(r, GetNextAsync(),c);
                 }
                 else
                 {
-                    var middleware = _factory.Create(_middlewaretypes[_middlewaretypes.Length-1]);
-                    return middleware.SendAsync(_request, GetNextAsync());
+                    var middleware = _factory.Create(c.MiddlewareTypes[c.MiddlewareTypes.Length-1]);
+                    return middleware.SendAsync(r, GetNextAsync(),c);
                 }
             };
         }

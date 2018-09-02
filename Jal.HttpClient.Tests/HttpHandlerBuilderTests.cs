@@ -18,6 +18,7 @@ using NUnit.Framework;
 using Shouldly;
 using Jal.HttpClient.Polly.Installer;
 using Jal.HttpClient.Polly;
+using Jal.HttpClient.Extensions;
 
 namespace Jal.HttpClient.Tests
 {
@@ -101,6 +102,7 @@ namespace Jal.HttpClient.Tests
             using (var response = _sut.Get("http://httpbin.org/get").WithMiddleware(x => {
                 x.AuthorizedByToken("token", "value");
                 x.OnConditionRetry(3, y => y.HttpStatusCode == HttpStatusCode.OK, (z, c) => { retries++; });
+                x.UseCommonLogging();
             }).Send)
             {
                 var content = response.Content.Read();
