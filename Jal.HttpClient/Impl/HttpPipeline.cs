@@ -38,8 +38,11 @@ namespace Jal.HttpClient.Impl
                     _current++;
                     return middleware.Send(_request, GetNext());
                 }
-
-                return null;
+                else
+                {
+                    var middleware = _factory.Create(_middlewaretypes[_middlewaretypes.Length-1]);
+                    return middleware.Send(_request, GetNext());
+                }
             };
         }
 
@@ -58,8 +61,11 @@ namespace Jal.HttpClient.Impl
                     _current++;
                     return middleware.SendAsync(_request, GetNextAsync());
                 }
-
-                return null;
+                else
+                {
+                    var middleware = _factory.Create(_middlewaretypes[_middlewaretypes.Length-1]);
+                    return middleware.SendAsync(_request, GetNextAsync());
+                }
             };
         }
     }

@@ -15,13 +15,22 @@ namespace Jal.HttpClient.Impl
 
         private readonly IHttpMiddlewareFactory _factory;
 
-        public static IHttpHandler Create(int timeout = 5000)
+        public static IHttpHandler Create(int timeout = 5000, IHttpMiddleware[] middlewares = null)
         {
             var requestconverter = new HttpRequestToWebRequestConverter(new HttpMethodMapper(), timeout);
 
             var responseconverter = new WebResponseToHttpResponseConverter();
 
-            var httphandler = new HttpHandler(new HttpMiddlewareFactory(new IHttpMiddleware[] { new HttpMiddelware(requestconverter, responseconverter) }));
+            var all = new List<IHttpMiddleware>();
+
+            all.Add(new HttpMiddelware(requestconverter, responseconverter));
+
+            if(middlewares!=null)
+            {
+                all.AddRange(middlewares);
+            }
+
+            var httphandler = new HttpHandler(new HttpMiddlewareFactory(middlewares.ToArray()));
 
             return httphandler;
         }

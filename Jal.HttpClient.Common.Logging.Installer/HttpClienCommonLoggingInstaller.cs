@@ -3,9 +3,9 @@ using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using Jal.HttpClient.Interface;
 
-namespace Jal.HttpClient.Logger.Installer
+namespace Jal.HttpClient.Common.Logging.Installer
 {
-    public class HttpClienLoggertInstaller : IWindsorInstaller
+    public class HttpClienCommonLoggingInstaller : IWindsorInstaller
     {
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {

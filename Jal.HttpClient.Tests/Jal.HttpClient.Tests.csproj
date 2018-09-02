@@ -56,13 +56,23 @@
     <Reference Include="nunit.framework, Version=3.10.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\packages\NUnit.3.10.1\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="Polly, Version=6.0.0.0, Culture=neutral, PublicKeyToken=c8a3ffc3f8f825cc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Polly.6.1.0\lib\netstandard1.1\Polly.dll</HintPath>
+    </Reference>
     <Reference Include="Shouldly, Version=3.0.0.0, Culture=neutral, PublicKeyToken=6042cbcb05cbc941, processorArchitecture=MSIL">
       <HintPath>..\packages\Shouldly.3.0.0\lib\net40\Shouldly.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
@@ -85,13 +95,21 @@
       <Project>{cf1f1ee3-47f7-4f53-9aae-c6aab6be7598}</Project>
       <Name>Jal.HttpClient.Installer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Jal.HttpClient.Logger.Installer\Jal.HttpClient.Logger.Installer.csproj">
+    <ProjectReference Include="..\Jal.HttpClient.Common.Logging.Installer\Jal.HttpClient.Common.Logging.Installer.csproj">
       <Project>{957a4780-55a8-4232-9575-f9cf6b650eff}</Project>
-      <Name>Jal.HttpClient.Logger.Installer</Name>
+      <Name>Jal.HttpClient.Common.Logging.Installer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Jal.HttpClient.Logger\Jal.HttpClient.Logger.csproj">
+    <ProjectReference Include="..\Jal.HttpClient.Common.Logging\Jal.HttpClient.Common.Logging.csproj">
       <Project>{a4fb5d41-f423-4977-b44f-480b2a5e5976}</Project>
-      <Name>Jal.HttpClient.Logger</Name>
+      <Name>Jal.HttpClient.Common.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Jal.HttpClient.Polly.Installer\Jal.HttpClient.Polly.Installer.csproj">
+      <Project>{dd242955-53ea-4651-8fb2-0b5e61dc4444}</Project>
+      <Name>Jal.HttpClient.Polly.Installer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Jal.HttpClient.Polly\Jal.HttpClient.Polly.csproj">
+      <Project>{993ffb99-546d-4b46-8b40-6313c3dce3ec}</Project>
+      <Name>Jal.HttpClient.Polly</Name>
     </ProjectReference>
     <ProjectReference Include="..\Jal.HttpClient\Jal.HttpClient.csproj">
       <Project>{5bbe156d-e724-47d0-88b8-0ec6b0fb7e33}</Project>

@@ -5,7 +5,7 @@ using Common.Logging;
 using Jal.HttpClient.Interface;
 using Jal.HttpClient.Model;
 
-namespace Jal.HttpClient.Logger
+namespace Jal.HttpClient.Common.Logging
 {
     public class CommonLoggingMiddelware : IHttpMiddleware
     {

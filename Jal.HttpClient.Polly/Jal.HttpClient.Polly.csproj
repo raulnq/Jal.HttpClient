@@ -3,9 +3,9 @@
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
     <Authors>Raul Naupari</Authors>
-    <Version>2.1.5</Version>
+    <Version>1.0.0</Version>
     <Company>Raul Naupari</Company>
-    <Description>Just another library to send HTTP requests and receive HTTP responses</Description>
+    <Description>Jal.HttpClient library integration with Polly</Description>
     <Copyright />
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/raulnq/Jal.HttpClient</PackageProjectUrl>
@@ -14,7 +14,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Runtime.Caching" Version="4.5.0" />
+    <PackageReference Include="Polly" Version="6.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Jal.HttpClient\Jal.HttpClient.csproj" />
   </ItemGroup>
   
 </Project>

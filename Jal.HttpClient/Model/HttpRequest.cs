@@ -15,7 +15,7 @@ namespace Jal.HttpClient.Model
 
         public List<Type> MiddlewareTypes { get; set; }
 
-        public Dictionary<string,string> Data { get; set; }
+        public Dictionary<string,object> Context { get; set; }
 
         public List<HttpHeader> Headers { get; set; }
 
@@ -46,7 +46,7 @@ namespace Jal.HttpClient.Model
             Timeout = -1;
             AllowWriteStreamBuffering = true;
             Identity = new HttpIdentity(Guid.NewGuid().ToString());
-            Data = new Dictionary<string, string>();
+            Context = new Dictionary<string, object>();
         }
     }
 }

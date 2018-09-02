@@ -10,7 +10,7 @@ using Castle.Windsor;
 using Common.Logging;
 using Jal.HttpClient.Installer;
 using Jal.HttpClient.Interface;
-using Jal.HttpClient.Logger.Installer;
+using Jal.HttpClient.Common.Logging.Installer;
 using Jal.HttpClient.Model;
 using NUnit.Framework;
 using Shouldly;
@@ -35,7 +35,7 @@ namespace Jal.HttpClient.Tests
 
             container.Install(new HttpClientInstaller());
 
-            container.Install(new HttpClienLoggertInstaller());
+            container.Install(new HttpClienCommonLoggingInstaller());
 
            _sut = container.Resolve<IHttpHandler>();
         }

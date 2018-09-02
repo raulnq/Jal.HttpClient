@@ -3,18 +3,18 @@ using Jal.HttpClient.Model;
 
 namespace Jal.HttpClient.Impl.Fluent
 {
-    public class HttpDataDescriptor : IHttpDataDescriptor
+    public class HttpContextDescriptor : IHttpContextDescriptor
     {
         private readonly HttpRequest _httpRequest;
 
-        public HttpDataDescriptor(HttpRequest httpRequest)
+        public HttpContextDescriptor(HttpRequest httpRequest)
         {
             _httpRequest = httpRequest;
         }
 
-        public void Add(string name, string value)
+        public void Add(string name, object value)
         {
-            _httpRequest.Data.Add(name, value);
+            _httpRequest.Context.Add(name, value);
         }
     }
 }

@@ -1,9 +1,10 @@
-﻿using Jal.HttpClient.Interface;
+﻿using Jal.HttpClient.Common.Logging;
+using Jal.HttpClient.Interface;
 using LightInject;
 
-namespace Jal.HttpClient.Logger.LightInject.Installer
+namespace Jal.HttpClient.LightInject.Common.Logging.Installer
 {
-    public class HttpClienLoggerCompositionRoot : ICompositionRoot
+    public class HttpClienCommonLoggingCompositionRoot : ICompositionRoot
     {
         public void Compose(IServiceRegistry serviceRegistry)
         {

@@ -1,10 +1,10 @@
 ﻿using Jal.HttpClient.Interface.Fluent;
 
-namespace Jal.HttpClient.Logger
+namespace Jal.HttpClient.Common.Logging
 {
     public static class HttpMiddlewareDescriptorExtensions
     {
-        public static void AddCommonLogging(this IHttpMiddlewareDescriptor descriptor)
+        public static void UseCommonLogging(this IHttpMiddlewareDescriptor descriptor)
         {
             descriptor.Add<CommonLoggingMiddelware>();
         }

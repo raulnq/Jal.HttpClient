@@ -11,11 +11,13 @@ using Jal.HttpClient.Impl;
 using Jal.HttpClient.Impl.Fluent;
 using Jal.HttpClient.Installer;
 using Jal.HttpClient.Interface.Fluent;
-using Jal.HttpClient.Logger;
-using Jal.HttpClient.Logger.Installer;
+using Jal.HttpClient.Common.Logging;
+using Jal.HttpClient.Common.Logging.Installer;
 using Jal.HttpClient.Model;
 using NUnit.Framework;
 using Shouldly;
+using Jal.HttpClient.Polly.Installer;
+using Jal.HttpClient.Polly;
 
 namespace Jal.HttpClient.Tests
 {
@@ -37,7 +39,9 @@ namespace Jal.HttpClient.Tests
 
             container.Install(new HttpClientInstaller());
 
-            container.Install(new HttpClienLoggertInstaller());
+            container.Install(new HttpClienCommonLoggingInstaller());
+
+            container.Install(new HttpClienPollyInstaller());
 
             _sut = container.Resolve<IHttpFluentHandler>();
         }
@@ -45,13 +49,139 @@ namespace Jal.HttpClient.Tests
         [Test]
         public void Send_Get_Ok()
         {
-            using (var response = _sut.Get("http://httpbin.org/ip").WithMiddleware(x=>x.AddCommonLogging()).Send)
+            using (var response = _sut.Get("http://httpbin.org/ip").WithMiddleware(x=>x.UseCommonLogging()).Send)
             {
                 var content = response.Content.Read();
 
                 response.Content.IsString().ShouldBeTrue();
 
                 content.ShouldContain("origin");
+
+                response.Content.ContentType.ShouldBe("application/json");
+
+                response.Content.ContentLength.ShouldBeGreaterThan(0);
+
+                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
+
+                response.HttpExceptionStatus.ShouldBeNull();
+
+                response.Exception.ShouldBeNull();
+            }
+        }
+
+        [Test]
+        public void Send_Get_Authorized_Ok()
+        {
+            using (var response = _sut.Get("http://httpbin.org/get").WithMiddleware(x => x.AuthorizedByToken("token","value")).Send)
+            {
+                var content = response.Content.Read();
+
+                response.Content.IsString().ShouldBeTrue();
+
+                content.ShouldContain("token");
+
+                content.ShouldContain("value");
+
+                response.Content.ContentType.ShouldBe("application/json");
+
+                response.Content.ContentLength.ShouldBeGreaterThan(0);
+
+                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
+
+                response.HttpExceptionStatus.ShouldBeNull();
+
+                response.Exception.ShouldBeNull();
+            }
+        }
+
+        [Test]
+        public void Send_Get_Retry_Ok()
+        {
+            var retries = 0;
+            using (var response = _sut.Get("http://httpbin.org/get").WithMiddleware(x => {
+                x.AuthorizedByToken("token", "value");
+                x.OnConditionRetry(3, y => y.HttpStatusCode == HttpStatusCode.OK, (z, c) => { retries++; });
+            }).Send)
+            {
+                var content = response.Content.Read();
+
+                response.Content.IsString().ShouldBeTrue();
+
+                retries.ShouldBe(3);
+
+                content.ShouldContain("token");
+
+                content.ShouldContain("value");
+
+                response.Content.ContentType.ShouldBe("application/json");
+
+                response.Content.ContentLength.ShouldBeGreaterThan(0);
+
+                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
+
+                response.HttpExceptionStatus.ShouldBeNull();
+
+                response.Exception.ShouldBeNull();
+            }
+        }
+
+        [Test]
+        public void Send_Get_AuthorizationAndRetry_Ok()
+        {
+            var retries = 0;
+            using (var response = _sut.Get("http://httpbin.org/get").WithMiddleware(x => x.OnConditionRetry(3, y => y.HttpStatusCode == HttpStatusCode.OK, (z, c) => { retries++; })).Send)
+            {
+                var content = response.Content.Read();
+
+                response.Content.IsString().ShouldBeTrue();
+
+                retries.ShouldBe(3);
+
+                response.Content.ContentType.ShouldBe("application/json");
+
+                response.Content.ContentLength.ShouldBeGreaterThan(0);
+
+                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
+
+                response.HttpExceptionStatus.ShouldBeNull();
+
+                response.Exception.ShouldBeNull();
+            }
+        }
+
+        [Test]
+        public void Send_Get_MemoryCache_Ok()
+        {
+            using (var response = _sut.Get("http://httpbin.org/get").WithMiddleware(x => x.UseMemoryCache(30, y => y.Url)).WithHeaders(x=>x.Add("header","old")).Send)
+            {
+                var content = response.Content.Read();
+
+                response.Content.IsString().ShouldBeTrue();
+
+                content.ShouldContain("header");
+
+                content.ShouldContain("old");
+
+                response.Content.ContentType.ShouldBe("application/json");
+
+                response.Content.ContentLength. ShouldBeGreaterThan(0);
+
+                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
+
+                response.HttpExceptionStatus.ShouldBeNull();
+
+                response.Exception.ShouldBeNull();
+            }
+
+            using (var response = _sut.Get("http://httpbin.org/get").WithMiddleware(x => x.UseMemoryCache(30, y => y.Url)).WithHeaders(x => x.Add("header", "new")).Send)
+            {
+                var content = response.Content.Read();
+
+                response.Content.IsString().ShouldBeTrue();
+
+                content.ShouldContain("header");
+
+                content.ShouldContain("old");
 
                 response.Content.ContentType.ShouldBe("application/json");
 
