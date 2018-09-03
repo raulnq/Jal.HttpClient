@@ -40,9 +40,9 @@ namespace Jal.HttpClient.Tests
 
             container.Install(new HttpClientInstaller());
 
-            container.Install(new HttpClienCommonLoggingInstaller());
+            container.Install(new HttpClientCommonLoggingInstaller());
 
-            container.Install(new HttpClienPollyInstaller());
+            container.Install(new HttpClientPollyInstaller());
 
             _sut = container.Resolve<IHttpFluentHandler>();
         }

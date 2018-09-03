@@ -35,7 +35,7 @@ namespace Jal.HttpClient.Tests
 
             container.Install(new HttpClientInstaller());
 
-            container.Install(new HttpClienCommonLoggingInstaller());
+            container.Install(new HttpClientCommonLoggingInstaller());
 
            _sut = container.Resolve<IHttpHandler>();
         }

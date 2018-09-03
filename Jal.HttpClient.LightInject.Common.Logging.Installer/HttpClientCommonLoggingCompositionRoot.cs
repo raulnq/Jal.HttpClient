@@ -4,7 +4,7 @@ using LightInject;
 
 namespace Jal.HttpClient.LightInject.Common.Logging.Installer
 {
-    public class HttpClienCommonLoggingCompositionRoot : ICompositionRoot
+    public class HttpClientCommonLoggingCompositionRoot : ICompositionRoot
     {
         public void Compose(IServiceRegistry serviceRegistry)
         {

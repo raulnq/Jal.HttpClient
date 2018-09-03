@@ -5,7 +5,7 @@ using Jal.HttpClient.Interface;
 
 namespace Jal.HttpClient.Polly.Installer
 {
-    public class HttpClienPollyInstaller : IWindsorInstaller
+    public class HttpClientPollyInstaller : IWindsorInstaller
     {
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {

@@ -4,7 +4,7 @@ using LightInject;
 
 namespace Jal.HttpClient.LightInject.Polly.Installer
 {
-    public class HttpClienPollyCompositionRoot : ICompositionRoot
+    public class HttpClientPollyCompositionRoot : ICompositionRoot
     {
         public void Compose(IServiceRegistry serviceRegistry)
         {

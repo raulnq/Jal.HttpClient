@@ -5,7 +5,7 @@ using Jal.HttpClient.Interface;
 
 namespace Jal.HttpClient.Common.Logging.Installer
 {
-    public class HttpClienCommonLoggingInstaller : IWindsorInstaller
+    public class HttpClientCommonLoggingInstaller : IWindsorInstaller
     {
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
