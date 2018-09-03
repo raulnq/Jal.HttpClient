@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Text;
 using Jal.HttpClient.Impl.Fluent;
 using Jal.HttpClient.Interface.Fluent;
 using Jal.HttpClient.Model;
@@ -11,6 +10,15 @@ namespace Jal.HttpClient.Extensions
 {
     public static class HttpDescriptorExtensions
     {
+        public static IHttpDescriptor WithIdentity(this IHttpDescriptor descriptor, string id, string parentid=null, string operationid=null)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+            return descriptor.WithIdentity(new HttpIdentity(id) { ParentId = parentid, OperationId = null });
+        }
+
         public static IHttpDescriptor GZip(this IHttpDescriptor descriptor)
         {
             return descriptor.WithDecompression(DecompressionMethods.GZip);
