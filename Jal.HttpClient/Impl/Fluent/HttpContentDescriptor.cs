@@ -38,6 +38,12 @@ namespace Jal.HttpClient.Impl.Fluent
                     _httpcontext.QueryParemeterDescriptorAction(queryParemeterDescriptor);
                 }
 
+                if (_httpcontext.MiddlewareDescriptorAction != null)
+                {
+                    var middlewareParemeterDescriptor = new HttpMiddlewareDescriptor(_httpcontext.HttpRequest);
+                    _httpcontext.MiddlewareDescriptorAction(middlewareParemeterDescriptor);
+                }
+
                 if (_httpcontext.HeaderDescriptorAction != null)
                 {
                     var headerDescriptor = new HttpHeaderDescriptor(_httpcontext.HttpRequest);
@@ -55,6 +61,12 @@ namespace Jal.HttpClient.Impl.Fluent
             {
                 var queryParemeterDescriptor = new HttpQueryParameterDescriptor(_httpcontext.HttpRequest);
                 _httpcontext.QueryParemeterDescriptorAction(queryParemeterDescriptor);
+            }
+
+            if (_httpcontext.MiddlewareDescriptorAction != null)
+            {
+                var middlewareParemeterDescriptor = new HttpMiddlewareDescriptor(_httpcontext.HttpRequest);
+                _httpcontext.MiddlewareDescriptorAction(middlewareParemeterDescriptor);
             }
 
             if (_httpcontext.HeaderDescriptorAction != null)
