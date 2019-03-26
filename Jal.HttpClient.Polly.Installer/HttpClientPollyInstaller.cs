@@ -1,7 +1,9 @@
 ﻿using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
+using Jal.ChainOfResponsability.Intefaces;
 using Jal.HttpClient.Interface;
+using Jal.HttpClient.Model;
 
 namespace Jal.HttpClient.Polly.Installer
 {
@@ -10,9 +12,8 @@ namespace Jal.HttpClient.Polly.Installer
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             container.Register(
-                Component.For<IHttpMiddleware>().ImplementedBy<OnConditionRetryMiddelware>().Named(typeof(OnConditionRetryMiddelware).FullName)
+                Component.For<IMiddleware<HttpMessageWrapper>, IMiddlewareAsync<HttpMessageWrapper>>().ImplementedBy<OnConditionRetryMiddelware>().Named(typeof(OnConditionRetryMiddelware).FullName)
                 );
         }
-
     }
 }

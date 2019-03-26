@@ -7,50 +7,46 @@ namespace Jal.HttpClient.Impl.Fluent
 {
     public class HttpFluentHandler : IHttpFluentHandler
     {
-        public static IHttpFluentHandler Current;
-
-        public static IHttpFluentHandlerStartBuilder Builder => new HttpFluentHandlerBuilder();
-
-        public IHttpHandler Handler { get; set; }
+        public IHttpHandler Handler { get; }
 
         public HttpFluentHandler(IHttpHandler httpHandler)
         {
             Handler = httpHandler;
         }
 
-        public IHttpDescriptor Get(string url)
+        public IHttpDescriptor Get(string url, System.Net.Http.HttpClient httpclient = null)
         {
-            return new HttpDescriptor(url, Handler, HttpMethod.Get);
+            return new HttpDescriptor(url, Handler, HttpMethod.Get, httpclient);
         }
 
-        public IHttpDescriptor Post(string url)
+        public IHttpDescriptor Post(string url, System.Net.Http.HttpClient httpclient = null)
         {
-            return new HttpDescriptor(url, Handler, HttpMethod.Post);
+            return new HttpDescriptor(url, Handler, HttpMethod.Post, httpclient);
         }
 
-        public IHttpDescriptor Put(string url)
+        public IHttpDescriptor Put(string url, System.Net.Http.HttpClient httpclient = null)
         {
-            return new HttpDescriptor(url, Handler, HttpMethod.Put);
+            return new HttpDescriptor(url, Handler, HttpMethod.Put, httpclient);
         }
 
-        public IHttpDescriptor Head(string url)
+        public IHttpDescriptor Head(string url, System.Net.Http.HttpClient httpclient = null)
         {
-            return new HttpDescriptor(url, Handler, HttpMethod.Head);
+            return new HttpDescriptor(url, Handler, HttpMethod.Head, httpclient);
         }
 
-        public IHttpDescriptor Delete(string url)
+        public IHttpDescriptor Delete(string url, System.Net.Http.HttpClient httpclient = null)
         {
-            return new HttpDescriptor(url, Handler, HttpMethod.Delete);
+            return new HttpDescriptor(url, Handler, HttpMethod.Delete, httpclient = null);
         }
 
-        public IHttpDescriptor Patch(string url)
+        public IHttpDescriptor Patch(string url, System.Net.Http.HttpClient httpclient = null)
         {
-            return new HttpDescriptor(url, Handler, new HttpMethod("PATCH"));
+            return new HttpDescriptor(url, Handler, new HttpMethod("PATCH"), httpclient);
         }
 
-        public IHttpDescriptor Options(string url)
+        public IHttpDescriptor Options(string url, System.Net.Http.HttpClient httpclient = null)
         {
-            return new HttpDescriptor(url, Handler, HttpMethod.Options);
+            return new HttpDescriptor(url, Handler, HttpMethod.Options, httpclient);
         }
     }
 

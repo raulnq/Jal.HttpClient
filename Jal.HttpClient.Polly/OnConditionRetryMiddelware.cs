@@ -1,80 +1,130 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Jal.HttpClient.Interface;
+using Jal.ChainOfResponsability.Intefaces;
+using Jal.ChainOfResponsability.Model;
+using Jal.HttpClient.Extensions;
 using Jal.HttpClient.Model;
 using Polly;
 
 namespace Jal.HttpClient.Polly
 {
-    public class OnConditionRetryMiddelware : IHttpMiddleware
+    public class OnConditionRetryMiddelware : IMiddleware<HttpMessageWrapper>, IMiddlewareAsync<HttpMessageWrapper>
     {
-        public HttpResponse Send(HttpRequest request, Func<HttpRequest, HttpContext, HttpResponse> next, HttpContext context)
+        public void Execute(Context<HttpMessageWrapper> context, Action<Context<HttpMessageWrapper>> next)
         {
             var currentindex = context.Index;
 
-            if(request.Context.ContainsKey("retrycount") && request.Context.ContainsKey("retrycondition"))
+            if (context.Data.Request.Context.ContainsKey("retrycount") && context.Data.Request.Context.ContainsKey("retrycondition"))
             {
-                var retrycount = request.Context["retrycount"] as int?;
+                var retrycount = context.Data.Request.Context["retrycount"] as int?;
 
-                var retrycondition = request.Context["retrycondition"] as Func<HttpResponse, bool>;
+                var retrycondition = context.Data.Request.Context["retrycondition"] as Func<HttpResponse, bool>;
 
                 if (retrycount != null && retrycondition != null)
                 {
 
-                    if(request.Context.ContainsKey("onretry"))
+                    if (context.Data.Request.Context.ContainsKey("onretry"))
                     {
-                        var onretry = request.Context["onretry"] as Action<DelegateResult<HttpResponse>, int>;
+                        var onretry = context.Data.Request.Context["onretry"] as Action<DelegateResult<HttpResponse>, int>;
 
                         if (onretry != null)
                         {
-                            return Policy
+                            Policy
                             .HandleResult<HttpResponse>(retrycondition)
-                            .Retry(retrycount.Value, (c, r) => { context.Index = currentindex; onretry(c, r); })
-                            .Execute(() => { return next(request, context); });
+                            .Retry(retrycount.Value, (c, r) => 
+                            {
+                                context.Index = currentindex;
+                                onretry(c, r);
+                                context.Data.Request.Message = context.Data.Request.Message.Clone();
+                            })
+                            .Execute(() => 
+                            {
+                                next(context);
+                                return context.Data.Response;
+                            });
                         }
                     }
+                    else
+                    {
 
-                    return Policy
-                    .HandleResult<HttpResponse>(retrycondition)
-                    .Retry(retrycount.Value, (c,r) => { context.Index = currentindex; })
-                    .Execute(() => { return next(request, context); });
+                        Policy
+                        .HandleResult<HttpResponse>(retrycondition)
+                        .Retry(retrycount.Value, (c, r) =>
+                        {
+                            context.Index = currentindex;
+                            context.Data.Request.Message = context.Data.Request.Message.Clone();
+                        })
+                        .Execute(() =>
+                        {
+                            next(context); return context.Data.Response;
+                        });
+                    }
+                }
+                else
+                {
+                    next(context);
                 }
             }
+            else
+            {
+                next(context);
+            }
 
-            return next(request, context);
+            
         }
 
-        public async Task<HttpResponse> SendAsync(HttpRequest request, Func<HttpRequest, HttpContext, Task<HttpResponse>> next, HttpContext context)
+        public async Task ExecuteAsync(Context<HttpMessageWrapper> context, Func<Context<HttpMessageWrapper>, Task> next)
         {
-            if (request.Context.ContainsKey("retrycount") && request.Context.ContainsKey("retrycondition"))
-            {
-                var retrycount = request.Context["retrycount"] as int?;
+            var currentindex = context.Index;
 
-                var retrycondition = request.Context["retrycondition"] as Func<HttpResponse, bool>;
+            if (context.Data.Request.Context.ContainsKey("retrycount") && context.Data.Request.Context.ContainsKey("retrycondition"))
+            {
+                var retrycount = context.Data.Request.Context["retrycount"] as int?;
+
+                var retrycondition = context.Data.Request.Context["retrycondition"] as Func<HttpResponse, bool>;
 
                 if (retrycount != null && retrycondition != null)
                 {
-                    if (request.Context.ContainsKey("onretry"))
+                    if (context.Data.Request.Context.ContainsKey("onretry"))
                     {
-                        var onretry = request.Context["onretry"] as Action<DelegateResult<HttpResponse>, int>;
+                        var onretry = context.Data.Request.Context["onretry"] as Action<DelegateResult<HttpResponse>, int>;
 
                         if (onretry != null)
                         {
-                            return await Policy
+                            await Policy
                             .HandleResult<HttpResponse>(retrycondition)
-                            .Retry(retrycount.Value, onretry)
-                            .ExecuteAsync(() => { return next(request, context); });
+                            .RetryAsync(retrycount.Value, (c, r) => { context.Index = currentindex; onretry(c, r); context.Data.Request.Message = context.Data.Request.Message.Clone(); })
+                            .ExecuteAsync(async () => {
+
+                                await next(context);
+
+                                return context.Data.Response;
+                            });
                         }
                     }
+                    else
+                    {
+                        await Policy
+                        .HandleResult<HttpResponse>(retrycondition)
+                        .RetryAsync(retrycount.Value, (c, r) => { context.Index = currentindex; context.Data.Request.Message = context.Data.Request.Message.Clone(); })
+                               .ExecuteAsync(async () => {
 
-                    return await Policy
-                    .HandleResult<HttpResponse>(retrycondition)
-                    .Retry(retrycount.Value)
-                    .ExecuteAsync(() => { return next(request, context); });
+                                   await next(context);
+
+                                   return context.Data.Response;
+                               });
+                    }
+                }
+                else
+                {
+                    await next(context);
                 }
             }
-
-            return await next(request, context);
+            else
+            {
+                await next(context);
+            }
+            
         }
     }
 }

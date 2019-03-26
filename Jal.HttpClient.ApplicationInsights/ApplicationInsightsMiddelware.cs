@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
-using Jal.HttpClient.Interface;
+using Jal.ChainOfResponsability.Intefaces;
+using Jal.ChainOfResponsability.Model;
 using Jal.HttpClient.Model;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 
 namespace Jal.HttpClient.ApplicationInsights
 {
-    public class ApplicationInsightsMiddelware : IHttpMiddleware
+    public class ApplicationInsightsMiddelware : IMiddleware<HttpMessageWrapper>, IMiddlewareAsync<HttpMessageWrapper>
     {
         private readonly TelemetryClient _client;
 
@@ -20,31 +21,31 @@ namespace Jal.HttpClient.ApplicationInsights
             _applicationname = applicationname;
         }
 
-        public HttpResponse Send(HttpRequest request, Func<HttpRequest, HttpContext, HttpResponse> next, HttpContext context)
+        public void Execute(Context<HttpMessageWrapper> context, Action<Context<HttpMessageWrapper>> next)
         {
             var telemetry = new DependencyTelemetry()
             {
-                Name = request.Uri.AbsolutePath,
+                Name = context.Data.Request.Uri.AbsolutePath,
 
-                Id = request.Identity.Id,
+                Id = context.Data.Request.Identity.Id,
 
                 Timestamp = DateTime.Now,
 
-                Target = request.Uri.Host,
+                Target = context.Data.Request.Uri.Host,
 
-                Data = request.Uri.ToString(),
+                Data = context.Data.Request.Uri.ToString(),
 
                 Type = "HTTP",
             };
 
-            if(!string.IsNullOrWhiteSpace(request.Identity.OperationId))
+            if (!string.IsNullOrWhiteSpace(context.Data.Request.Identity.OperationId))
             {
-                telemetry.Context.Operation.Id = request.Identity.OperationId;
+                telemetry.Context.Operation.Id = context.Data.Request.Identity.OperationId;
             }
 
-            if (!string.IsNullOrWhiteSpace(request.Identity.ParentId))
+            if (!string.IsNullOrWhiteSpace(context.Data.Request.Identity.ParentId))
             {
-                telemetry.Context.Operation.ParentId = request.Identity.ParentId;
+                telemetry.Context.Operation.ParentId = context.Data.Request.Identity.ParentId;
             }
 
             if (!string.IsNullOrWhiteSpace(_applicationname))
@@ -56,9 +57,9 @@ namespace Jal.HttpClient.ApplicationInsights
 
             try
             {
-                response = next(request, context);
+                next(context);
 
-                if (response.HttpStatusCode == HttpStatusCode.OK)
+                if (context.Data.Response.HttpStatusCode == HttpStatusCode.OK)
                 {
                     telemetry.Success = true;
 
@@ -68,7 +69,7 @@ namespace Jal.HttpClient.ApplicationInsights
                 {
                     telemetry.Success = false;
 
-                    if(response.HttpStatusCode!=null)
+                    if (context.Data.Response.HttpStatusCode != null)
                     {
                         telemetry.ResultCode = ((int)response.HttpStatusCode).ToString();
                     }
@@ -77,8 +78,6 @@ namespace Jal.HttpClient.ApplicationInsights
                         telemetry.ResultCode = "500";
                     }
                 }
-
-                return response;
             }
             catch (Exception exception)
             {
@@ -88,14 +87,14 @@ namespace Jal.HttpClient.ApplicationInsights
 
                 var telemetryexception = new ExceptionTelemetry(exception);
 
-                if (!string.IsNullOrWhiteSpace(request.Identity.OperationId))
+                if (!string.IsNullOrWhiteSpace(context.Data.Request.Identity.OperationId))
                 {
-                    telemetryexception.Context.Operation.Id = request.Identity.OperationId;
+                    telemetryexception.Context.Operation.Id = context.Data.Request.Identity.OperationId;
                 }
 
-                if (!string.IsNullOrWhiteSpace(request.Identity.ParentId))
+                if (!string.IsNullOrWhiteSpace(context.Data.Request.Identity.ParentId))
                 {
-                    telemetryexception.Context.Operation.ParentId = request.Identity.ParentId;
+                    telemetryexception.Context.Operation.ParentId = context.Data.Request.Identity.ParentId;
                 }
 
                 if (!string.IsNullOrWhiteSpace(_applicationname))
@@ -109,7 +108,7 @@ namespace Jal.HttpClient.ApplicationInsights
             }
             finally
             {
-                if(response!=null)
+                if (response != null)
                 {
                     telemetry.Duration = TimeSpan.FromMilliseconds(response.Duration);
                 }
@@ -118,33 +117,31 @@ namespace Jal.HttpClient.ApplicationInsights
             }
         }
 
-
-        public async Task<HttpResponse> SendAsync(HttpRequest request, Func<HttpRequest, HttpContext, Task<HttpResponse>> next, HttpContext context)
+        public async Task ExecuteAsync(Context<HttpMessageWrapper> context, Func<Context<HttpMessageWrapper>, Task> next)
         {
-
             var telemetry = new DependencyTelemetry()
             {
-                Name = request.Uri.AbsolutePath,
+                Name = context.Data.Request.Uri.AbsolutePath,
 
-                Id = request.Identity.Id,
+                Id = context.Data.Request.Identity.Id,
 
                 Timestamp = DateTime.Now,
 
-                Target = request.Uri.Host,
+                Target = context.Data.Request.Uri.Host,
 
-                Data = request.Uri.ToString(),
+                Data = context.Data.Request.Uri.ToString(),
 
                 Type = "HTTP",
             };
 
-            if (!string.IsNullOrWhiteSpace(request.Identity.OperationId))
+            if (!string.IsNullOrWhiteSpace(context.Data.Request.Identity.OperationId))
             {
-                telemetry.Context.Operation.Id = request.Identity.OperationId;
+                telemetry.Context.Operation.Id = context.Data.Request.Identity.OperationId;
             }
 
-            if (!string.IsNullOrWhiteSpace(request.Identity.ParentId))
+            if (!string.IsNullOrWhiteSpace(context.Data.Request.Identity.ParentId))
             {
-                telemetry.Context.Operation.ParentId = request.Identity.ParentId;
+                telemetry.Context.Operation.ParentId = context.Data.Request.Identity.ParentId;
             }
 
             if (!string.IsNullOrWhiteSpace(_applicationname))
@@ -157,7 +154,7 @@ namespace Jal.HttpClient.ApplicationInsights
             try
             {
 
-                response = await next(request, context);
+                await next(context);
 
                 if (response.HttpStatusCode == HttpStatusCode.OK)
                 {
@@ -178,8 +175,6 @@ namespace Jal.HttpClient.ApplicationInsights
                         telemetry.ResultCode = "500";
                     }
                 }
-
-                return response;
             }
             catch (Exception exception)
             {
@@ -189,14 +184,14 @@ namespace Jal.HttpClient.ApplicationInsights
 
                 var telemetryexception = new ExceptionTelemetry(exception);
 
-                if (!string.IsNullOrWhiteSpace(request.Identity.OperationId))
+                if (!string.IsNullOrWhiteSpace(context.Data.Request.Identity.OperationId))
                 {
-                    telemetryexception.Context.Operation.Id = request.Identity.OperationId;
+                    telemetryexception.Context.Operation.Id = context.Data.Request.Identity.OperationId;
                 }
 
-                if (!string.IsNullOrWhiteSpace(request.Identity.ParentId))
+                if (!string.IsNullOrWhiteSpace(context.Data.Request.Identity.ParentId))
                 {
-                    telemetryexception.Context.Operation.ParentId = request.Identity.ParentId;
+                    telemetryexception.Context.Operation.ParentId = context.Data.Request.Identity.ParentId;
                 }
 
                 if (!string.IsNullOrWhiteSpace(_applicationname))

@@ -4,34 +4,39 @@ using Jal.HttpClient.Interface;
 using System.Runtime.Caching;
 using Jal.HttpClient.Model;
 using System.IO;
+using Jal.ChainOfResponsability.Intefaces;
+using Jal.ChainOfResponsability.Model;
+using System.Net.Http;
+using Jal.HttpClient.Extensions;
 
 namespace Jal.HttpClient.Impl
 {
-    public class MemoryCacheMiddleware : IHttpMiddleware
+    public class MemoryCacheMiddleware : IMiddleware<HttpMessageWrapper>, IMiddlewareAsync<HttpMessageWrapper>
     {
-        public HttpResponse Send(HttpRequest request, Func<HttpRequest, HttpContext, HttpResponse> next, HttpContext context)
+
+        public void Execute(Context<HttpMessageWrapper> context, Action<Context<HttpMessageWrapper>> next)
         {
-            if (request.Context.ContainsKey("durationinseconds") && request.Context.ContainsKey("cachemode") && request.Context.ContainsKey("keybuilder"))
+            if (context.Data.Request.Context.ContainsKey("durationinseconds") && context.Data.Request.Context.ContainsKey("cachemode") && context.Data.Request.Context.ContainsKey("keybuilder"))
             {
-                var durationinseconds = request.Context["durationinseconds"] as double?;
+                var durationinseconds = context.Data.Request.Context["durationinseconds"] as double?;
 
-                var mode = request.Context["cachemode"] as string;
+                var mode = context.Data.Request.Context["cachemode"] as string;
 
-                var keybuilder = request.Context["keybuilder"] as Func<HttpRequest, string>;
+                var keybuilder = context.Data.Request.Context["keybuilder"] as Func<HttpRequest, string>;
 
                 if (durationinseconds != null && !string.IsNullOrWhiteSpace(mode) && keybuilder != null)
                 {
                     var cache = MemoryCache.Default;
 
-                    var key = keybuilder(request);
+                    var key = keybuilder(context.Data.Request);
 
                     if (cache.Contains(key))
                     {
-                        var resultfromcache = cache[request.Message.RequestUri.AbsoluteUri] as HttpResponse;
+                        var resultfromcache = cache[context.Data.Request.Message.RequestUri.AbsoluteUri] as HttpResponseMessage;
 
-                        if (request.Context.ContainsKey("oncacheget"))
+                        if (context.Data.Request.Context.ContainsKey("oncacheget"))
                         {
-                            var oncacheget = request.Context["oncacheget"] as Action<HttpResponse>;
+                            var oncacheget = context.Data.Request.Context["oncacheget"] as Action<HttpResponseMessage>;
 
                             if (oncacheget != null)
                             {
@@ -39,14 +44,23 @@ namespace Jal.HttpClient.Impl
                             }
                         }
 
-                        var copyfromcache = Copy(resultfromcache);
+                        var copyfromcache = resultfromcache.Clone().GetAwaiter().GetResult();
 
-                        return copyfromcache;
+                        context.Data.Response = new HttpResponse(context.Data.Request)
+                        {
+                            Message = copyfromcache
+                        };
+
+                        return;
                     }
 
-                    var result = next(request, context);
+                    next(context);
 
-                    var copy = Copy(result);
+                    var copy = context.Data.Response.Message.Clone().GetAwaiter().GetResult();
+
+                    var copyforcache = copy.Clone().GetAwaiter().GetResult();
+
+                    context.Data.Response.Message = copy;
 
                     var policy = new CacheItemPolicy { SlidingExpiration = TimeSpan.FromSeconds(durationinseconds.Value) };
 
@@ -55,60 +69,42 @@ namespace Jal.HttpClient.Impl
                         policy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.UtcNow.AddSeconds(durationinseconds.Value) };
                     }
 
-                    cache.Set(key, result, policy);
-
-                    return copy;
+                    cache.Set(key, copyforcache, policy);
+                }
+                else
+                {
+                    next(context);
                 }
             }
-
-            return next(request, context);
+            else
+            {
+                next(context);
+            }
         }
 
-        private static HttpResponse Copy(HttpResponse response)
+        public async Task ExecuteAsync(Context<HttpMessageWrapper> context, Func<Context<HttpMessageWrapper>, Task> next)
         {
-            var copy = new HttpResponse(null)
+            if (context.Data.Request.Context.ContainsKey("durationinseconds") && context.Data.Request.Context.ContainsKey("cachemode") && context.Data.Request.Context.ContainsKey("keybuilder"))
             {
-                Duration = response.Duration,
-                Exception = response.Exception,
-                //HttpExceptionStatus = response.HttpExceptionStatus,
-                //Uri = response.Uri,
-                //Content = new HttpResponseContent()
-                //{
-                //    CharacterSet = response.Content.CharacterSet,
-                //    ContentLength = response.Content.ContentLength,
-                //    ContentType = response.Content.ContentType
-                //}
-            };
+                var durationinseconds = context.Data.Request.Context["durationinseconds"] as double?;
 
-            //copy.Content.Stream = new MemoryStream();
-            //response.Content.Stream.Position = 0;
-            //response.Content.Stream.CopyTo(copy.Content.Stream);
-            return copy;
-        }
+                var mode = context.Data.Request.Context["cachemode"] as string;
 
-        public async Task<HttpResponse> SendAsync(HttpRequest request, Func<HttpRequest, HttpContext, Task<HttpResponse>> next, HttpContext context)
-        {
-            if (request.Context.ContainsKey("durationinseconds") && request.Context.ContainsKey("mode") && request.Context.ContainsKey("keybuilder"))
-            {
-                var durationinseconds = request.Context["durationinseconds"] as double?;
+                var keybuilder = context.Data.Request.Context["keybuilder"] as Func<HttpRequest, string>;
 
-                var mode = request.Context["cachemode"] as string;
-
-                var keybuilder = request.Context["keybuilder"] as Func<HttpRequest, string>;
-
-                if (durationinseconds != null && !string.IsNullOrWhiteSpace(mode) && keybuilder!=null)
+                if (durationinseconds != null && !string.IsNullOrWhiteSpace(mode) && keybuilder != null)
                 {
                     var cache = MemoryCache.Default;
 
-                    var key = keybuilder(request);
+                    var key = keybuilder(context.Data.Request);
 
                     if (cache.Contains(key))
                     {
-                        var resultfromcache = cache[request.Message.RequestUri.AbsoluteUri] as HttpResponse;
+                        var resultfromcache = cache[context.Data.Request.Message.RequestUri.AbsoluteUri] as HttpResponseMessage;
 
-                        if (request.Context.ContainsKey("oncacheget"))
+                        if (context.Data.Request.Context.ContainsKey("oncacheget"))
                         {
-                            var oncacheget = request.Context["oncacheget"] as Action<HttpResponse>;
+                            var oncacheget = context.Data.Request.Context["oncacheget"] as Action<HttpResponseMessage>;
 
                             if (oncacheget != null)
                             {
@@ -116,14 +112,18 @@ namespace Jal.HttpClient.Impl
                             }
                         }
 
-                        var copyfromcache = Copy(resultfromcache);
+                        var copyfromcache = await resultfromcache.Clone();
 
-                        return copyfromcache;
+                        context.Data.Response.Message = copyfromcache;
+
+                        return;
                     }
 
-                    var result = await next(request, context);
+                    await next(context);
 
-                    var copy = Copy(result);
+                    var copy = await context.Data.Response.Message.Clone();
+
+                    context.Data.Response.Message = copy;
 
                     var policy = new CacheItemPolicy { SlidingExpiration = TimeSpan.FromSeconds(durationinseconds.Value) };
 
@@ -132,13 +132,17 @@ namespace Jal.HttpClient.Impl
                         policy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.UtcNow.AddSeconds(durationinseconds.Value) };
                     }
 
-                    cache.Set(key, result, policy);
-
-                    return copy;
+                    cache.Set(key, copy, policy);
+                }
+                else
+                {
+                    await next(context);
                 }
             }
-
-            return await next(request, context);
+            else
+            {
+                await next(context);
+            }
         }
     }
 }

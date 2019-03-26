@@ -2,21 +2,19 @@
 {
     public interface IHttpFluentHandler
     {
-        IHttpHandler Handler { get; }
+        IHttpDescriptor Get(string url, System.Net.Http.HttpClient httpclient = null);
 
-        IHttpDescriptor Get(string url);
+        IHttpDescriptor Post(string url, System.Net.Http.HttpClient httpclient = null);
 
-        IHttpDescriptor Post(string url);
+        IHttpDescriptor Put(string url, System.Net.Http.HttpClient httpclient = null);
 
-        IHttpDescriptor Put(string url);
+        IHttpDescriptor Head(string url, System.Net.Http.HttpClient httpclient = null);
 
-        IHttpDescriptor Head(string url);
+        IHttpDescriptor Delete(string url, System.Net.Http.HttpClient httpclient = null);
 
-        IHttpDescriptor Delete(string url);
+        IHttpDescriptor Patch(string url, System.Net.Http.HttpClient httpclient = null);
 
-        IHttpDescriptor Patch(string url);
-
-        IHttpDescriptor Options(string url);
+        IHttpDescriptor Options(string url, System.Net.Http.HttpClient httpclient = null);
 
     }
 }

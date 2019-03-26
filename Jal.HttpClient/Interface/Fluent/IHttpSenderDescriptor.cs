@@ -5,7 +5,7 @@ namespace Jal.HttpClient.Interface.Fluent
 {
     public interface IHttpSenderDescriptor
     {
-        HttpResponse Send { get; }
+        HttpResponse Send();
 
         Task<HttpResponse> SendAsync();
     }

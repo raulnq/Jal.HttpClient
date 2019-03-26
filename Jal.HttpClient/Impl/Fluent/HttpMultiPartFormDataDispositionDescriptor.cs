@@ -13,9 +13,9 @@ namespace Jal.HttpClient.Impl.Fluent
             _httpcontent = httpcontent;
         }
 
-        public IHttpMultiPartFormDataContentTypeDescriptor WithCharacterSet(string characterset)
+        public IHttpMultiPartFormDataContentTypeDescriptor WithEncoding(string encoding)
         {
-            _httpcontent.Headers.ContentEncoding.Add(characterset);
+            _httpcontent.Headers.ContentEncoding.Add(encoding);
             return this;
         }
 

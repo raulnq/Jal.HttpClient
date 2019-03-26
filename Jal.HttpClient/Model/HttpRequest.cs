@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
 
 namespace Jal.HttpClient.Model
 {
-
     public class HttpRequest : IDisposable
     {
-        public System.Net.Http.HttpRequestMessage Message { get; }
+        public System.Net.Http.HttpRequestMessage Message { get; set; }
 
         public System.Net.Http.HttpContent Content
         {
             get
             {
-                return Message.Content;
+                return Message?.Content;
             }
             set
             {
@@ -25,7 +25,7 @@ namespace Jal.HttpClient.Model
         {
             get
             {
-                return Message.Method;
+                return Message?.Method;
             }
         }
 
@@ -33,7 +33,7 @@ namespace Jal.HttpClient.Model
         {
             get
             {
-                return Message.Headers;
+                return Message?.Headers;
             }
         }
 
@@ -41,7 +41,7 @@ namespace Jal.HttpClient.Model
         {
             get
             {
-                return Message.RequestUri;
+                return Message?.RequestUri;
             }
             set
             {
@@ -49,11 +49,13 @@ namespace Jal.HttpClient.Model
             }
         }
 
-        public System.Net.Http.HttpClient HttpClient { get; set; }
+        public System.Net.Http.HttpClient HttpClient { get; internal set; }
 
-        public List<Type> MiddlewareTypes { get; set; }
+        public bool DisposeClient { get; }
 
-        public Dictionary<string,object> Context { get; set; }
+        public List<Type> MiddlewareTypes { get; }
+
+        public Dictionary<string,object> Context { get; }
 
         public List<HttpQueryParameter> QueryParameters { get; set; }
 
@@ -73,10 +75,12 @@ namespace Jal.HttpClient.Model
 
         public HttpIdentity Identity { get; set; }
 
+
+
         public HttpRequest(string uri, System.Net.Http.HttpMethod httpMethod):
         this(uri, httpMethod, new System.Net.Http.HttpClient())
         {
-
+            DisposeClient = true;
         }
 
         public HttpRequest(string uri, System.Net.Http.HttpMethod httpMethod, Func<System.Net.Http.HttpClient> factory) :
@@ -98,6 +102,8 @@ namespace Jal.HttpClient.Model
             Identity = new HttpIdentity(Guid.NewGuid().ToString());
 
             Context = new Dictionary<string, object>();
+
+            DisposeClient = false;
         }
 
         public void Dispose()
@@ -113,10 +119,15 @@ namespace Jal.HttpClient.Model
                 {
                     Message.Dispose();
                 }
-                if (HttpClient != null)
+
+                Message = null;
+
+                if (HttpClient != null && DisposeClient)
                 {
-                    HttpClient.Dispose();
+                    HttpClient.Dispose(); 
                 }
+
+                HttpClient = null;
             }
         }
     }

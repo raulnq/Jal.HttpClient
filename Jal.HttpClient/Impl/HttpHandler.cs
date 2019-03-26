@@ -6,53 +6,38 @@ using System.Text;
 using System.Threading.Tasks;
 using Jal.HttpClient.Interface;
 using Jal.HttpClient.Model;
+using Jal.ChainOfResponsability.Fluent.Interfaces;
+using Jal.ChainOfResponsability.Intefaces;
 
 namespace Jal.HttpClient.Impl
 {
     public class HttpHandler : IHttpHandler
     {
-        public static IHttpHandler Current;
+        private readonly IPipelineBuilder _pipelinebuilder;
 
-        private readonly IHttpPipeline _pipeline;
-
-        //public static IHttpHandler Create(int timeout = 5000, IHttpMiddleware[] middlewares = null)
-        //{
-        //    var requestconverter = new HttpRequestToWebRequestConverter(new HttpMethodMapper(), timeout);
-
-        //    var responseconverter = new WebResponseToHttpResponseConverter();
-
-        //    var all = new List<IHttpMiddleware>();
-
-        //    all.Add(new HttpMiddelware(requestconverter, responseconverter));
-
-        //    if(middlewares!=null)
-        //    {
-        //        all.AddRange(middlewares);
-        //    }
-
-        //    var httphandler = new HttpHandler(new HttpPipeline(new HttpMiddlewareFactory(middlewares.ToArray())));
-
-        //    return httphandler;
-        //}
-
-        public HttpHandler(IHttpPipeline pipeline)
+        public HttpHandler(IPipelineBuilder pipelinebuilder)
         {
-            _pipeline = pipeline;
+            _pipelinebuilder = pipelinebuilder;
         }
 
         public HttpResponse Send(HttpRequest httpRequest)
         {
             try
             {
-                var types = new List<Type>();
+                var wrapper = new HttpMessageWrapper(httpRequest);
 
-                types.AddRange(httpRequest.MiddlewareTypes);
+                var chain = _pipelinebuilder.For<HttpMessageWrapper>();
 
-                types.Add(typeof(HttpMiddelware));
+                foreach (var type in httpRequest.MiddlewareTypes)
+                {
+                    chain.Use(type);
+                }
 
                 UpdateRequestUri(httpRequest);
 
-                return _pipeline.Send(httpRequest, types.ToArray());
+                chain.Use<HttpMiddelware>().Run(wrapper);
+
+                return wrapper.Response;
             }
             catch (Exception ex)
             {
@@ -97,15 +82,20 @@ namespace Jal.HttpClient.Impl
         {
             try
             {
-                var types = new List<Type>();
+                var wrapper = new HttpMessageWrapper(httpRequest);
 
-                types.AddRange(httpRequest.MiddlewareTypes);
+                var chain = _pipelinebuilder.ForAsync<HttpMessageWrapper>();
 
-                types.Add(typeof(HttpMiddelware));
+                foreach (var type in httpRequest.MiddlewareTypes)
+                {
+                    chain.UseAsync(type);
+                }
 
                 UpdateRequestUri(httpRequest);
 
-                return await _pipeline.SendAsync(httpRequest, types.ToArray());
+                await chain.UseAsync<HttpMiddelware>().RunAsync(wrapper);
+
+                return wrapper.Response;
             }
             catch (Exception ex)
             {

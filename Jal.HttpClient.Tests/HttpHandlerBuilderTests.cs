@@ -19,6 +19,10 @@ using Shouldly;
 using Jal.HttpClient.Polly.Installer;
 using Jal.HttpClient.Polly;
 using Jal.HttpClient.Extensions;
+using Jal.Locator.CastleWindsor.Installer;
+using Jal.ChainOfResponsability.Installer;
+using CacheCow.Client;
+using System.Net.Http;
 
 namespace Jal.HttpClient.Tests
 {
@@ -40,6 +44,10 @@ namespace Jal.HttpClient.Tests
 
             container.Install(new HttpClientInstaller());
 
+            container.Install(new ChainOfResponsabilityInstaller());
+
+            container.Install(new ServiceLocatorInstaller());
+
             container.Install(new HttpClientCommonLoggingInstaller());
 
             container.Install(new HttpClientPollyInstaller());
@@ -50,7 +58,7 @@ namespace Jal.HttpClient.Tests
         [Test]
         public void Send_Get_Ok()
         {
-            using (var response = _sut.Get("http://httpbin.org/ip").WithMiddleware(x=>x.UseCommonLogging()).Send)
+            using (var response = _sut.Get("http://httpbin.org/ip").WithMiddleware(x=>x.UseCommonLogging()).Send())
             {
                 var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
@@ -69,7 +77,7 @@ namespace Jal.HttpClient.Tests
         [Test]
         public void Send_Get_Authorized_Ok()
         {
-            using (var response = _sut.Get("http://httpbin.org/get").WithMiddleware(x => x.AuthorizedByToken("token","value")).Send)
+            using (var response = _sut.Get("http://httpbin.org/get").WithMiddleware(x => x.AuthorizedByToken("token","value")).Send())
             {
                 var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
@@ -95,7 +103,7 @@ namespace Jal.HttpClient.Tests
                 x.AuthorizedByToken("token", "value");
                 x.OnConditionRetry(3, y => y.HttpStatusCode == HttpStatusCode.OK, (z, c) => { retries++; });
                 x.UseCommonLogging();
-            }).Send)
+            }).Send())
             {
                 var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
@@ -119,7 +127,7 @@ namespace Jal.HttpClient.Tests
         public void Send_Get_AuthorizationAndRetry_Ok()
         {
             var retries = 0;
-            using (var response = _sut.Get("http://httpbin.org/get").WithMiddleware(x => x.OnConditionRetry(3, y => y.HttpStatusCode == HttpStatusCode.OK, (z, c) => { retries++; })).Send)
+            using (var response = _sut.Get("http://httpbin.org/get").WithMiddleware(x => x.OnConditionRetry(3, y => y.HttpStatusCode == HttpStatusCode.OK, (z, c) => { retries++; })).Send())
             {
                 var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
@@ -138,7 +146,7 @@ namespace Jal.HttpClient.Tests
         [Test]
         public void Send_Get_MemoryCache_Ok()
         {
-            using (var response = _sut.Get("http://httpbin.org/get").WithMiddleware(x => x.UseMemoryCache(30, y => y.Message.RequestUri.AbsoluteUri)).WithHeaders(x=>x.Add("header","old")).Send)
+            using (var response = _sut.Get("http://httpbin.org/get").WithMiddleware(x => x.UseMemoryCache(30, y => y.Message.RequestUri.AbsoluteUri)).WithHeaders(x => x.Add("header", "old")).Send())
             {
                 var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
@@ -155,8 +163,9 @@ namespace Jal.HttpClient.Tests
                 response.Exception.ShouldBeNull();
             }
 
-            using (var response = _sut.Get("http://httpbin.org/get").WithMiddleware(x => x.UseMemoryCache(30, y => y.Message.RequestUri.AbsoluteUri)).WithHeaders(x => x.Add("header", "new")).Send)
+            using (var response = _sut.Get("http://httpbin.org/get").WithMiddleware(x => x.UseMemoryCache(30, y => y.Message.RequestUri.AbsoluteUri)).WithHeaders(x => x.Add("header", "new")).Send())
             {
+
                 var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                 content.ShouldContain("header");
@@ -195,7 +204,7 @@ namespace Jal.HttpClient.Tests
         [Test]
         public void Send_PostJsonUtf8_Ok()
         {
-            using (var response = _sut.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").Send)
+            using (var response = _sut.Post("http://httpbin.org/post").WithMiddleware(x => x.UseCommonLogging()).Json(@"{""message"":""Hello World!!""}").Send())
             {
                 var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
@@ -214,7 +223,7 @@ namespace Jal.HttpClient.Tests
         [Test]
         public void Send_PostXmlUtf8_Ok()
         {
-            using (var response = _sut.Post("http://httpbin.org/post").Xml(@"<message>Hello World!!</message>").Send)
+            using (var response = _sut.Post("http://httpbin.org/post").Xml(@"<message>Hello World!!</message>").Send())
             {
                 var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
@@ -233,7 +242,7 @@ namespace Jal.HttpClient.Tests
         [Test]
         public void Send_PostFormUrlEncodedArrayUtf8_Ok()
         {
-            using (var response = _sut.Post("http://httpbin.org/post").FormUrlEncoded(new[] { new KeyValuePair<string, string>("message", "Hello World"), new KeyValuePair<string, string>("array", "a a"), new KeyValuePair<string, string>("array", "bbb"), new KeyValuePair<string, string>("array", "c c"), }).Send)
+            using (var response = _sut.Post("http://httpbin.org/post").FormUrlEncoded(new[] { new KeyValuePair<string, string>("message", "Hello World"), new KeyValuePair<string, string>("array", "a a"), new KeyValuePair<string, string>("array", "bbb"), new KeyValuePair<string, string>("array", "c c"), }).Send())
             {
                 var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
@@ -252,7 +261,7 @@ namespace Jal.HttpClient.Tests
         [Test]
         public void Send_PostFormUrlEncodedUtf8_Ok()
         {
-            using (var response = _sut.Post("http://httpbin.org/post").FormUrlEncoded(new [] {new KeyValuePair<string, string>("message", "Hello World") }).Send)
+            using (var response = _sut.Post("http://httpbin.org/post").FormUrlEncoded(new [] {new KeyValuePair<string, string>("message", "Hello World") }).Send())
             {
                 var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
@@ -273,15 +282,15 @@ namespace Jal.HttpClient.Tests
         {
             using (var response = _sut.Post("http://httpbin.org/post").WithTimeout(60000).MultiPartFormData(x =>
              {
-                 x.Json(@"{""message1"":""Hello World1!!""}", "nombre1");
-                 x.Json(@"{""message2"":""Hello World2!!""}", "nombre2");
+                 x.Json(@"{""message1"":""Hello World1!!""}", "form-data");
+                 x.Json(@"{""message2"":""Hello World2!!""}", "form-data");
                  x.Xml("<saludo>hola mundo</saludo>", "nombre3", "file.xml");
-                 x.WithContent("message3").WithDisposition("x x");
+                 x.WithContent("message3").WithDisposition("form-data");
                  x.UrlEncoded("a", "message4");
                  x.UrlEncoded("b", "message4");
                  x.UrlEncoded("c c", "message4");
                  //x.WithContent(new FileStream("file.zip", FileMode.Open, FileAccess.Read)).WithDisposition("file", "file.zip");
-             }).Send)
+             }).Send())
             {
                 var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
             }
@@ -290,7 +299,7 @@ namespace Jal.HttpClient.Tests
         [Test]
         public void Send_GetWithQueryParameters_Ok()
         {
-            using (var response = _sut.Get("http://httpbin.org/get").WithQueryParameters(x=>x.Add("parameter","value")).Send)
+            using (var response = _sut.Get("http://httpbin.org/get").WithQueryParameters(x=>x.Add("parameter","value")).Send())
             {
                 var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
@@ -311,7 +320,7 @@ namespace Jal.HttpClient.Tests
         [Test]
         public void Send_GetWithHeaders_Ok()
         {
-            using (var response = _sut.Get("http://httpbin.org/get").WithHeaders(x => x.Add("Header1", "value")).Send)
+            using (var response = _sut.Get("http://httpbin.org/get").WithHeaders(x => x.Add("Header1", "value")).Send())
             {
                 var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
@@ -332,29 +341,19 @@ namespace Jal.HttpClient.Tests
         [Test]
         public void Send_Delete_Ok()
         {
-            var container = new WindsorContainer();
+            using (var response = _sut.Delete("http://httpbin.org/delete").Send())
+            {
 
-            container.Kernel.Resolver.AddSubResolver(new ArrayResolver(container.Kernel));
-
-            container.Install(new HttpClientInstaller());
-
-            var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
-
-            var response = httpclientbuilder.Delete("http://httpbin.org/delete").Send;
+            }
         }
 
         [Test]
         public void Send_Get_TimeOut()
         {
-            var container = new WindsorContainer();
+            using (var response = _sut.Delete("http://httpbin.org/delay/5").WithTimeout(10).Send())
+            {
 
-            container.Kernel.Resolver.AddSubResolver(new ArrayResolver(container.Kernel));
-
-            container.Install(new HttpClientInstaller());
-
-            var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
-
-            var response = httpclientbuilder.Get("http://httpbin.org/delay/5").WithTimeout(10).Send;
+            }
         }
 
         //[Test]

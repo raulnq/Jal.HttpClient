@@ -1,29 +1,17 @@
 ﻿using System;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Jal.HttpClient.Interface;
+using Jal.ChainOfResponsability.Intefaces;
+using Jal.ChainOfResponsability.Model;
 using Jal.HttpClient.Model;
 
 namespace Jal.HttpClient.Impl
 {
 
-    public class BasicHttpAuthenticatorMiddleware : IHttpMiddleware
+    public class BasicHttpAuthenticatorMiddleware : IMiddleware<HttpMessageWrapper>, IMiddlewareAsync<HttpMessageWrapper>
     {
-        public HttpResponse Send(HttpRequest request, Func<HttpRequest, HttpContext, HttpResponse> next, HttpContext context)
-        {
-            AddAuthorizationHeader(request);
-
-            return next(request, context);
-        }
-
         private static void AddAuthorizationHeader(HttpRequest request)
         {
-            if (request.Headers.Contains("Authorization"))
-            {
-                request.Headers.Remove("Authorization");
-            }
-
             if (request.Context.ContainsKey("username") && request.Context.ContainsKey("password"))
             {
                 var user = request.Context["username"] as string;
@@ -32,16 +20,23 @@ namespace Jal.HttpClient.Impl
 
                 if (!string.IsNullOrWhiteSpace(user) && !string.IsNullOrWhiteSpace(password))
                 {
-                    request.Headers.Add("Authorization", $"{"Basic"} {Convert.ToBase64String(Encoding.UTF8.GetBytes(user + ":" + password))}");
+                    request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes(user + ":" + password)));
                 }
             }
         }
 
-        public async Task<HttpResponse> SendAsync(HttpRequest request, Func<HttpRequest, HttpContext, Task<HttpResponse>> next, HttpContext context)
+        public void Execute(Context<HttpMessageWrapper> context, Action<Context<HttpMessageWrapper>> next)
         {
-            AddAuthorizationHeader(request);
+            AddAuthorizationHeader(context.Data.Request);
 
-            return await next(request, context);
+            next(context);
+        }
+
+        public Task ExecuteAsync(Context<HttpMessageWrapper> context, Func<Context<HttpMessageWrapper>, Task> next)
+        {
+            AddAuthorizationHeader(context.Data.Request);
+
+            return next(context);
         }
     }
 }

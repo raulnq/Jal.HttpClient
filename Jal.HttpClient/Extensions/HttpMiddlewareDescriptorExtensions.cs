@@ -2,6 +2,7 @@
 using Jal.HttpClient.Interface.Fluent;
 using Jal.HttpClient.Model;
 using System;
+using System.Net.Http;
 
 namespace Jal.HttpClient.Extensions
 {
@@ -22,7 +23,7 @@ namespace Jal.HttpClient.Extensions
             descriptor.Add<BasicHttpAuthenticatorMiddleware>(y => { y.Add("username", username); y.Add("password", password); });
         }
 
-        public static void UseMemoryCache(this IHttpMiddlewareDescriptor descriptor, double durationinseconds, Func<HttpRequest, string> keybuilder, string cachemode = "sliding", Action<HttpResponse> oncacheget=null)
+        public static void UseMemoryCache(this IHttpMiddlewareDescriptor descriptor, double durationinseconds, Func<HttpRequest, string> keybuilder, string cachemode = "sliding", Action<HttpResponseMessage> oncacheget=null)
         {
             descriptor.Add<MemoryCacheMiddleware>(y => 
             {

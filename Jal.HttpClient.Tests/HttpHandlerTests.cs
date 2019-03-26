@@ -17,6 +17,8 @@ using Shouldly;
 using System.Net.Http;
 using System.Collections.Generic;
 using System.Net.Http.Headers;
+using Jal.ChainOfResponsability.Installer;
+using Jal.Locator.CastleWindsor.Installer;
 
 namespace Jal.HttpClient.Tests
 {
@@ -40,7 +42,11 @@ namespace Jal.HttpClient.Tests
 
             container.Install(new HttpClientCommonLoggingInstaller());
 
-           _sut = container.Resolve<IHttpHandler>();
+            container.Install(new ChainOfResponsabilityInstaller());
+
+            container.Install(new ServiceLocatorInstaller());
+
+            _sut = container.Resolve<IHttpHandler>();
         }
 
         [Test]

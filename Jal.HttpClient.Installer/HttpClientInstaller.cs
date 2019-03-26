@@ -1,38 +1,28 @@
 ﻿using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
+using Jal.ChainOfResponsability.Intefaces;
 using Jal.HttpClient.Impl;
 using Jal.HttpClient.Impl.Fluent;
 using Jal.HttpClient.Interface;
 using Jal.HttpClient.Interface.Fluent;
+using Jal.HttpClient.Model;
 
 namespace Jal.HttpClient.Installer
 {
     public class HttpClientInstaller : IWindsorInstaller
     {
-        private readonly int _timeout;
-
-        public HttpClientInstaller(int timeout=5000)
-        {
-            _timeout = timeout;
-        }
-
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             container.Register(
                 Component.For<IHttpHandler>().ImplementedBy<HttpHandler>(),
-                Component.For<IHttpPipeline>().ImplementedBy<HttpPipeline>(),
-                Component.For<IHttpMiddleware>().ImplementedBy<HttpMiddelware>().Named(typeof(HttpMiddelware).FullName),
-                Component.For<IHttpMiddlewareFactory>().ImplementedBy<HttpMiddlewareFactory>(),
-                //Component.For<IHttpRequestToWebRequestConverter>().ImplementedBy<HttpRequestToWebRequestConverter>().DependsOn(new { timeout = _timeout }),
-                //Component.For<IWebResponseToHttpResponseConverter>().ImplementedBy<WebResponseToHttpResponseConverter>(),
-                //Component.For<IHttpMethodMapper>().ImplementedBy<HttpMethodMapper>(),
+                Component.For<IMiddleware<HttpMessageWrapper>, IMiddlewareAsync<HttpMessageWrapper>>().ImplementedBy<HttpMiddelware>().Named(typeof(HttpMiddelware).FullName),
                 Component.For<IHttpFluentHandler>().ImplementedBy<HttpFluentHandler>()
                 );
 
-            container.Register(Component.For<IHttpMiddleware>().ImplementedBy<BasicHttpAuthenticatorMiddleware>().Named(typeof(BasicHttpAuthenticatorMiddleware).FullName));
-            container.Register(Component.For<IHttpMiddleware>().ImplementedBy<TokenAuthenticatorMiddleware>().Named(typeof(TokenAuthenticatorMiddleware).FullName));
-            container.Register(Component.For<IHttpMiddleware>().ImplementedBy<MemoryCacheMiddleware>().Named(typeof(MemoryCacheMiddleware).FullName));
+            container.Register(Component.For<IMiddleware<HttpMessageWrapper>, IMiddlewareAsync<HttpMessageWrapper>>().ImplementedBy<BasicHttpAuthenticatorMiddleware>().Named(typeof(BasicHttpAuthenticatorMiddleware).FullName));
+            container.Register(Component.For<IMiddleware<HttpMessageWrapper>, IMiddlewareAsync<HttpMessageWrapper>>().ImplementedBy<TokenAuthenticatorMiddleware>().Named(typeof(TokenAuthenticatorMiddleware).FullName));
+            container.Register(Component.For<IMiddleware<HttpMessageWrapper>, IMiddlewareAsync<HttpMessageWrapper>>().ImplementedBy<MemoryCacheMiddleware>().Named(typeof(MemoryCacheMiddleware).FullName));
             
         }
 

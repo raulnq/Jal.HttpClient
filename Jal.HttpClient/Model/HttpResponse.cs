@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 
 namespace Jal.HttpClient.Model
 {
@@ -15,7 +16,7 @@ namespace Jal.HttpClient.Model
             HttpRequest = request;
         }
 
-        public HttpRequest HttpRequest { get; }
+        public HttpRequest HttpRequest { get; internal set; }
 
         public HttpResponseMessage Message { get; set; }
 
@@ -51,7 +52,6 @@ namespace Jal.HttpClient.Model
         {
             Dispose(true);
         }
-
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
@@ -59,11 +59,15 @@ namespace Jal.HttpClient.Model
                 if(Message!=null)
                 {
                     Message.Dispose();
+
+                    Message = null;
                 }
 
                 if(HttpRequest!=null)
                 {
                     HttpRequest.Dispose();
+
+                    HttpRequest = null;
                 }       
             }
         }

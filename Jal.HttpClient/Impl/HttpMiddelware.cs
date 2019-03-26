@@ -3,20 +3,25 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Jal.HttpClient.Interface;
+using Jal.ChainOfResponsability.Intefaces;
+using Jal.ChainOfResponsability.Model;
 using Jal.HttpClient.Model;
 
 namespace Jal.HttpClient.Impl
 {
-    public class HttpMiddelware : IHttpMiddleware
+    public class HttpMiddelware : IMiddleware<HttpMessageWrapper>, IMiddlewareAsync<HttpMessageWrapper>
     {
-
-        public HttpResponse Send(HttpRequest request, Func<HttpRequest, HttpContext, HttpResponse> next, HttpContext context)
+        public void Execute(Context<HttpMessageWrapper> context, Action<Context<HttpMessageWrapper>> next)
         {
-            return SendAsync(request, context).GetAwaiter().GetResult();
+            context.Data.Response = SendAsync(context.Data.Request).GetAwaiter().GetResult();
         }
 
-        public async Task<HttpResponse> SendAsync(HttpRequest request, HttpContext context)
+        public async Task ExecuteAsync(Context<HttpMessageWrapper> context, Func<Context<HttpMessageWrapper>, Task> next)
+        {
+            context.Data.Response = await SendAsync(context.Data.Request);
+        }
+
+        public async Task<HttpResponse> SendAsync(HttpRequest request)
         {
             var stopWatch = new Stopwatch();
 
@@ -26,12 +31,10 @@ namespace Jal.HttpClient.Impl
 
             try
             {
-
-                response.Message = await request.HttpClient.SendAsync(request.Message, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+                //response.Message = await request.HttpClient.SendAsync(request.Message, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+                response.Message = await request.HttpClient.SendAsync(request.Message).ConfigureAwait(false);
 
                 return response;
-                    
-                
             }
             catch (WebException we)
             {
@@ -59,11 +62,6 @@ namespace Jal.HttpClient.Impl
                 }
             }
             return response;
-        }
-
-        public Task<HttpResponse> SendAsync(HttpRequest request, Func<HttpRequest, HttpContext, Task<HttpResponse>> next, HttpContext context)
-        {
-            return SendAsync(request, context);
         }
     }
 }

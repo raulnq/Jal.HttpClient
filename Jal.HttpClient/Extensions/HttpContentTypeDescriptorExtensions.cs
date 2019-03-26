@@ -6,17 +6,17 @@ namespace Jal.HttpClient.Extensions
     {
         public static IHttpContentTypeDescriptor Utf8(this IHttpContentTypeDescriptor descriptor)
         {
-            return descriptor.WithCharacterSet("charset=utf-8");
+            return descriptor.WithEncoding("utf-8");
         }
 
         public static IHttpContentTypeDescriptor Utf16(this IHttpContentTypeDescriptor descriptor)
         {
-            return descriptor.WithCharacterSet("charset=utf-16");
+            return descriptor.WithEncoding("utf-16");
         }
 
         public static IHttpContentTypeDescriptor Utf7(this IHttpContentTypeDescriptor descriptor)
         {
-            return descriptor.WithCharacterSet("charset=utf-7");
+            return descriptor.WithEncoding("utf-7");
         }
 
     }
