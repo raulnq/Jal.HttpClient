@@ -52,19 +52,15 @@ namespace Jal.HttpClient.Tests
         {
             using (var response = _sut.Get("http://httpbin.org/ip").WithMiddleware(x=>x.UseCommonLogging()).Send)
             {
-                var content = response.Content.Read();
-
-                response.Content.IsString().ShouldBeTrue();
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                 content.ShouldContain("origin");
 
-                response.Content.ContentType.ShouldBe("application/json");
+                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.ContentLength.ShouldBeGreaterThan(0);
+                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.HttpExceptionStatus.ShouldBeNull();
 
                 response.Exception.ShouldBeNull();
             }
@@ -75,21 +71,17 @@ namespace Jal.HttpClient.Tests
         {
             using (var response = _sut.Get("http://httpbin.org/get").WithMiddleware(x => x.AuthorizedByToken("token","value")).Send)
             {
-                var content = response.Content.Read();
-
-                response.Content.IsString().ShouldBeTrue();
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                 content.ShouldContain("token");
 
                 content.ShouldContain("value");
 
-                response.Content.ContentType.ShouldBe("application/json");
+                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.ContentLength.ShouldBeGreaterThan(0);
+                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.HttpExceptionStatus.ShouldBeNull();
 
                 response.Exception.ShouldBeNull();
             }
@@ -105,9 +97,7 @@ namespace Jal.HttpClient.Tests
                 x.UseCommonLogging();
             }).Send)
             {
-                var content = response.Content.Read();
-
-                response.Content.IsString().ShouldBeTrue();
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                 retries.ShouldBe(3);
 
@@ -115,13 +105,11 @@ namespace Jal.HttpClient.Tests
 
                 content.ShouldContain("value");
 
-                response.Content.ContentType.ShouldBe("application/json");
+                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.ContentLength.ShouldBeGreaterThan(0);
+                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.HttpExceptionStatus.ShouldBeNull();
 
                 response.Exception.ShouldBeNull();
             }
@@ -133,19 +121,15 @@ namespace Jal.HttpClient.Tests
             var retries = 0;
             using (var response = _sut.Get("http://httpbin.org/get").WithMiddleware(x => x.OnConditionRetry(3, y => y.HttpStatusCode == HttpStatusCode.OK, (z, c) => { retries++; })).Send)
             {
-                var content = response.Content.Read();
-
-                response.Content.IsString().ShouldBeTrue();
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                 retries.ShouldBe(3);
 
-                response.Content.ContentType.ShouldBe("application/json");
+                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.ContentLength.ShouldBeGreaterThan(0);
+                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.HttpExceptionStatus.ShouldBeNull();
 
                 response.Exception.ShouldBeNull();
             }
@@ -154,44 +138,36 @@ namespace Jal.HttpClient.Tests
         [Test]
         public void Send_Get_MemoryCache_Ok()
         {
-            using (var response = _sut.Get("http://httpbin.org/get").WithMiddleware(x => x.UseMemoryCache(30, y => y.Url)).WithHeaders(x=>x.Add("header","old")).Send)
+            using (var response = _sut.Get("http://httpbin.org/get").WithMiddleware(x => x.UseMemoryCache(30, y => y.Message.RequestUri.AbsoluteUri)).WithHeaders(x=>x.Add("header","old")).Send)
             {
-                var content = response.Content.Read();
-
-                response.Content.IsString().ShouldBeTrue();
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                 content.ShouldContain("header");
 
                 content.ShouldContain("old");
 
-                response.Content.ContentType.ShouldBe("application/json");
+                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.ContentLength. ShouldBeGreaterThan(0);
+                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.HttpExceptionStatus.ShouldBeNull();
 
                 response.Exception.ShouldBeNull();
             }
 
-            using (var response = _sut.Get("http://httpbin.org/get").WithMiddleware(x => x.UseMemoryCache(30, y => y.Url)).WithHeaders(x => x.Add("header", "new")).Send)
+            using (var response = _sut.Get("http://httpbin.org/get").WithMiddleware(x => x.UseMemoryCache(30, y => y.Message.RequestUri.AbsoluteUri)).WithHeaders(x => x.Add("header", "new")).Send)
             {
-                var content = response.Content.Read();
-
-                response.Content.IsString().ShouldBeTrue();
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                 content.ShouldContain("header");
 
                 content.ShouldContain("old");
 
-                response.Content.ContentType.ShouldBe("application/json");
+                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.ContentLength.ShouldBeGreaterThan(0);
+                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.HttpExceptionStatus.ShouldBeNull();
 
                 response.Exception.ShouldBeNull();
             }
@@ -202,19 +178,15 @@ namespace Jal.HttpClient.Tests
         {
             using (var response = await _sut.Get("http://httpbin.org/ip").SendAsync())
             {
-                var content = response.Content.Read();
-
-                response.Content.IsString().ShouldBeTrue();
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                 content.ShouldContain("origin");
 
-                response.Content.ContentType.ShouldBe("application/json");
+                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.ContentLength.ShouldBeGreaterThan(0);
+                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.HttpExceptionStatus.ShouldBeNull();
 
                 response.Exception.ShouldBeNull();
             }
@@ -225,19 +197,15 @@ namespace Jal.HttpClient.Tests
         {
             using (var response = _sut.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").Send)
             {
-                var content = response.Content.Read();
-
-                response.Content.IsString().ShouldBeTrue();
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                 content.ShouldContain("Hello World");
 
-                response.Content.ContentType.ShouldBe("application/json");
+                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.ContentLength.ShouldBeGreaterThan(0);
+                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.HttpExceptionStatus.ShouldBeNull();
 
                 response.Exception.ShouldBeNull();
             }
@@ -248,19 +216,15 @@ namespace Jal.HttpClient.Tests
         {
             using (var response = _sut.Post("http://httpbin.org/post").Xml(@"<message>Hello World!!</message>").Send)
             {
-                var content = response.Content.Read();
-
-                response.Content.IsString().ShouldBeTrue();
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                 content.ShouldContain("Hello World");
 
-                response.Content.ContentType.ShouldBe("application/json");
+                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.ContentLength.ShouldBeGreaterThan(0);
+                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.HttpExceptionStatus.ShouldBeNull();
 
                 response.Exception.ShouldBeNull();
             }
@@ -271,19 +235,15 @@ namespace Jal.HttpClient.Tests
         {
             using (var response = _sut.Post("http://httpbin.org/post").FormUrlEncoded(new[] { new KeyValuePair<string, string>("message", "Hello World"), new KeyValuePair<string, string>("array", "a a"), new KeyValuePair<string, string>("array", "bbb"), new KeyValuePair<string, string>("array", "c c"), }).Send)
             {
-                var content = response.Content.Read();
-
-                response.Content.IsString().ShouldBeTrue();
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                 content.ShouldContain("Hello World");
 
-                response.Content.ContentType.ShouldBe("application/json");
+                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.ContentLength.ShouldBeGreaterThan(0);
+                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.HttpExceptionStatus.ShouldBeNull();
 
                 response.Exception.ShouldBeNull();
             }
@@ -294,19 +254,15 @@ namespace Jal.HttpClient.Tests
         {
             using (var response = _sut.Post("http://httpbin.org/post").FormUrlEncoded(new [] {new KeyValuePair<string, string>("message", "Hello World") }).Send)
             {
-                var content = response.Content.Read();
-
-                response.Content.IsString().ShouldBeTrue();
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                 content.ShouldContain("Hello World");
 
-                response.Content.ContentType.ShouldBe("application/json");
+                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.ContentLength.ShouldBeGreaterThan(0);
+                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.HttpExceptionStatus.ShouldBeNull();
 
                 response.Exception.ShouldBeNull();
             }
@@ -315,7 +271,7 @@ namespace Jal.HttpClient.Tests
         [Test]
         public void Send_PostMultiPartFormDataUtf8_Ok()
         {
-            using (var response = _sut.Post("http://httpbin.org/post").WithTimeout(60000).WithAllowWriteStreamBuffering(false).MultiPartFormData(x =>
+            using (var response = _sut.Post("http://httpbin.org/post").WithTimeout(60000).MultiPartFormData(x =>
              {
                  x.Json(@"{""message1"":""Hello World1!!""}", "nombre1");
                  x.Json(@"{""message2"":""Hello World2!!""}", "nombre2");
@@ -327,9 +283,7 @@ namespace Jal.HttpClient.Tests
                  //x.WithContent(new FileStream("file.zip", FileMode.Open, FileAccess.Read)).WithDisposition("file", "file.zip");
              }).Send)
             {
-                var content = response.Content.Read();
-
-                response.Content.IsString().ShouldBeTrue();
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
             }
         }
 
@@ -338,21 +292,17 @@ namespace Jal.HttpClient.Tests
         {
             using (var response = _sut.Get("http://httpbin.org/get").WithQueryParameters(x=>x.Add("parameter","value")).Send)
             {
-                var content = response.Content.Read();
-
-                response.Content.IsString().ShouldBeTrue();
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                 content.ShouldContain("parameter");
 
                 content.ShouldContain("value");
 
-                response.Content.ContentType.ShouldBe("application/json");
+                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.ContentLength.ShouldBeGreaterThan(0);
+                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.HttpExceptionStatus.ShouldBeNull();
 
                 response.Exception.ShouldBeNull();
             }
@@ -363,21 +313,17 @@ namespace Jal.HttpClient.Tests
         {
             using (var response = _sut.Get("http://httpbin.org/get").WithHeaders(x => x.Add("Header1", "value")).Send)
             {
-                var content = response.Content.Read();
-
-                response.Content.IsString().ShouldBeTrue();
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                 content.ShouldContain("Header1");
 
                 content.ShouldContain("value");
 
-                response.Content.ContentType.ShouldBe("application/json");
+                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.ContentLength.ShouldBeGreaterThan(0);
+                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.HttpExceptionStatus.ShouldBeNull();
 
                 response.Exception.ShouldBeNull();
             }
@@ -411,18 +357,18 @@ namespace Jal.HttpClient.Tests
             var response = httpclientbuilder.Get("http://httpbin.org/delay/5").WithTimeout(10).Send;
         }
 
-        [Test]
-        public void Send_GetGzip_Ok()
-        {
-            var container = new WindsorContainer();
+        //[Test]
+        //public void Send_GetGzip_Ok()
+        //{
+        //    var container = new WindsorContainer();
 
-            container.Kernel.Resolver.AddSubResolver(new ArrayResolver(container.Kernel));
+        //    container.Kernel.Resolver.AddSubResolver(new ArrayResolver(container.Kernel));
 
-            container.Install(new HttpClientInstaller());
+        //    container.Install(new HttpClientInstaller());
 
-            var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
+        //    var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
 
-            var response = httpclientbuilder.Get("http://httpbin.org/gzip").GZip().Send;
-        }
+        //    var response = httpclientbuilder.Get("http://httpbin.org/gzip").GZip().Send;
+        //}
     }
 }

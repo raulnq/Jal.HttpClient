@@ -15,25 +15,25 @@ namespace Jal.HttpClient.Impl
 
         private readonly IHttpPipeline _pipeline;
 
-        public static IHttpHandler Create(int timeout = 5000, IHttpMiddleware[] middlewares = null)
-        {
-            var requestconverter = new HttpRequestToWebRequestConverter(new HttpMethodMapper(), timeout);
+        //public static IHttpHandler Create(int timeout = 5000, IHttpMiddleware[] middlewares = null)
+        //{
+        //    var requestconverter = new HttpRequestToWebRequestConverter(new HttpMethodMapper(), timeout);
 
-            var responseconverter = new WebResponseToHttpResponseConverter();
+        //    var responseconverter = new WebResponseToHttpResponseConverter();
 
-            var all = new List<IHttpMiddleware>();
+        //    var all = new List<IHttpMiddleware>();
 
-            all.Add(new HttpMiddelware(requestconverter, responseconverter));
+        //    all.Add(new HttpMiddelware(requestconverter, responseconverter));
 
-            if(middlewares!=null)
-            {
-                all.AddRange(middlewares);
-            }
+        //    if(middlewares!=null)
+        //    {
+        //        all.AddRange(middlewares);
+        //    }
 
-            var httphandler = new HttpHandler(new HttpPipeline(new HttpMiddlewareFactory(middlewares.ToArray())));
+        //    var httphandler = new HttpHandler(new HttpPipeline(new HttpMiddlewareFactory(middlewares.ToArray())));
 
-            return httphandler;
-        }
+        //    return httphandler;
+        //}
 
         public HttpHandler(IHttpPipeline pipeline)
         {
@@ -56,7 +56,7 @@ namespace Jal.HttpClient.Impl
             }
             catch (Exception ex)
             {
-                return new HttpResponse()
+                return new HttpResponse(httpRequest)
                 {
                     Exception = ex
                 };
@@ -65,7 +65,7 @@ namespace Jal.HttpClient.Impl
 
         private void UpdateRequestUri(HttpRequest httpRequest)
         {
-            var url = httpRequest.Url;
+            var url = httpRequest.Message.RequestUri.AbsoluteUri;
 
             if (httpRequest.QueryParameters.Count > 0)
             {
@@ -109,7 +109,7 @@ namespace Jal.HttpClient.Impl
             }
             catch (Exception ex)
             {
-                return new HttpResponse()
+                return new HttpResponse(httpRequest)
                 {
                     Exception = ex
                 };

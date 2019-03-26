@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Jal.HttpClient.Interface;
 using Jal.HttpClient.Interface.Fluent;
@@ -16,28 +17,16 @@ namespace Jal.HttpClient.Impl.Fluent
             _httpcontext = new HttpDescriptorContext(new HttpRequest(url, httpMethod), httpHandler);
         }
 
-        public IHttpDescriptor WithDecompression(DecompressionMethods decompression)
-        {
-            _httpcontext.HttpRequest.Decompression = decompression;
-            return this;
-        }
-
-        public IHttpDescriptor WithAllowWriteStreamBuffering(bool allowwritestreambuffering)
-        {
-            _httpcontext.HttpRequest.AllowWriteStreamBuffering = allowwritestreambuffering;
-            return this;
-        }
-
         public IHttpDescriptor WithAcceptedType(string acceptedtype)
         {
-            _httpcontext.HttpRequest.AcceptedType = acceptedtype;
+            _httpcontext.HttpRequest.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue(acceptedtype));
             return this;
         }
 
-        public IHttpContentTypeDescriptor WithContent(HttpRequestContent requestContent)
+        public IHttpContentTypeDescriptor WithContent(System.Net.Http.HttpContent requestContent)
         {
-            _httpcontext.HttpRequest.Content = requestContent;
-            return new HttpContentDescriptor(_httpcontext.HttpRequest.Content, _httpcontext);
+            _httpcontext.HttpRequest.Message.Content = requestContent;
+            return new HttpContentDescriptor(_httpcontext.HttpRequest.Message.Content, _httpcontext);
         }
 
         public IHttpDescriptor WithTimeout(int timeout)

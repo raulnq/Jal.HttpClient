@@ -17,11 +17,9 @@ namespace Jal.HttpClient.Impl
 
         private static void AddAuthorizationHeader(HttpRequest request)
         {
-            var item = request.Headers.FirstOrDefault(x => x.Name == "Authorization");
-
-            if (item != null)
+            if (request.Headers.Contains("Authorization"))
             {
-                request.Headers.Remove(item);
+                request.Headers.Remove("Authorization");
             }
 
             if(request.Context.ContainsKey("tokenvalue") && request.Context.ContainsKey("tokentype"))
@@ -32,7 +30,7 @@ namespace Jal.HttpClient.Impl
 
                 if (!string.IsNullOrWhiteSpace(token) && !string.IsNullOrWhiteSpace(type))
                 {
-                    request.Headers.Add(new HttpHeader("Authorization", $"{type} {token}"));
+                    request.Headers.Add("Authorization", $"{type} {token}");
                 }
             }
         }

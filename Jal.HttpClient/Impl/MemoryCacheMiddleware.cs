@@ -27,7 +27,7 @@ namespace Jal.HttpClient.Impl
 
                     if (cache.Contains(key))
                     {
-                        var resultfromcache = cache[request.Url] as HttpResponse;
+                        var resultfromcache = cache[request.Message.RequestUri.AbsoluteUri] as HttpResponse;
 
                         if (request.Context.ContainsKey("oncacheget"))
                         {
@@ -66,25 +66,23 @@ namespace Jal.HttpClient.Impl
 
         private static HttpResponse Copy(HttpResponse response)
         {
-            var copy = new HttpResponse()
+            var copy = new HttpResponse(null)
             {
                 Duration = response.Duration,
                 Exception = response.Exception,
-                HttpExceptionStatus = response.HttpExceptionStatus,
-                Uri = response.Uri,
-                HttpStatusCode = response.HttpStatusCode,
-                Headers = response.Headers,
-                Content = new HttpResponseContent()
-                {
-                    CharacterSet = response.Content.CharacterSet,
-                    ContentLength = response.Content.ContentLength,
-                    ContentType = response.Content.ContentType
-                }
+                //HttpExceptionStatus = response.HttpExceptionStatus,
+                //Uri = response.Uri,
+                //Content = new HttpResponseContent()
+                //{
+                //    CharacterSet = response.Content.CharacterSet,
+                //    ContentLength = response.Content.ContentLength,
+                //    ContentType = response.Content.ContentType
+                //}
             };
 
-            copy.Content.Stream = new MemoryStream();
-            response.Content.Stream.Position = 0;
-            response.Content.Stream.CopyTo(copy.Content.Stream);
+            //copy.Content.Stream = new MemoryStream();
+            //response.Content.Stream.Position = 0;
+            //response.Content.Stream.CopyTo(copy.Content.Stream);
             return copy;
         }
 
@@ -106,7 +104,7 @@ namespace Jal.HttpClient.Impl
 
                     if (cache.Contains(key))
                     {
-                        var resultfromcache = cache[request.Url] as HttpResponse;
+                        var resultfromcache = cache[request.Message.RequestUri.AbsoluteUri] as HttpResponse;
 
                         if (request.Context.ContainsKey("oncacheget"))
                         {

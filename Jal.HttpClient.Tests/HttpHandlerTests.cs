@@ -14,6 +14,9 @@ using Jal.HttpClient.Common.Logging.Installer;
 using Jal.HttpClient.Model;
 using NUnit.Framework;
 using Shouldly;
+using System.Net.Http;
+using System.Collections.Generic;
+using System.Net.Http.Headers;
 
 namespace Jal.HttpClient.Tests
 {
@@ -45,19 +48,15 @@ namespace Jal.HttpClient.Tests
         {
             using (var response = _sut.Send(new HttpRequest("http://httpbin.org/ip", HttpMethod.Get)))
             {
-                var content = response.Content.Read();
-
-                response.Content.IsString().ShouldBeTrue();
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                 content.ShouldContain("origin");
 
-                response.Content.ContentType.ShouldBe("application/json");
+                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.ContentLength.ShouldBeGreaterThan(0);
+                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.HttpExceptionStatus.ShouldBeNull();
 
                 response.Exception.ShouldBeNull();    
             }
@@ -68,19 +67,15 @@ namespace Jal.HttpClient.Tests
         {
             using (var response = await _sut.SendAsync(new HttpRequest("http://httpbin.org/get", HttpMethod.Get)))
             {
-                var content = response.Content.Read();
-
-                response.Content.IsString().ShouldBeTrue();
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                 content.ShouldContain("origin");
 
-                response.Content.ContentType.ShouldBe("application/json");
+                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.ContentLength.ShouldBeGreaterThan(0);
+                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.HttpExceptionStatus.ShouldBeNull();
 
                 response.Exception.ShouldBeNull();
             }
@@ -91,25 +86,21 @@ namespace Jal.HttpClient.Tests
         {
             var request = new HttpRequest("http://httpbin.org/get", HttpMethod.Get);
 
-            request.Headers.Add(new HttpHeader("Header1", "value"));
+            request.Headers.Add("Header1", "value");
 
             using (var response = _sut.Send(request))
             {
-                var content = response.Content.Read();
-
-                response.Content.IsString().ShouldBeTrue();
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                 content.ShouldContain("Header1");
 
                 content.ShouldContain("value");
 
-                response.Content.ContentType.ShouldBe("application/json");
+                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.ContentLength.ShouldBeGreaterThan(0);
+                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.HttpExceptionStatus.ShouldBeNull();
 
                 response.Exception.ShouldBeNull();
             }
@@ -120,27 +111,23 @@ namespace Jal.HttpClient.Tests
         {
             var request = new HttpRequest("http://httpbin.org/get", HttpMethod.Get);
 
-            request.Headers.Add(new HttpHeader("Header1", "value"));
+            request.Headers.Add("Header1", "value");
 
-            request.Headers.Add(new HttpHeader("Header1", "value"));
+            request.Headers.Add("Header1", "value");
 
             using (var response = _sut.Send(request))
             {
-                var content = response.Content.Read();
-
-                response.Content.IsString().ShouldBeTrue();
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                 content.ShouldContain("Header1");
 
                 content.ShouldContain("value");
 
-                response.Content.ContentType.ShouldBe("application/json");
+                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.ContentLength.ShouldBeGreaterThan(0);
+                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.HttpExceptionStatus.ShouldBeNull();
 
                 response.Exception.ShouldBeNull();
             }
@@ -155,21 +142,17 @@ namespace Jal.HttpClient.Tests
 
             using (var response = _sut.Send(request))
             {
-                var content = response.Content.Read();
-
-                response.Content.IsString().ShouldBeTrue();
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                 content.ShouldContain("parameter");
 
                 content.ShouldContain("value");
 
-                response.Content.ContentType.ShouldBe("application/json");
+                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.ContentLength.ShouldBeGreaterThan(0);
+                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.HttpExceptionStatus.ShouldBeNull();
 
                 response.Exception.ShouldBeNull();
             }
@@ -179,19 +162,15 @@ namespace Jal.HttpClient.Tests
         {
             using (var response = _sut.Send(new HttpRequest("http://httpbin.org/xml", HttpMethod.Get)))
             {
-                var content = response.Content.Read();
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                 content.ShouldContain("xml");
 
-                response.Content.IsString().ShouldBeTrue();
+                response.Content.Headers.ContentType.MediaType.ShouldBe("application/xml");
 
-                response.Content.ContentType.ShouldBe("application/xml");
-
-                response.Content.ContentLength.ShouldBeGreaterThan(0);
+                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.HttpExceptionStatus.ShouldBeNull();
 
                 response.Exception.ShouldBeNull();
             }
@@ -202,21 +181,15 @@ namespace Jal.HttpClient.Tests
         {
             using (var response = _sut.Send(new HttpRequest("http://httpbin.org/html", HttpMethod.Get)))
             {
-                var content = response.Content.Read();
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                 content.ShouldContain("<html>");
 
-                response.Content.IsString().ShouldBeTrue();
+                response.Content.Headers.ContentType.MediaType.ShouldContain("text/html");
 
-                response.Content.ContentType.ShouldContain("text/html");
-
-                response.Content.CharacterSet.ShouldBe("utf-8");
-
-                response.Content.ContentLength.ShouldBeGreaterThan(0);
+                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.HttpExceptionStatus.ShouldBeNull();
 
                 response.Exception.ShouldBeNull();
             }
@@ -227,23 +200,17 @@ namespace Jal.HttpClient.Tests
         {
             using (var response = _sut.Send(new HttpRequest("http://httpbin.org/image/png", HttpMethod.Get)))
             {
-                var image = Image.FromStream(response.Content.Stream);
+                var image = Image.FromStream(response.Content.ReadAsStreamAsync().GetAwaiter().GetResult());
 
                 var same = ImageFormat.Png.Equals(image.RawFormat);
 
                 same.ShouldBeTrue();
 
-                response.Content.IsString().ShouldBeFalse();
+                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
-                response.Content.ContentType.ShouldContain("image/png");
-
-                response.Content.CharacterSet.ShouldBe("");
-
-                response.Content.ContentLength.ShouldBeGreaterThan(0);
+                response.Content.Headers.ContentType.MediaType.ShouldBe("image/png");
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.HttpExceptionStatus.ShouldBeNull();
 
                 response.Exception.ShouldBeNull();
             }
@@ -254,15 +221,11 @@ namespace Jal.HttpClient.Tests
         {
             using (var response = _sut.Send(new HttpRequest("http://httpbin.org/status/404", HttpMethod.Get)))
             {
-                response.Content.ContentType.ShouldContain("text/html");
-
-                response.Content.CharacterSet.ShouldBe("utf-8");
+                response.Content.Headers.ContentType.MediaType.ShouldBe("text/html");
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.NotFound);
 
-                response.HttpExceptionStatus.ShouldBe(WebExceptionStatus.ProtocolError);
-
-                response.HttpExceptionStatus.ShouldNotBeNull();
+                response.Exception.ShouldBeNull();
             }
         }
 
@@ -271,15 +234,11 @@ namespace Jal.HttpClient.Tests
         {
             using (var response = _sut.Send(new HttpRequest("http://httpbin.org/status/500", HttpMethod.Get)))
             {
-                response.Content.ContentType.ShouldContain("text/html");
-
-                response.Content.CharacterSet.ShouldBe("utf-8");
+                response.Content.Headers.ContentType.MediaType.ShouldBe("text/html");
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.InternalServerError);
 
-                response.HttpExceptionStatus.ShouldBe(WebExceptionStatus.ProtocolError);
-
-                response.HttpExceptionStatus.ShouldNotBeNull();
+                response.Exception.ShouldBeNull();
             }
         }
 
@@ -288,28 +247,20 @@ namespace Jal.HttpClient.Tests
         {
             var request = new HttpRequest("http://httpbin.org/post", HttpMethod.Post)
             {
-                Content = new HttpRequestStringContent(@"{""message"":""Hello World!!""}")
-                {
-                    ContentType = "application/json",
-                    CharacterSet = "charset=utf-8"
-                }
+                Content = new StringContent(@"{""message"":""Hello World!!""}", Encoding.UTF8, "application/json")
             };
 
             using (var response = _sut.Send(request))
             {
-                var content = response.Content.Read();
-
-                response.Content.IsString().ShouldBeTrue();
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                 content.ShouldContain("Hello World");
 
-                response.Content.ContentType.ShouldBe("application/json");
+                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.ContentLength.ShouldBeGreaterThan(0);
+                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.HttpExceptionStatus.ShouldBeNull();
 
                 response.Exception.ShouldBeNull();
             }
@@ -318,30 +269,33 @@ namespace Jal.HttpClient.Tests
         [Test]
         public void Send_PostStreamJsonUtf8_Ok()
         {
+            var c = new StreamContent(new MemoryStream(Encoding.UTF8.GetBytes(@"{""message"":""Hello World!!""}")));
+
+            c.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            c.Headers.ContentEncoding.Add("utf-8");
+
             var request = new HttpRequest("http://httpbin.org/post", HttpMethod.Post)
             {
-                Content = new HttpRequestStreamContent(new MemoryStream(Encoding.UTF8.GetBytes(@"{""message"":""Hello World!!""}")))
-                {
-                    ContentType = "application/json",
-                    CharacterSet = "charset=utf-8"
-                }, Timeout = 60000
+                //Content = new HttpRequestStreamContent(new MemoryStream(Encoding.UTF8.GetBytes(@"{""message"":""Hello World!!""}")))
+                //{
+                //    ContentType = "application/json",
+                //    CharacterSet = "charset=utf-8"
+                //},
+                Content = c,
+                Timeout = 60000
             };
 
             using (var response = _sut.Send(request))
             {
-                var content = response.Content.Read();
-
-                response.Content.IsString().ShouldBeTrue();
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                 content.ShouldContain("Hello World");
 
-                response.Content.ContentType.ShouldBe("application/json");
+                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.ContentLength.ShouldBeGreaterThan(0);
+                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.HttpExceptionStatus.ShouldBeNull();
 
                 response.Exception.ShouldBeNull();
             }
@@ -350,31 +304,32 @@ namespace Jal.HttpClient.Tests
         [Test]
         public void Send_PostStreamJsonUtf7_Ok()
         {
+            var c = new StreamContent(new MemoryStream(Encoding.UTF7.GetBytes(@"{""message"":""Hello World!!""}")));
+
+            c.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            c.Headers.ContentEncoding.Add("utf-7");
             var request = new HttpRequest("http://httpbin.org/post", HttpMethod.Post)
             {
-                Content = new HttpRequestStreamContent(new MemoryStream(Encoding.UTF7.GetBytes(@"{""message"":""Hello World!!""}")))
-                {
-                    ContentType = "application/json",
-                    CharacterSet = "charset=utf-7"
-                },
+                //Content = new HttpRequestStreamContent(new MemoryStream(Encoding.UTF7.GetBytes(@"{""message"":""Hello World!!""}")))
+                //{
+                //    ContentType = "application/json",
+                //    CharacterSet = "charset=utf-7"
+                //},
+                Content = c,
                 Timeout = 60000
             };
 
             using (var response = _sut.Send(request))
             {
-                var content = response.Content.Read();
-
-                response.Content.IsString().ShouldBeTrue();
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                 content.ShouldContain("Hello World");
 
-                response.Content.ContentType.ShouldBe("application/json");
+                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.ContentLength.ShouldBeGreaterThan(0);
+                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.HttpExceptionStatus.ShouldBeNull();
 
                 response.Exception.ShouldBeNull();
             }
@@ -385,28 +340,25 @@ namespace Jal.HttpClient.Tests
         {
             var request = new HttpRequest("http://httpbin.org/post", HttpMethod.Post)
             {
-                Content = new HttpRequestStringContent(@"<message>Hello World!!</message>")
-                {
-                    ContentType = "text/xml",
-                    CharacterSet = "charset=utf-8"
-                }
+                //Content = new HttpRequestStringContent(@"<message>Hello World!!</message>")
+                //{
+                //    ContentType = "text/xml",
+                //    CharacterSet = "charset=utf-8"
+                //}
+                Content = new StringContent(@"<message>Hello World!!</message>", Encoding.UTF7, "text/xml")
             };
 
             using (var response = _sut.Send(request))
             {
-                var content = response.Content.Read();
-
-                response.Content.IsString().ShouldBeTrue();
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                 content.ShouldContain("Hello World");
 
-                response.Content.ContentType.ShouldBe("application/json");
+                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.ContentLength.ShouldBeGreaterThan(0);
+                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.HttpExceptionStatus.ShouldBeNull();
 
                 response.Exception.ShouldBeNull();
             }
@@ -417,28 +369,25 @@ namespace Jal.HttpClient.Tests
         {
             var request = new HttpRequest("http://httpbin.org/post", HttpMethod.Post)
             {
-                Content = new HttpRequestStringContent(@"message=Hello%20World!!")
-                {
-                    ContentType = "application/x-www-form-urlencoded",
-                    CharacterSet = "charset=utf-7"
-                }
+                //Content = new HttpRequestStringContent(@"message=Hello%20World!!")
+                //{
+                //    ContentType = "application/x-www-form-urlencoded",
+                //    CharacterSet = "charset=utf-7"
+                //}
+                Content = new FormUrlEncodedContent(new KeyValuePair<string, string>[] { new KeyValuePair<string, string>("message", "hello world") } )
             };
 
             using (var response = _sut.Send(request))
             {
-                var content = response.Content.Read();
-
-                response.Content.IsString().ShouldBeTrue();
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                 //content.ShouldContain("Hello World");
 
-                response.Content.ContentType.ShouldBe("application/json");
+                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.ContentLength.ShouldBeGreaterThan(0);
+                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.HttpExceptionStatus.ShouldBeNull();
 
                 response.Exception.ShouldBeNull();
             }
@@ -449,28 +398,25 @@ namespace Jal.HttpClient.Tests
         {
             var request = new HttpRequest("http://httpbin.org/post", HttpMethod.Post)
             {
-                Content = new HttpRequestStringContent(@"message=Hello%20World!!")
-                {
-                    ContentType = "application/x-www-form-urlencoded",
-                    CharacterSet = "charset=utf-8"
-                }
+                //Content = new HttpRequestStringContent(@"message=Hello%20World!!")
+                //{
+                //    ContentType = "application/x-www-form-urlencoded",
+                //    CharacterSet = "charset=utf-8"
+                //}
+                Content = new FormUrlEncodedContent(new KeyValuePair<string, string>[] { new KeyValuePair<string, string>("message", "hello world") })
             };
 
             using (var response = _sut.Send(request))
             {
-                var content = response.Content.Read();
-
-                response.Content.IsString().ShouldBeTrue();
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                 content.ShouldContain("Hello World");
 
-                response.Content.ContentType.ShouldBe("application/json");
+                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.ContentLength.ShouldBeGreaterThan(0);
+                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.HttpExceptionStatus.ShouldBeNull();
 
                 response.Exception.ShouldBeNull();
             }
@@ -481,26 +427,23 @@ namespace Jal.HttpClient.Tests
         {
             var request = new HttpRequest("http://httpbin.org/post", HttpMethod.Post)
             {
-                Content = new HttpRequestStringContent(@"{""message"":""Hello World!!""}")
-                {
-                    ContentType = "application/json",
-                    CharacterSet = "charset=utf-7"
-                }
+                //Content = new HttpRequestStringContent(@"{""message"":""Hello World!!""}")
+                //{
+                //    ContentType = "application/json",
+                //    CharacterSet = "charset=utf-7"
+                //}
+                Content = new StringContent(@"{""message"":""Hello World!!""}", Encoding.UTF7, "application/json")
             };
 
             using (var response = _sut.Send(request))
             {
-                var content = response.Content.Read();
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
-                response.Content.IsString().ShouldBeTrue();
+                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.ContentType.ShouldBe("application/json");
-
-                response.Content.ContentLength.ShouldBeGreaterThan(0);
+                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.HttpExceptionStatus.ShouldBeNull();
 
                 response.Exception.ShouldBeNull();
             }
@@ -511,28 +454,25 @@ namespace Jal.HttpClient.Tests
         {
             var request = new HttpRequest("http://httpbin.org/put", HttpMethod.Put)
             {
-                Content = new HttpRequestStringContent(@"{""message"":""Hello World!!""}")
-                {
-                    ContentType = "application/json",
-                    CharacterSet = "charset=utf-8"
-                }
+                //Content = new HttpRequestStringContent(@"{""message"":""Hello World!!""}")
+                //{
+                //    ContentType = "application/json",
+                //    CharacterSet = "charset=utf-8"
+                //}
+                Content = new StringContent(@"{""message"":""Hello World!!""}", Encoding.UTF8, "application/json")
             };
 
             using (var response = _sut.Send(request))
             {
-                var content = response.Content.Read();
-
-                response.Content.IsString().ShouldBeTrue();
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                 content.ShouldContain("Hello World");
 
-                response.Content.ContentType.ShouldBe("application/json");
+                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.ContentLength.ShouldBeGreaterThan(0);
+                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.HttpExceptionStatus.ShouldBeNull();
 
                 response.Exception.ShouldBeNull();
             }
@@ -543,28 +483,25 @@ namespace Jal.HttpClient.Tests
         {
             var request = new HttpRequest("http://httpbin.org/delete", HttpMethod.Delete)
             {
-                Content = new HttpRequestStringContent(@"{""message"":""Hello World!!""}")
-                {
-                    ContentType = "application/json",
-                    CharacterSet = "charset=utf-8"
-                }
+                //Content = new HttpRequestStringContent(@"{""message"":""Hello World!!""}")
+                //{
+                //    ContentType = "application/json",
+                //    CharacterSet = "charset=utf-8"
+                //}
+                Content = new StringContent(@"{""message"":""Hello World!!""}", Encoding.UTF8, "application/json")
             };
 
             using (var response = _sut.Send(request))
             {
-                var content = response.Content.Read();
-
-                response.Content.IsString().ShouldBeTrue();
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                 content.ShouldContain("Hello World");
 
-                response.Content.ContentType.ShouldBe("application/json");
+                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.ContentLength.ShouldBeGreaterThan(0);
+                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.HttpExceptionStatus.ShouldBeNull();
 
                 response.Exception.ShouldBeNull();
             }
@@ -581,8 +518,6 @@ namespace Jal.HttpClient.Tests
             using (var response = _sut.Send(request))
             {
                 response.HttpStatusCode.ShouldBeNull();
-
-                response.HttpExceptionStatus.ShouldBe(WebExceptionStatus.Timeout);
 
                 response.Exception.ShouldNotBeNull();
             }
@@ -610,24 +545,26 @@ namespace Jal.HttpClient.Tests
         [Test]
         public void Send_GetGzip_Ok()
         {
-            var request = new HttpRequest("http://httpbin.org/gzip", HttpMethod.Get)
-                          {
-                              Decompression = DecompressionMethods.GZip
-                          };
+            HttpClientHandler handler = new HttpClientHandler()
+            {
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+            };
+
+            var httpclient = new System.Net.Http.HttpClient(handler);
+
+            var request = new HttpRequest("http://httpbin.org/gzip", HttpMethod.Get, httpclient);
 
             using (var response = _sut.Send(request))
             {
-                var content = response.Content.Read();
-
-                response.Content.IsString().ShouldBeTrue();
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                 content.ShouldContain("gzipped");
 
-                response.Content.ContentType.ShouldBe("application/json");
+                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
+
+                //response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
                 response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.HttpExceptionStatus.ShouldBeNull();
 
                 response.Exception.ShouldBeNull();
             }

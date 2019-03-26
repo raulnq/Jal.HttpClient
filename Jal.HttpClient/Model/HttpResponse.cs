@@ -1,30 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace Jal.HttpClient.Model
 {
     public class HttpResponse : IDisposable
     {
-        public Uri Uri { get; set; }
 
-        public HttpResponseContent Content { get; set; }
 
-        public List<HttpHeader> Headers { get; set; }
+        public HttpResponse(HttpRequest request)
+        {
+            HttpRequest = request;
+        }
 
-        public HttpStatusCode? HttpStatusCode { get; set; }
+        public HttpRequest HttpRequest { get; }
 
-        public WebExceptionStatus? HttpExceptionStatus { get; set; }
+        public HttpResponseMessage Message { get; set; }
+
+        public HttpContent Content
+        {
+            get
+            {
+                return Message?.Content;
+            }
+        }
+
+        public HttpResponseHeaders Headers
+        {
+            get
+            {
+                return Message?.Headers;
+            }
+        }
+
+        public HttpStatusCode? HttpStatusCode
+        {
+            get
+            {
+                return Message?.StatusCode;
+            }
+        }
 
         public Exception Exception { get; set; }
 
         public double Duration { get; set; }
-
-        public HttpResponse()
-        {
-            Headers= new List<HttpHeader>();
-            Content = new HttpResponseContent();
-        }
 
         public void Dispose()
         {
@@ -35,9 +56,15 @@ namespace Jal.HttpClient.Model
         {
             if (disposing)
             {
-                Content?.Dispose();
-                Content = null;
-                Headers = null;
+                if(Message!=null)
+                {
+                    Message.Dispose();
+                }
+
+                if(HttpRequest!=null)
+                {
+                    HttpRequest.Dispose();
+                }       
             }
         }
     }

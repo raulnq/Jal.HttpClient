@@ -6,11 +6,11 @@ namespace Jal.HttpClient.Impl.Fluent
 {
     public class HttpContentDescriptor : IHttpContentTypeDescriptor
     {
-        private readonly HttpRequestContent _httpcontent;
+        private readonly System.Net.Http.HttpContent _httpcontent;
 
         private readonly HttpDescriptorContext _httpcontext;
 
-        public HttpContentDescriptor(HttpRequestContent httpcontent, HttpDescriptorContext httpcontext)
+        public HttpContentDescriptor(System.Net.Http.HttpContent httpcontent, HttpDescriptorContext httpcontext)
         {
             _httpcontent = httpcontent;
             _httpcontext = httpcontext;
@@ -18,13 +18,13 @@ namespace Jal.HttpClient.Impl.Fluent
 
         public IHttpContentTypeDescriptor WithCharacterSet(string characterset)
         {
-            _httpcontent.CharacterSet = characterset;
+            _httpcontent.Headers.ContentEncoding.Add(characterset);
             return this;
         }
 
         public IHttpContentTypeDescriptor WithContentType(string contenttype)
         {
-            _httpcontent.ContentType = contenttype;
+            _httpcontent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contenttype);
             return this;
         }
 

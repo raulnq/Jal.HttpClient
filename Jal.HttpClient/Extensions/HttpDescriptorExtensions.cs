@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using Jal.HttpClient.Impl.Fluent;
 using Jal.HttpClient.Interface.Fluent;
 using Jal.HttpClient.Model;
@@ -19,30 +20,15 @@ namespace Jal.HttpClient.Extensions
             return descriptor.WithIdentity(new HttpIdentity(id) { ParentId = parentid, OperationId = null });
         }
 
-        public static IHttpDescriptor GZip(this IHttpDescriptor descriptor)
-        {
-            return descriptor.WithDecompression(DecompressionMethods.GZip);
-        }
-
-        public static IHttpDescriptor Deflate(this IHttpDescriptor descriptor)
-        {
-            return descriptor.WithDecompression(DecompressionMethods.Deflate);
-        }
-
-        public static IHttpDescriptor DeflateGZip(this IHttpDescriptor descriptor)
-        {
-            return descriptor.WithDecompression(DecompressionMethods.GZip | DecompressionMethods.Deflate);
-        }
-
         public static IHttpDescriptor MultiPartFormData(this IHttpDescriptor descriptor, Action<IHttpMultiPartFormDataContentDescriptor> contentTypeDescriptorAction)
         {
-            var content = new HttpRequestMultiPartFormDataContent();
+            var content = new MultipartFormDataContent();
 
             var contentdescriptor = new HttpMultiPartFormDataContentDescriptor(content);
 
             contentTypeDescriptorAction(contentdescriptor);
 
-            descriptor.WithContent(content).WithContentType("multipart/form-data");
+            descriptor.WithContent(content)/*.WithContentType("multipart/form-data")*/;
 
             return descriptor;
         }
@@ -93,12 +79,12 @@ namespace Jal.HttpClient.Extensions
 
         public static IHttpContentTypeDescriptor WithContent(this IHttpDescriptor descriptor, string content)
         {
-            return descriptor.WithContent(new HttpRequestStringContent(content));
+            return descriptor.WithContent(new StringContent(content));
         }
 
-        public static IHttpContentTypeDescriptor WithContent(this IHttpDescriptor descriptor, Stream content, long bufferlenght = 4096)
+        public static IHttpContentTypeDescriptor WithContent(this IHttpDescriptor descriptor, Stream content, int bufferlenght = 4096)
         {
-            return descriptor.WithContent(new HttpRequestStreamContent(content, bufferlenght));
+            return descriptor.WithContent(new StreamContent(content, bufferlenght));
         }
 
         public static IHttpDescriptor WithQueryParameters(this IHttpDescriptor descriptor, object queryParams)

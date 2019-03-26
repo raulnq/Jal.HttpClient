@@ -15,12 +15,11 @@ namespace Jal.HttpClient.Impl.Fluent
 
         public void Add(string name, string value)
         {
-            var item = _httpRequest.Headers.FirstOrDefault(x => x.Name == name);
-            if (item != null)
+            if (_httpRequest.Headers.Contains(name))
             {
-                _httpRequest.Headers.Remove(item);
+                _httpRequest.Headers.Remove(name);
             }
-            _httpRequest.Headers.Add(new HttpHeader(name, value));
+            _httpRequest.Headers.Add(name, value);
         }
     }
 }

@@ -19,11 +19,9 @@ namespace Jal.HttpClient.Impl
 
         private static void AddAuthorizationHeader(HttpRequest request)
         {
-            var item = request.Headers.FirstOrDefault(x => x.Name == "Authorization");
-
-            if (item != null)
+            if (request.Headers.Contains("Authorization"))
             {
-                request.Headers.Remove(item);
+                request.Headers.Remove("Authorization");
             }
 
             if (request.Context.ContainsKey("username") && request.Context.ContainsKey("password"))
@@ -34,7 +32,7 @@ namespace Jal.HttpClient.Impl
 
                 if (!string.IsNullOrWhiteSpace(user) && !string.IsNullOrWhiteSpace(password))
                 {
-                    request.Headers.Add(new HttpHeader("Authorization", $"{"Basic"} {Convert.ToBase64String(Encoding.UTF8.GetBytes(user + ":" + password))}"));
+                    request.Headers.Add("Authorization", $"{"Basic"} {Convert.ToBase64String(Encoding.UTF8.GetBytes(user + ":" + password))}");
                 }
             }
         }

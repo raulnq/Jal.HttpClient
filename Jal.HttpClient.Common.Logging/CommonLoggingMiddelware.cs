@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Common.Logging;
@@ -34,7 +36,7 @@ namespace Jal.HttpClient.Common.Logging
         private StringBuilder BuildResponseLog(HttpResponse response, HttpRequest request)
         {
             StringBuilder builder = new StringBuilder();
-            builder.AppendLine($"HTTP/1.1 {response.HttpStatusCode}{response.HttpExceptionStatus} ({request.Identity.Id})");
+            builder.AppendLine($"HTTP/1.1 {response.HttpStatusCode} ({request.Identity.Id})");
             builder.AppendLine($"Duration: {response.Duration} ms");
             if (response.Exception != null)
             {
@@ -42,27 +44,34 @@ namespace Jal.HttpClient.Common.Logging
             }
             foreach (var httpHeader in response.Headers)
             {
-                builder.AppendLine($"{httpHeader.Name}: {httpHeader.Value} ");
+                builder.AppendLine($"{httpHeader.Key}: {httpHeader.Value.FirstOrDefault()} ");
             }
             builder.AppendLine("");
 
-            if (response.Content.IsString())
+            if (IsString(response.Content))
             {
-                builder.AppendLine($"{Truncate(response.Content.Read())}");
+                builder.AppendLine($"{Truncate(response.Content.ReadAsStringAsync().GetAwaiter().GetResult())}");
             }
 
             return builder;
         }
 
+        public bool IsString(HttpContent content)
+        {
+            var contenttype = content.Headers.ContentType.MediaType;
+
+            return !string.IsNullOrWhiteSpace(contenttype) && (contenttype.Contains("text") || contenttype.Contains("xml") || contenttype.Contains("json") || contenttype.Contains("html"));
+        }
+
         private static StringBuilder BuildRequestLog(HttpRequest request)
         {
             var builder = new StringBuilder();
-            builder.AppendLine($"{request.HttpMethod.ToString().ToUpper()} {request.Uri.PathAndQuery} HTTP/1.1 ({request.Identity.Id})");
+            builder.AppendLine($"{request.Method.ToString().ToUpper()} {request.Uri.PathAndQuery} HTTP/1.1 ({request.Identity.Id})");
             foreach (var httpHeader in request.Headers)
             {
-                builder.AppendLine($"{httpHeader.Name}: {httpHeader.Value} ");
+                builder.AppendLine($"{httpHeader.Key}: {httpHeader.Value} ");
             }
-            var contenttype = request.Content.GetContentType();
+            var contenttype = request.Content.Headers.ContentType.MediaType;
             if (!string.IsNullOrWhiteSpace(contenttype))
             {
                 builder.AppendLine($"Content-Type: {contenttype}");

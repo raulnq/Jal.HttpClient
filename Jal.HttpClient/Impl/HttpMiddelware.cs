@@ -1,97 +1,69 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Jal.HttpClient.Interface;
 using Jal.HttpClient.Model;
 
 namespace Jal.HttpClient.Impl
 {
-
     public class HttpMiddelware : IHttpMiddleware
     {
-        private readonly IHttpRequestToWebRequestConverter _requestconverter;
 
-        private readonly IWebResponseToHttpResponseConverter _responseconverter;
-
-        public HttpMiddelware(IHttpRequestToWebRequestConverter requestconverter, IWebResponseToHttpResponseConverter responseconverter)
+        public HttpResponse Send(HttpRequest request, Func<HttpRequest, HttpContext, HttpResponse> next, HttpContext context)
         {
-            _requestconverter = requestconverter;
-
-            _responseconverter = responseconverter;
+            return SendAsync(request, context).GetAwaiter().GetResult();
         }
 
-        public HttpResponse Send(HttpRequest httprequest, Func<HttpRequest, HttpContext, HttpResponse> next, HttpContext context)
+        public async Task<HttpResponse> SendAsync(HttpRequest request, HttpContext context)
         {
             var stopWatch = new Stopwatch();
 
             stopWatch.Start();
 
-            HttpResponse httpresponse = null;
+            HttpResponse response = new HttpResponse(request);
 
             try
             {
-                var request = _requestconverter.Convert(httprequest);
 
-                using (var response = (HttpWebResponse)request.GetResponse())
-                {
-                    httpresponse = _responseconverter.Convert(response);
+                response.Message = await request.HttpClient.SendAsync(request.Message, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
 
-                    return httpresponse;
-                } 
+                return response;
+                    
+                
             }
-            catch (WebException wex)
+            catch (WebException we)
             {
-                httpresponse = _responseconverter.Convert(wex);
-
-                return httpresponse;
+                response.Exception = we;
+            }
+            catch (InvalidOperationException ioe)
+            {
+                response.Exception = ioe;
+            }
+            catch (HttpRequestException hre)
+            {
+                response.Exception = hre;
+            }
+            catch (TaskCanceledException tce)
+            {
+                response.Exception = tce;
             }
             finally
             {
                 stopWatch.Stop();
 
-                if (httpresponse != null)
+                if (response != null)
                 {
-                    httpresponse.Duration = stopWatch.Elapsed.TotalMilliseconds;
+                    response.Duration = stopWatch.Elapsed.TotalMilliseconds;
                 }
             }
+            return response;
         }
 
-        public async Task<HttpResponse> SendAsync(HttpRequest httprequest, Func<HttpRequest, HttpContext, Task<HttpResponse>> next, HttpContext context)
+        public Task<HttpResponse> SendAsync(HttpRequest request, Func<HttpRequest, HttpContext, Task<HttpResponse>> next, HttpContext context)
         {
-            var stopWatch = new Stopwatch();
-
-            stopWatch.Start();
-
-            HttpResponse httpresponse = null;
-
-            try
-            {
-                var request = _requestconverter.Convert(httprequest);
-
-                using (var response = (HttpWebResponse) await request.GetResponseAsync())
-                {
-                    httpresponse = _responseconverter.Convert(response);
-
-                    return httpresponse;
-                }
-            }
-            catch (WebException wex)
-            {
-                httpresponse = _responseconverter.Convert(wex);
-
-                return httpresponse;
-            }
-            finally
-            {
-                stopWatch.Stop();
-
-                if (httpresponse != null)
-                {
-                    httpresponse.Duration = stopWatch.Elapsed.TotalMilliseconds;
-                }
-            }
+            return SendAsync(request, context);
         }
     }
 }

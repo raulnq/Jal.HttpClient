@@ -1,34 +1,39 @@
 using Jal.HttpClient.Interface.Fluent;
 using Jal.HttpClient.Model;
+using System.Net.Http;
 
 namespace Jal.HttpClient.Impl.Fluent
 {
     public class HttpMultiPartFormDataDispositionDescriptor : IHttpMultiPartFormDataDispositionDescriptor, IHttpMultiPartFormDataContentTypeDescriptor
     {
-        private readonly HttpRequestSimpleDataContent _httpcontent;
+        private readonly HttpContent _httpcontent;
 
-        public HttpMultiPartFormDataDispositionDescriptor(HttpRequestSimpleDataContent httpcontent)
+        public HttpMultiPartFormDataDispositionDescriptor(HttpContent httpcontent)
         {
             _httpcontent = httpcontent;
         }
 
         public IHttpMultiPartFormDataContentTypeDescriptor WithCharacterSet(string characterset)
         {
-            _httpcontent.CharacterSet = characterset;
+            _httpcontent.Headers.ContentEncoding.Add(characterset);
             return this;
         }
 
 
         public IHttpMultiPartFormDataContentTypeDescriptor WithDisposition(string name, string filename = "")
         {
-            _httpcontent.Disposition.Name = name;
-            _httpcontent.Disposition.FileName = filename;
+            var cd = new System.Net.Http.Headers.ContentDispositionHeaderValue(name);
+            if(!string.IsNullOrEmpty(filename))
+            {
+                cd.FileName = filename;
+            }
+            _httpcontent.Headers.ContentDisposition = cd;
             return this;
         }
 
         public IHttpMultiPartFormDataContentTypeDescriptor WithContentType(string contenttype)
         {
-            _httpcontent.ContentType = contenttype;
+            _httpcontent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contenttype);
             return this;
         }
     }

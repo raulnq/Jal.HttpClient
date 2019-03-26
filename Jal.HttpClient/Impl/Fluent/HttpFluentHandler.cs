@@ -1,6 +1,7 @@
 ﻿using Jal.HttpClient.Interface;
 using Jal.HttpClient.Interface.Fluent;
 using Jal.HttpClient.Model;
+using System.Net.Http;
 
 namespace Jal.HttpClient.Impl.Fluent
 {
@@ -44,7 +45,7 @@ namespace Jal.HttpClient.Impl.Fluent
 
         public IHttpDescriptor Patch(string url)
         {
-            return new HttpDescriptor(url, Handler, HttpMethod.Patch);
+            return new HttpDescriptor(url, Handler, new HttpMethod("PATCH"));
         }
 
         public IHttpDescriptor Options(string url)

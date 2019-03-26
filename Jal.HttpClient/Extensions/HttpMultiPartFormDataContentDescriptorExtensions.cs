@@ -1,5 +1,6 @@
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using Jal.HttpClient.Interface.Fluent;
 using Jal.HttpClient.Model;
 
@@ -34,12 +35,12 @@ namespace Jal.HttpClient.Extensions
 
         public static IHttpMultiPartFormDataDispositionDescriptor WithContent(this IHttpMultiPartFormDataContentDescriptor descriptor, string content)
         {
-            return descriptor.WithContent(new HttpRequestStringContent(content));
+            return descriptor.WithContent(new StringContent(content));
         }
 
-        public static IHttpMultiPartFormDataDispositionDescriptor WithContent(this IHttpMultiPartFormDataContentDescriptor descriptor, Stream content, long bufferlenght = 4096)
+        public static IHttpMultiPartFormDataDispositionDescriptor WithContent(this IHttpMultiPartFormDataContentDescriptor descriptor, Stream content, int bufferlenght = 4096)
         {
-            return descriptor.WithContent(new HttpRequestStreamContent(content, bufferlenght));
+            return descriptor.WithContent(new StreamContent(content, bufferlenght));
         }
     }
 }
