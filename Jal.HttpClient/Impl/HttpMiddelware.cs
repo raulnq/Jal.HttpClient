@@ -27,7 +27,7 @@ namespace Jal.HttpClient.Impl
             try
             {
                 //response.Message = await request.HttpClient.SendAsync(request.Message, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
-                response.Message = await request.HttpClient.SendAsync(request.Message).ConfigureAwait(false);
+                response.Message = await request.Client.SendAsync(request.Message).ConfigureAwait(false);
 
                 return response;
             }

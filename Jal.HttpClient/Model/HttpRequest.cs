@@ -8,7 +8,7 @@ namespace Jal.HttpClient.Model
     {
         public HttpRequestMessage Message { get; set; }
 
-        public System.Net.Http.HttpContent Content
+        public HttpContent Content
         {
             get
             {
@@ -20,7 +20,7 @@ namespace Jal.HttpClient.Model
             }
         }
 
-        public System.Net.Http.HttpClient HttpClient { get; internal set; }
+        public System.Net.Http.HttpClient Client { get; internal set; }
 
         public bool DisposeClient { get; }
 
@@ -38,17 +38,17 @@ namespace Jal.HttpClient.Model
             DisposeClient = true;
         }
 
-        public HttpRequest(string uri, HttpMethod httpMethod, Func<System.Net.Http.HttpClient> factory) :
-        this(uri, httpMethod, factory())
+        public HttpRequest(string uri, HttpMethod method, Func<System.Net.Http.HttpClient> factory) :
+        this(uri, method, factory())
         {
 
         }
 
-        public HttpRequest(string uri, System.Net.Http.HttpMethod httpMethod, System.Net.Http.HttpClient httpclient)
+        public HttpRequest(string uri, HttpMethod method, System.Net.Http.HttpClient client)
         {
-            Message = new System.Net.Http.HttpRequestMessage(httpMethod, uri);
+            Message = new HttpRequestMessage(method, uri);
 
-            HttpClient = httpclient;
+            Client = client;
             
             QueryParameters = new List<HttpQueryParameter>();
 
@@ -77,12 +77,12 @@ namespace Jal.HttpClient.Model
 
                 Message = null;
 
-                if (HttpClient != null && DisposeClient)
+                if (Client != null && DisposeClient)
                 {
-                    HttpClient.Dispose(); 
+                    Client.Dispose(); 
                 }
 
-                HttpClient = null;
+                Client = null;
             }
         }
     }

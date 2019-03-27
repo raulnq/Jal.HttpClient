@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Jal.HttpClient.Interface;
 using System.Runtime.Caching;
 using Jal.HttpClient.Model;
-using System.IO;
 using Jal.ChainOfResponsability.Intefaces;
 using Jal.ChainOfResponsability.Model;
 using System.Net.Http;

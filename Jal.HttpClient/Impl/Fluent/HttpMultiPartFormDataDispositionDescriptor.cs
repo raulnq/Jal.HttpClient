@@ -1,5 +1,4 @@
 using Jal.HttpClient.Interface.Fluent;
-using Jal.HttpClient.Model;
 using System.Net.Http;
 
 namespace Jal.HttpClient.Impl.Fluent

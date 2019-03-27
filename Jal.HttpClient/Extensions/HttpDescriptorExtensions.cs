@@ -97,11 +97,11 @@ namespace Jal.HttpClient.Extensions
                 {
                     foreach (var property in properties)
                     {
-                        var key = property.Name;
+                        var name = property.Name;
                         var value = property.GetValue(queryParams);
                         if (value != null)
                         {
-                            x.Add(key, value.ToString());
+                            x.Add(name, value.ToString());
                         }
                     }
                 });

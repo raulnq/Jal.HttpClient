@@ -10,31 +10,31 @@ namespace Jal.HttpClient.Impl.Fluent
 {
     public class HttpDescriptor : IHttpDescriptor, IHttpContentTypeDescriptor
     {
-        private readonly HttpDescriptorContext _httpcontext;
+        private readonly Model.HttpContextDescriptor _httpcontext;
         
         public HttpDescriptor(string url, IHttpHandler httphandler, HttpMethod httpMethod, System.Net.Http.HttpClient httpclient)
         {
             if(httpclient==null)
             {
-                _httpcontext = new HttpDescriptorContext(new HttpRequest(url, httpMethod), httphandler);
+                _httpcontext = new Model.HttpContextDescriptor(new HttpRequest(url, httpMethod), httphandler);
             }
             else
             {
-                _httpcontext = new HttpDescriptorContext(new HttpRequest(url, httpMethod, httpclient), httphandler);
+                _httpcontext = new Model.HttpContextDescriptor(new HttpRequest(url, httpMethod, httpclient), httphandler);
             }
             
         }
 
         public IHttpDescriptor WithAcceptedType(string acceptedtype)
         {
-            _httpcontext.HttpRequest.Message.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue(acceptedtype));
+            _httpcontext.Request.Message.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue(acceptedtype));
 
             return this;
         }
 
         public IHttpContentTypeDescriptor WithContent(HttpContent requestContent)
         {
-            _httpcontext.HttpRequest.Message.Content = requestContent;
+            _httpcontext.Request.Message.Content = requestContent;
 
             return this;
         }
@@ -57,26 +57,26 @@ namespace Jal.HttpClient.Impl.Fluent
         {
             if (_httpcontext.QueryParemeterDescriptorAction != null)
             {
-                var queryParemeterDescriptor = new HttpQueryParameterDescriptor(_httpcontext.HttpRequest);
+                var queryParemeterDescriptor = new HttpQueryParameterDescriptor(_httpcontext.Request);
 
                 _httpcontext.QueryParemeterDescriptorAction(queryParemeterDescriptor);
             }
 
             if (_httpcontext.MiddlewareDescriptorAction != null)
             {
-                var middlewareParemeterDescriptor = new HttpMiddlewareDescriptor(_httpcontext.HttpRequest);
+                var middlewareParemeterDescriptor = new HttpMiddlewareDescriptor(_httpcontext.Request);
 
                 _httpcontext.MiddlewareDescriptorAction(middlewareParemeterDescriptor);
             }
 
             if (_httpcontext.HeaderDescriptorAction != null)
             {
-                var headerDescriptor = new HttpHeaderDescriptor(_httpcontext.HttpRequest);
+                var headerDescriptor = new HttpHeaderDescriptor(_httpcontext.Request);
 
                 _httpcontext.HeaderDescriptorAction(headerDescriptor);
             }
 
-            return await _httpcontext.HttpHandler.SendAsync(_httpcontext.HttpRequest);
+            return await _httpcontext.Handler.SendAsync(_httpcontext.Request);
         }
 
         public IHttpDescriptor WithMiddleware(Action<IHttpMiddlewareDescriptor> action)
@@ -88,14 +88,14 @@ namespace Jal.HttpClient.Impl.Fluent
 
         public IHttpDescriptor WithIdentity(HttpIdentity identity)
         {
-            _httpcontext.HttpRequest.Identity = identity;
+            _httpcontext.Request.Identity = identity;
 
             return this;
         }
 
         public IHttpContentTypeDescriptor WithContentType(string contenttype)
         {
-            _httpcontext.HttpRequest.Message.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contenttype);
+            _httpcontext.Request.Message.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contenttype);
 
             return this;
         }

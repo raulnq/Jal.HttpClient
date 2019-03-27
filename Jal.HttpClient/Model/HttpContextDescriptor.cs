@@ -4,11 +4,11 @@ using Jal.HttpClient.Interface.Fluent;
 
 namespace Jal.HttpClient.Model
 {
-    public class HttpDescriptorContext
+    public class HttpContextDescriptor
     {
-        public HttpRequest HttpRequest { get; set; }
+        public HttpRequest Request { get; }
 
-        public IHttpHandler HttpHandler { get; set; }
+        public IHttpHandler Handler { get; }
 
         public Action<IHttpQueryParameterDescriptor> QueryParemeterDescriptorAction { get; set; }
 
@@ -16,10 +16,10 @@ namespace Jal.HttpClient.Model
 
         public Action<IHttpMiddlewareDescriptor> MiddlewareDescriptorAction { get; set; }
 
-        public HttpDescriptorContext(HttpRequest httprequest, IHttpHandler httphandler)
+        public HttpContextDescriptor(HttpRequest request, IHttpHandler handler)
         {
-            HttpRequest = httprequest;
-            HttpHandler = httphandler;
+            Request = request;
+            Handler = handler;
         }
     }
 }

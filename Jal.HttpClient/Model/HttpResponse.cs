@@ -7,10 +7,10 @@ namespace Jal.HttpClient.Model
     {
         public HttpResponse(HttpRequest request)
         {
-            HttpRequest = request;
+            Request = request;
         }
 
-        public HttpRequest HttpRequest { get; internal set; }
+        public HttpRequest Request { get; internal set; }
 
         public HttpResponseMessage Message { get; set; }
 
@@ -33,11 +33,11 @@ namespace Jal.HttpClient.Model
                     Message = null;
                 }
 
-                if(HttpRequest!=null)
+                if(Request!=null)
                 {
-                    HttpRequest.Dispose();
+                    Request.Dispose();
 
-                    HttpRequest = null;
+                    Request = null;
                 }       
             }
         }
