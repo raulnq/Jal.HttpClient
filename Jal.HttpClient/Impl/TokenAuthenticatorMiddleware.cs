@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Jal.HttpClient.Impl
 {
-    public class TokenAuthenticatorMiddleware : IMiddleware<HttpMessageWrapper>, IMiddlewareAsync<HttpMessageWrapper>
+    public class TokenAuthenticatorMiddleware : IMiddlewareAsync<HttpWrapper>
     {
         private static void AddAuthorizationHeader(HttpRequest request)
         {
@@ -18,19 +18,12 @@ namespace Jal.HttpClient.Impl
 
                 if (!string.IsNullOrWhiteSpace(token) && !string.IsNullOrWhiteSpace(type))
                 {
-                    request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue($"{type}", token);
+                    request.Message.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue($"{type}", token);
                 }
             }
         }
 
-        public void Execute(Context<HttpMessageWrapper> context, Action<Context<HttpMessageWrapper>> next)
-        {
-            AddAuthorizationHeader(context.Data.Request);
-
-            next(context);
-        }
-
-        public Task ExecuteAsync(Context<HttpMessageWrapper> context, Func<Context<HttpMessageWrapper>, Task> next)
+        public Task ExecuteAsync(Context<HttpWrapper> context, Func<Context<HttpWrapper>, Task> next)
         {
             AddAuthorizationHeader(context.Data.Request);
 

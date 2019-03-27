@@ -5,16 +5,16 @@ namespace Jal.HttpClient.Impl.Fluent
 {
     public class HttpQueryParameterDescriptor : IHttpQueryParameterDescriptor
     {
-        private readonly HttpRequest _httpRequest;
+        private readonly HttpRequest _request;
 
-        public HttpQueryParameterDescriptor(HttpRequest httpRequest)
+        public HttpQueryParameterDescriptor(HttpRequest request)
         {
-            _httpRequest = httpRequest;
+            _request = request;
         }
 
         public void Add(string name, string value)
         {
-            _httpRequest.QueryParameters.Add(new HttpQueryParameter(name, value));
+            _request.QueryParameters.Add(new HttpQueryParameter(name, value));
         }
     }
 }

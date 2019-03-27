@@ -13,13 +13,6 @@ namespace Jal.HttpClient.Impl.Fluent
             _httpcontent = httpcontent;
         }
 
-        public IHttpMultiPartFormDataContentTypeDescriptor WithEncoding(string encoding)
-        {
-            _httpcontent.Headers.ContentEncoding.Add(encoding);
-            return this;
-        }
-
-
         public IHttpMultiPartFormDataContentTypeDescriptor WithDisposition(string name, string filename = "")
         {
             var cd = new System.Net.Http.Headers.ContentDispositionHeaderValue(name);

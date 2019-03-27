@@ -1,8 +1,8 @@
 ﻿namespace Jal.HttpClient.Model
 {
-    public class HttpMessageWrapper
+    public class HttpWrapper
     {
-        public HttpMessageWrapper(HttpRequest request)
+        public HttpWrapper(HttpRequest request)
         {
             Request = request;
         }

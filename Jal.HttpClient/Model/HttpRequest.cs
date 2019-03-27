@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
 
 namespace Jal.HttpClient.Model
 {
     public class HttpRequest : IDisposable
     {
-        public System.Net.Http.HttpRequestMessage Message { get; set; }
+        public HttpRequestMessage Message { get; set; }
 
         public System.Net.Http.HttpContent Content
         {
@@ -21,34 +20,6 @@ namespace Jal.HttpClient.Model
             }
         }
 
-        public System.Net.Http.HttpMethod Method
-        {
-            get
-            {
-                return Message?.Method;
-            }
-        }
-
-        public System.Net.Http.Headers.HttpRequestHeaders Headers
-        {
-            get
-            {
-                return Message?.Headers;
-            }
-        }
-
-        public Uri Uri
-        {
-            get
-            {
-                return Message?.RequestUri;
-            }
-            set
-            {
-                Message.RequestUri = value;
-            }
-        }
-
         public System.Net.Http.HttpClient HttpClient { get; internal set; }
 
         public bool DisposeClient { get; }
@@ -57,33 +28,17 @@ namespace Jal.HttpClient.Model
 
         public Dictionary<string,object> Context { get; }
 
-        public List<HttpQueryParameter> QueryParameters { get; set; }
-
-        public int Timeout {
-            get
-            {
-                return HttpClient.Timeout.Milliseconds;
-            }
-            set
-            {
-                if(value>0)
-
-                HttpClient.Timeout = TimeSpan.FromMilliseconds(value);
-            }
-
-        }
+        public List<HttpQueryParameter> QueryParameters { get; }
 
         public HttpIdentity Identity { get; set; }
 
-
-
-        public HttpRequest(string uri, System.Net.Http.HttpMethod httpMethod):
+        public HttpRequest(string uri, HttpMethod httpMethod):
         this(uri, httpMethod, new System.Net.Http.HttpClient())
         {
             DisposeClient = true;
         }
 
-        public HttpRequest(string uri, System.Net.Http.HttpMethod httpMethod, Func<System.Net.Http.HttpClient> factory) :
+        public HttpRequest(string uri, HttpMethod httpMethod, Func<System.Net.Http.HttpClient> factory) :
         this(uri, httpMethod, factory())
         {
 

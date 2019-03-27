@@ -1,52 +1,51 @@
 ﻿using Jal.HttpClient.Interface;
 using Jal.HttpClient.Interface.Fluent;
-using Jal.HttpClient.Model;
 using System.Net.Http;
 
 namespace Jal.HttpClient.Impl.Fluent
 {
     public class HttpFluentHandler : IHttpFluentHandler
     {
-        public IHttpHandler Handler { get; }
+        private readonly IHttpHandler _handler;
 
-        public HttpFluentHandler(IHttpHandler httpHandler)
+        public HttpFluentHandler(IHttpHandler handler)
         {
-            Handler = httpHandler;
+            _handler = handler;
         }
 
         public IHttpDescriptor Get(string url, System.Net.Http.HttpClient httpclient = null)
         {
-            return new HttpDescriptor(url, Handler, HttpMethod.Get, httpclient);
+            return new HttpDescriptor(url, _handler, HttpMethod.Get, httpclient);
         }
 
         public IHttpDescriptor Post(string url, System.Net.Http.HttpClient httpclient = null)
         {
-            return new HttpDescriptor(url, Handler, HttpMethod.Post, httpclient);
+            return new HttpDescriptor(url, _handler, HttpMethod.Post, httpclient);
         }
 
         public IHttpDescriptor Put(string url, System.Net.Http.HttpClient httpclient = null)
         {
-            return new HttpDescriptor(url, Handler, HttpMethod.Put, httpclient);
+            return new HttpDescriptor(url, _handler, HttpMethod.Put, httpclient);
         }
 
         public IHttpDescriptor Head(string url, System.Net.Http.HttpClient httpclient = null)
         {
-            return new HttpDescriptor(url, Handler, HttpMethod.Head, httpclient);
+            return new HttpDescriptor(url, _handler, HttpMethod.Head, httpclient);
         }
 
         public IHttpDescriptor Delete(string url, System.Net.Http.HttpClient httpclient = null)
         {
-            return new HttpDescriptor(url, Handler, HttpMethod.Delete, httpclient = null);
+            return new HttpDescriptor(url, _handler, HttpMethod.Delete, httpclient);
         }
 
         public IHttpDescriptor Patch(string url, System.Net.Http.HttpClient httpclient = null)
         {
-            return new HttpDescriptor(url, Handler, new HttpMethod("PATCH"), httpclient);
+            return new HttpDescriptor(url, _handler, new HttpMethod("PATCH"), httpclient);
         }
 
         public IHttpDescriptor Options(string url, System.Net.Http.HttpClient httpclient = null)
         {
-            return new HttpDescriptor(url, Handler, HttpMethod.Options, httpclient);
+            return new HttpDescriptor(url, _handler, HttpMethod.Options, httpclient);
         }
     }
 

@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Jal.HttpClient.Interface;
 using Jal.HttpClient.Model;
 using Jal.ChainOfResponsability.Fluent.Interfaces;
-using Jal.ChainOfResponsability.Intefaces;
 
 namespace Jal.HttpClient.Impl
 {
@@ -20,53 +19,25 @@ namespace Jal.HttpClient.Impl
             _pipelinebuilder = pipelinebuilder;
         }
 
-        public HttpResponse Send(HttpRequest httpRequest)
+        private void UpdateRequestUri(HttpRequest request)
         {
-            try
+            var url = request.Message.RequestUri.AbsoluteUri;
+
+            if (request.QueryParameters.Count > 0)
             {
-                var wrapper = new HttpMessageWrapper(httpRequest);
-
-                var chain = _pipelinebuilder.For<HttpMessageWrapper>();
-
-                foreach (var type in httpRequest.MiddlewareTypes)
-                {
-                    chain.Use(type);
-                }
-
-                UpdateRequestUri(httpRequest);
-
-                chain.Use<HttpMiddelware>().Run(wrapper);
-
-                return wrapper.Response;
+                url = new UriBuilder(url) { Query = BuildQueryParameters(request.QueryParameters) }.Uri.ToString();
             }
-            catch (Exception ex)
-            {
-                return new HttpResponse(httpRequest)
-                {
-                    Exception = ex
-                };
-            }
+
+            request.Message.RequestUri = new Uri(url);
         }
 
-        private void UpdateRequestUri(HttpRequest httpRequest)
-        {
-            var url = httpRequest.Message.RequestUri.AbsoluteUri;
-
-            if (httpRequest.QueryParameters.Count > 0)
-            {
-                url = new UriBuilder(url) { Query = BuildQueryParameters(httpRequest.QueryParameters) }.Uri.ToString();
-            }
-
-            httpRequest.Uri = new Uri(url);
-        }
-
-        private string BuildQueryParameters(List<HttpQueryParameter> httpQueryParameters)
+        private string BuildQueryParameters(List<HttpQueryParameter> httpparameters)
         {
             var builder = new StringBuilder();
 
-            foreach (var httpQueryParameter in httpQueryParameters.Where(httpQueryParameter => !string.IsNullOrWhiteSpace(httpQueryParameter.Value)))
+            foreach (var httpparameter in httpparameters.Where(httpQueryParameter => !string.IsNullOrWhiteSpace(httpQueryParameter.Value)))
             {
-                builder.AppendFormat("{0}={1}&", WebUtility.UrlEncode(httpQueryParameter.Name), WebUtility.UrlEncode(httpQueryParameter.Value));
+                builder.AppendFormat("{0}={1}&", WebUtility.UrlEncode(httpparameter.Name), WebUtility.UrlEncode(httpparameter.Value));
             }
 
             var parameter = builder.ToString();
@@ -78,20 +49,20 @@ namespace Jal.HttpClient.Impl
             return parameter;
         }
 
-        public async Task<HttpResponse> SendAsync(HttpRequest httpRequest)
+        public async Task<HttpResponse> SendAsync(HttpRequest request)
         {
             try
             {
-                var wrapper = new HttpMessageWrapper(httpRequest);
+                var wrapper = new HttpWrapper(request);
 
-                var chain = _pipelinebuilder.ForAsync<HttpMessageWrapper>();
+                var chain = _pipelinebuilder.ForAsync<HttpWrapper>();
 
-                foreach (var type in httpRequest.MiddlewareTypes)
+                foreach (var type in request.MiddlewareTypes)
                 {
                     chain.UseAsync(type);
                 }
 
-                UpdateRequestUri(httpRequest);
+                UpdateRequestUri(request);
 
                 await chain.UseAsync<HttpMiddelware>().RunAsync(wrapper);
 
@@ -99,7 +70,7 @@ namespace Jal.HttpClient.Impl
             }
             catch (Exception ex)
             {
-                return new HttpResponse(httpRequest)
+                return new HttpResponse(request)
                 {
                     Exception = ex
                 };

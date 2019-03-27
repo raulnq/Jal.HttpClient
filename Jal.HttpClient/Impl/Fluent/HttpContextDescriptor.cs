@@ -5,16 +5,16 @@ namespace Jal.HttpClient.Impl.Fluent
 {
     public class HttpContextDescriptor : IHttpContextDescriptor
     {
-        private readonly HttpRequest _httpRequest;
+        private readonly HttpRequest _request;
 
-        public HttpContextDescriptor(HttpRequest httpRequest)
+        public HttpContextDescriptor(HttpRequest request)
         {
-            _httpRequest = httpRequest;
+            _request = request;
         }
 
         public void Add(string name, object value)
         {
-            _httpRequest.Context.Add(name, value);
+            _request.Context.Add(name, value);
         }
     }
 }

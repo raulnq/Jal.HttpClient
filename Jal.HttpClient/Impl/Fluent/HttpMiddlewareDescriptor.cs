@@ -8,23 +8,23 @@ namespace Jal.HttpClient.Impl.Fluent
 {
     public class HttpMiddlewareDescriptor : IHttpMiddlewareDescriptor
     {
-        private readonly HttpRequest _httpRequest;
+        private readonly HttpRequest _request;
 
-        public HttpMiddlewareDescriptor(HttpRequest httpRequest)
+        public HttpMiddlewareDescriptor(HttpRequest request)
         {
-            _httpRequest = httpRequest;
+            _request = request;
         }
 
-        public void Add<THttpMiddlewareType>(Action<IHttpContextDescriptor> action = null) where THttpMiddlewareType : IMiddleware<HttpMessageWrapper>, IMiddlewareAsync<HttpMessageWrapper>
+        public void Add<THttpMiddlewareType>(Action<IHttpContextDescriptor> action = null) where THttpMiddlewareType : IMiddlewareAsync<HttpWrapper>
         {
             var type = typeof(THttpMiddlewareType);
-            var item = _httpRequest.MiddlewareTypes.FirstOrDefault(x => x == type);
+            var item = _request.MiddlewareTypes.FirstOrDefault(x => x == type);
             if (item == null)
             {
-                _httpRequest.MiddlewareTypes.Add(type);
+                _request.MiddlewareTypes.Add(type);
                 if (action != null)
                 {
-                    var descriptor = new HttpContextDescriptor(_httpRequest);
+                    var descriptor = new HttpContextDescriptor(_request);
                     action(descriptor);
                 }
             }

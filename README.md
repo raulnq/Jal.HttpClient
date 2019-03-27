@@ -61,14 +61,14 @@ Get data
 
     using (var response = httpfluenthandler.Get("https://github.com/raulnq").Send)
     {
-        var content = response.Content.Read();
+        var content = response.Message.Content.Read();
     }
 
 Post Json data
 
     using (var response = httpfluenthandler.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").Send)
     {
-        var code = response.HttpStatusCode;
+        var code = response.Message.StatusCode;
     }
     
 Post Xml data

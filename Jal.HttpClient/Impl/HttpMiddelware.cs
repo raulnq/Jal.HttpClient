@@ -9,14 +9,9 @@ using Jal.HttpClient.Model;
 
 namespace Jal.HttpClient.Impl
 {
-    public class HttpMiddelware : IMiddleware<HttpMessageWrapper>, IMiddlewareAsync<HttpMessageWrapper>
+    public class HttpMiddelware : IMiddlewareAsync<HttpWrapper>
     {
-        public void Execute(Context<HttpMessageWrapper> context, Action<Context<HttpMessageWrapper>> next)
-        {
-            context.Data.Response = SendAsync(context.Data.Request).GetAwaiter().GetResult();
-        }
-
-        public async Task ExecuteAsync(Context<HttpMessageWrapper> context, Func<Context<HttpMessageWrapper>, Task> next)
+        public async Task ExecuteAsync(Context<HttpWrapper> context, Func<Context<HttpWrapper>, Task> next)
         {
             context.Data.Response = await SendAsync(context.Data.Request);
         }

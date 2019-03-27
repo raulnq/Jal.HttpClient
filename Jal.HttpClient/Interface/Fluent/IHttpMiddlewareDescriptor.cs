@@ -6,6 +6,6 @@ namespace Jal.HttpClient.Interface.Fluent
 {
     public interface IHttpMiddlewareDescriptor
     {
-        void Add<THttpMiddlewareType>(Action<IHttpContextDescriptor> action=null) where THttpMiddlewareType : IMiddleware<HttpMessageWrapper>, IMiddlewareAsync<HttpMessageWrapper>;
+        void Add<THttpMiddlewareType>(Action<IHttpContextDescriptor> action=null) where THttpMiddlewareType : IMiddlewareAsync<HttpWrapper>;
     }
 }

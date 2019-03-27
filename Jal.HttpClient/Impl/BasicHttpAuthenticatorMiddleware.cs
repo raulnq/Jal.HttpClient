@@ -8,9 +8,9 @@ using Jal.HttpClient.Model;
 namespace Jal.HttpClient.Impl
 {
 
-    public class BasicHttpAuthenticatorMiddleware : IMiddleware<HttpMessageWrapper>, IMiddlewareAsync<HttpMessageWrapper>
+    public class BasicHttpAuthenticatorMiddleware : IMiddlewareAsync<HttpWrapper>
     {
-        private static void AddAuthorizationHeader(HttpRequest request)
+        private void AddAuthorizationHeader(HttpRequest request)
         {
             if (request.Context.ContainsKey("username") && request.Context.ContainsKey("password"))
             {
@@ -20,19 +20,12 @@ namespace Jal.HttpClient.Impl
 
                 if (!string.IsNullOrWhiteSpace(user) && !string.IsNullOrWhiteSpace(password))
                 {
-                    request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes(user + ":" + password)));
+                    request.Message.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes(user + ":" + password)));
                 }
             }
         }
 
-        public void Execute(Context<HttpMessageWrapper> context, Action<Context<HttpMessageWrapper>> next)
-        {
-            AddAuthorizationHeader(context.Data.Request);
-
-            next(context);
-        }
-
-        public Task ExecuteAsync(Context<HttpMessageWrapper> context, Func<Context<HttpMessageWrapper>, Task> next)
+        public Task ExecuteAsync(Context<HttpWrapper> context, Func<Context<HttpWrapper>, Task> next)
         {
             AddAuthorizationHeader(context.Data.Request);
 

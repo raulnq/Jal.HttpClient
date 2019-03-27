@@ -10,7 +10,7 @@ namespace Jal.HttpClient.Common.Logging.Installer
     {
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
-            container.Register(Component.For<IMiddleware<HttpMessageWrapper>, IMiddlewareAsync<HttpMessageWrapper>>().ImplementedBy<CommonLoggingMiddelware>().Named(typeof(CommonLoggingMiddelware).FullName));
+            container.Register(Component.For<IMiddlewareAsync<HttpWrapper>>().ImplementedBy<CommonLoggingMiddelware>().Named(typeof(CommonLoggingMiddelware).FullName));
         }
     }
 }

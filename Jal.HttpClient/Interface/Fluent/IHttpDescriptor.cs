@@ -6,8 +6,6 @@ namespace Jal.HttpClient.Interface.Fluent
 {
     public interface IHttpDescriptor : IHttpContentDescriptor, IHttpSenderDescriptor
     {
-        IHttpDescriptor WithTimeout(int timeout);
-
         IHttpDescriptor WithIdentity(HttpIdentity identity);
 
         IHttpDescriptor WithAcceptedType(string acceptedtype);

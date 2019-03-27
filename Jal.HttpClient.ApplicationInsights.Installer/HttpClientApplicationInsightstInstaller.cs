@@ -17,10 +17,7 @@ namespace Jal.HttpClient.ApplicationInsights.Installer
 
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
-            container.Register(
-                Component.For<IMiddleware<HttpMessageWrapper>, IMiddlewareAsync<HttpMessageWrapper>>().ImplementedBy<ApplicationInsightsMiddelware>().Named(typeof(ApplicationInsightsMiddelware).FullName).DependsOn(new { applicationname = _applicationname })
-                );
+            container.Register(Component.For<IMiddlewareAsync<HttpWrapper>>().ImplementedBy<ApplicationInsightsMiddelware>().Named(typeof(ApplicationInsightsMiddelware).FullName).DependsOn(new { applicationname = _applicationname }));
         }
-
     }
 }

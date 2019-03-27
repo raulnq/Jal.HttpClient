@@ -10,22 +10,22 @@ namespace Jal.HttpClient.Extensions
     {
         public static IHttpMultiPartFormDataContentTypeDescriptor Json(this IHttpMultiPartFormDataContentDescriptor descriptor, string content, string name, string filename="")
         {
-            return descriptor.WithContent(content).WithDisposition(name, filename).WithContentType("application/json").Utf8();
+            return descriptor.WithContent(content).WithDisposition(name, filename).WithContentType("application/json");
         }
 
         public static IHttpMultiPartFormDataContentTypeDescriptor Xml(this IHttpMultiPartFormDataContentDescriptor descriptor, string content, string name, string filename = "")
         {
-            return descriptor.WithContent(content).WithDisposition(name, filename).WithContentType("text/xml").Utf8();
+            return descriptor.WithContent(content).WithDisposition(name, filename).WithContentType("text/xml");
         }
 
         public static IHttpMultiPartFormDataContentTypeDescriptor Text(this IHttpMultiPartFormDataContentDescriptor descriptor, string content, string name, string filename = "")
         {
-            return descriptor.WithContent(content).WithDisposition(name, filename).WithContentType("text/plain").Utf8();
+            return descriptor.WithContent(content).WithDisposition(name, filename).WithContentType("text/plain");
         }
 
         public static IHttpMultiPartFormDataContentTypeDescriptor Html(this IHttpMultiPartFormDataContentDescriptor descriptor, string content, string name, string filename = "")
         {
-            return descriptor.WithContent(content).WithDisposition(name, filename).WithContentType("text/html").Utf8();
+            return descriptor.WithContent(content).WithDisposition(name, filename).WithContentType("text/html");
         }
 
         public static IHttpMultiPartFormDataContentTypeDescriptor UrlEncoded(this IHttpMultiPartFormDataContentDescriptor descriptor, string content, string name, string filename = "")

@@ -6,8 +6,6 @@ namespace Jal.HttpClient.Interface
 
     public interface IHttpHandler
     {
-        HttpResponse Send(HttpRequest httpRequest);
-
-        Task<HttpResponse> SendAsync(HttpRequest httpRequest);
+        Task<HttpResponse> SendAsync(HttpRequest request);
     }
 }

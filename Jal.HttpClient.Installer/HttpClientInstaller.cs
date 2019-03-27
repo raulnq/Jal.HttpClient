@@ -16,13 +16,13 @@ namespace Jal.HttpClient.Installer
         {
             container.Register(
                 Component.For<IHttpHandler>().ImplementedBy<HttpHandler>(),
-                Component.For<IMiddleware<HttpMessageWrapper>, IMiddlewareAsync<HttpMessageWrapper>>().ImplementedBy<HttpMiddelware>().Named(typeof(HttpMiddelware).FullName),
+                Component.For<IMiddlewareAsync<HttpWrapper>>().ImplementedBy<HttpMiddelware>().Named(typeof(HttpMiddelware).FullName),
                 Component.For<IHttpFluentHandler>().ImplementedBy<HttpFluentHandler>()
                 );
 
-            container.Register(Component.For<IMiddleware<HttpMessageWrapper>, IMiddlewareAsync<HttpMessageWrapper>>().ImplementedBy<BasicHttpAuthenticatorMiddleware>().Named(typeof(BasicHttpAuthenticatorMiddleware).FullName));
-            container.Register(Component.For<IMiddleware<HttpMessageWrapper>, IMiddlewareAsync<HttpMessageWrapper>>().ImplementedBy<TokenAuthenticatorMiddleware>().Named(typeof(TokenAuthenticatorMiddleware).FullName));
-            container.Register(Component.For<IMiddleware<HttpMessageWrapper>, IMiddlewareAsync<HttpMessageWrapper>>().ImplementedBy<MemoryCacheMiddleware>().Named(typeof(MemoryCacheMiddleware).FullName));
+            container.Register(Component.For<IMiddlewareAsync<HttpWrapper>>().ImplementedBy<BasicHttpAuthenticatorMiddleware>().Named(typeof(BasicHttpAuthenticatorMiddleware).FullName));
+            container.Register(Component.For<IMiddlewareAsync<HttpWrapper>>().ImplementedBy<TokenAuthenticatorMiddleware>().Named(typeof(TokenAuthenticatorMiddleware).FullName));
+            container.Register(Component.For<IMiddlewareAsync<HttpWrapper>>().ImplementedBy<MemoryCacheMiddleware>().Named(typeof(MemoryCacheMiddleware).FullName));
             
         }
 

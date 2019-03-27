@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Net.Http.Headers;
 using Jal.ChainOfResponsability.Installer;
 using Jal.Locator.CastleWindsor.Installer;
+using System;
 
 namespace Jal.HttpClient.Tests
 {
@@ -50,506 +51,437 @@ namespace Jal.HttpClient.Tests
         }
 
         [Test]
-        public void Send_Get_Ok()
-        {
-            using (var response = _sut.Send(new HttpRequest("http://httpbin.org/ip", HttpMethod.Get)))
-            {
-                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-
-                content.ShouldContain("origin");
-
-                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
-
-                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
-
-                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.Exception.ShouldBeNull();    
-            }
-        }
-
-        [Test]
-        public async Task SendAsync_Get_Ok()
+        public async Task Send_Get_Ok()
         {
             using (var response = await _sut.SendAsync(new HttpRequest("http://httpbin.org/get", HttpMethod.Get)))
             {
-                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                var content = await response.Message.Content.ReadAsStringAsync();
 
                 content.ShouldContain("origin");
 
-                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
+                response.Message.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
+                response.Message.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
-                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
+                response.Message.StatusCode.ShouldBe(HttpStatusCode.OK);
 
                 response.Exception.ShouldBeNull();
             }
         }
 
         [Test]
-        public void Send_GetWithHeaders_Ok()
+        public async Task Send_GetWithHeaders_Ok()
         {
             var request = new HttpRequest("http://httpbin.org/get", HttpMethod.Get);
 
-            request.Headers.Add("Header1", "value");
+            request.Message.Headers.Add("Header1", "value");
 
-            using (var response = _sut.Send(request))
+            using (var response = await _sut.SendAsync(request))
             {
-                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                var content = await response.Message.Content.ReadAsStringAsync();
 
                 content.ShouldContain("Header1");
 
                 content.ShouldContain("value");
 
-                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
+                response.Message.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
+                response.Message.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
-                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
+                response.Message.StatusCode.ShouldBe(HttpStatusCode.OK);
 
                 response.Exception.ShouldBeNull();
             }
         }
 
         [Test]
-        public void Send_GetWithDuplicatedHeaders_Ok()
+        public async Task Send_GetWithDuplicatedHeaders_Ok()
         {
             var request = new HttpRequest("http://httpbin.org/get", HttpMethod.Get);
 
-            request.Headers.Add("Header1", "value");
+            request.Message.Headers.Add("Header1", "value");
 
-            request.Headers.Add("Header1", "value");
+            request.Message.Headers.Add("Header1", "value");
 
-            using (var response = _sut.Send(request))
+            using (var response = await _sut.SendAsync(request))
             {
-                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                var content = await response.Message.Content.ReadAsStringAsync();
 
                 content.ShouldContain("Header1");
 
                 content.ShouldContain("value");
 
-                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
+                response.Message.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
+                response.Message.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
-                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
+                response.Message.StatusCode.ShouldBe(HttpStatusCode.OK);
 
                 response.Exception.ShouldBeNull();
             }
         }
 
         [Test]
-        public void Send_GetWithQueryParameters_Ok()
+        public async Task Send_GetWithQueryParameters_Ok()
         {
             var request = new HttpRequest("http://httpbin.org/get", HttpMethod.Get);
 
             request.QueryParameters.Add(new HttpQueryParameter("parameter", "value"));
 
-            using (var response = _sut.Send(request))
+            using (var response = await _sut.SendAsync(request))
             {
-                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                var content = await response.Message.Content.ReadAsStringAsync();
 
                 content.ShouldContain("parameter");
 
                 content.ShouldContain("value");
 
-                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
+                response.Message.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
+                response.Message.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
-                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
+                response.Message.StatusCode.ShouldBe(HttpStatusCode.OK);
 
                 response.Exception.ShouldBeNull();
             }
         }
         [Test]
-        public void Send_GetXml_Ok()
+        public async Task Send_GetXml_Ok()
         {
-            using (var response = _sut.Send(new HttpRequest("http://httpbin.org/xml", HttpMethod.Get)))
+            using (var response = await _sut.SendAsync(new HttpRequest("http://httpbin.org/xml", HttpMethod.Get)))
             {
-                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                var content = await response.Message.Content.ReadAsStringAsync();
 
                 content.ShouldContain("xml");
 
-                response.Content.Headers.ContentType.MediaType.ShouldBe("application/xml");
+                response.Message.Content.Headers.ContentType.MediaType.ShouldBe("application/xml");
 
-                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
+                response.Message.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
-                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
+                response.Message.StatusCode.ShouldBe(HttpStatusCode.OK);
 
                 response.Exception.ShouldBeNull();
             }
         }
 
         [Test]
-        public void Send_GetHtml_Ok()
+        public async Task Send_GetHtml_Ok()
         {
-            using (var response = _sut.Send(new HttpRequest("http://httpbin.org/html", HttpMethod.Get)))
+            using (var response = await _sut.SendAsync(new HttpRequest("http://httpbin.org/html", HttpMethod.Get)))
             {
-                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                var content = await response.Message.Content.ReadAsStringAsync();
 
                 content.ShouldContain("<html>");
 
-                response.Content.Headers.ContentType.MediaType.ShouldContain("text/html");
+                response.Message.Content.Headers.ContentType.MediaType.ShouldContain("text/html");
 
-                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
+                response.Message.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
-                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
+                response.Message.StatusCode.ShouldBe(HttpStatusCode.OK);
 
                 response.Exception.ShouldBeNull();
             }
         }
 
         [Test]
-        public void Send_GetImagePng_Ok()
+        public async Task Send_GetImagePng_Ok()
         {
-            using (var response = _sut.Send(new HttpRequest("http://httpbin.org/image/png", HttpMethod.Get)))
+            using (var response = await _sut.SendAsync(new HttpRequest("http://httpbin.org/image/png", HttpMethod.Get)))
             {
-                var image = Image.FromStream(response.Content.ReadAsStreamAsync().GetAwaiter().GetResult());
+                var image = Image.FromStream(await response.Message.Content.ReadAsStreamAsync());
 
                 var same = ImageFormat.Png.Equals(image.RawFormat);
 
                 same.ShouldBeTrue();
 
-                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
+                response.Message.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
-                response.Content.Headers.ContentType.MediaType.ShouldBe("image/png");
+                response.Message.Content.Headers.ContentType.MediaType.ShouldBe("image/png");
 
-                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
+                response.Message.StatusCode.ShouldBe(HttpStatusCode.OK);
 
                 response.Exception.ShouldBeNull();
             }
         }
 
         [Test]
-        public void Send_Get404_Ok()
+        public async Task Send_Get404_Ok()
         {
-            using (var response = _sut.Send(new HttpRequest("http://httpbin.org/status/404", HttpMethod.Get)))
+            using (var response = await _sut.SendAsync(new HttpRequest("http://httpbin.org/status/404", HttpMethod.Get)))
             {
-                response.Content.Headers.ContentType.MediaType.ShouldBe("text/html");
+                var content = await response.Message.Content.ReadAsStringAsync();
 
-                response.HttpStatusCode.ShouldBe(HttpStatusCode.NotFound);
+                response.Message.Content.Headers.ContentType.MediaType.ShouldBe("text/html");
+
+                response.Message.StatusCode.ShouldBe(HttpStatusCode.NotFound);
 
                 response.Exception.ShouldBeNull();
             }
         }
 
         [Test]
-        public void Send_Get500_Ok()
+        public async Task Send_Get500_Ok()
         {
-            using (var response = _sut.Send(new HttpRequest("http://httpbin.org/status/500", HttpMethod.Get)))
+            using (var response = await _sut.SendAsync(new HttpRequest("http://httpbin.org/status/500", HttpMethod.Get)))
             {
-                response.Content.Headers.ContentType.MediaType.ShouldBe("text/html");
+                var content = await response.Message.Content.ReadAsStringAsync();
 
-                response.HttpStatusCode.ShouldBe(HttpStatusCode.InternalServerError);
+                response.Message.Content.Headers.ContentType.MediaType.ShouldBe("text/html");
+
+                response.Message.StatusCode.ShouldBe(HttpStatusCode.InternalServerError);
 
                 response.Exception.ShouldBeNull();
             }
         }
 
         [Test]
-        public void Send_PostJsonUtf8_Ok()
+        public async Task Send_PostJsonUtf8_Ok()
         {
             var request = new HttpRequest("http://httpbin.org/post", HttpMethod.Post)
             {
                 Content = new StringContent(@"{""message"":""Hello World!!""}", Encoding.UTF8, "application/json")
             };
 
-            using (var response = _sut.Send(request))
+            using (var response = await _sut.SendAsync(request))
             {
-                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                var content = await response.Message.Content.ReadAsStringAsync();
 
                 content.ShouldContain("Hello World");
 
-                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
+                response.Message.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
+                response.Message.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
-                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
+                response.Message.StatusCode.ShouldBe(HttpStatusCode.OK);
 
                 response.Exception.ShouldBeNull();
             }
         }
 
         [Test]
-        public void Send_PostStreamJsonUtf8_Ok()
+        public async Task Send_PostStreamJsonUtf8_Ok()
         {
-            var c = new StreamContent(new MemoryStream(Encoding.UTF8.GetBytes(@"{""message"":""Hello World!!""}")));
+            var streamcontent = new StreamContent(new MemoryStream(Encoding.UTF8.GetBytes(@"{""message"":""Hello World!!""}")));
 
-            c.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-            c.Headers.ContentEncoding.Add("utf-8");
+            streamcontent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
             var request = new HttpRequest("http://httpbin.org/post", HttpMethod.Post)
             {
-                //Content = new HttpRequestStreamContent(new MemoryStream(Encoding.UTF8.GetBytes(@"{""message"":""Hello World!!""}")))
-                //{
-                //    ContentType = "application/json",
-                //    CharacterSet = "charset=utf-8"
-                //},
-                Content = c,
-                Timeout = 60000
+                Content = streamcontent
             };
 
-            using (var response = _sut.Send(request))
+            using (var response = await _sut.SendAsync(request))
             {
-                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                var content = await response.Message.Content.ReadAsStringAsync();
 
                 content.ShouldContain("Hello World");
 
-                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
+                response.Message.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
+                response.Message.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
-                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
+                response.Message.StatusCode.ShouldBe(HttpStatusCode.OK);
 
                 response.Exception.ShouldBeNull();
             }
         }
 
         [Test]
-        public void Send_PostStreamJsonUtf7_Ok()
+        public async Task Send_PostStreamJsonUtf7_Ok()
         {
-            var c = new StreamContent(new MemoryStream(Encoding.UTF7.GetBytes(@"{""message"":""Hello World!!""}")));
+            var streamcontent = new StreamContent(new MemoryStream(Encoding.UTF7.GetBytes(@"{""message"":""Hello World!!""}")));
 
-            c.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-            c.Headers.ContentEncoding.Add("utf-7");
-            var request = new HttpRequest("http://httpbin.org/post", HttpMethod.Post)
+            streamcontent.Headers.ContentType = new MediaTypeHeaderValue("application/json")
             {
-                //Content = new HttpRequestStreamContent(new MemoryStream(Encoding.UTF7.GetBytes(@"{""message"":""Hello World!!""}")))
-                //{
-                //    ContentType = "application/json",
-                //    CharacterSet = "charset=utf-7"
-                //},
-                Content = c,
-                Timeout = 60000
+                CharSet = "utf-7"
             };
 
-            using (var response = _sut.Send(request))
-            {
-                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-
-                content.ShouldContain("Hello World");
-
-                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
-
-                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
-
-                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
-
-                response.Exception.ShouldBeNull();
-            }
-        }
-
-        [Test]
-        public void Send_PostXmlUtf8_Ok()
-        {
             var request = new HttpRequest("http://httpbin.org/post", HttpMethod.Post)
             {
-                //Content = new HttpRequestStringContent(@"<message>Hello World!!</message>")
-                //{
-                //    ContentType = "text/xml",
-                //    CharacterSet = "charset=utf-8"
-                //}
-                Content = new StringContent(@"<message>Hello World!!</message>", Encoding.UTF7, "text/xml")
+                Content = streamcontent
             };
 
-            using (var response = _sut.Send(request))
+            using (var response = await _sut.SendAsync(request))
             {
-                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                var content = await response.Message.Content.ReadAsStringAsync();
 
                 content.ShouldContain("Hello World");
 
-                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
+                response.Message.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
+                response.Message.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
-                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
+                response.Message.StatusCode.ShouldBe(HttpStatusCode.OK);
 
                 response.Exception.ShouldBeNull();
             }
         }
 
         [Test]
-        public void Send_PostFormUrlEncodedUtf7_Ok()
+        public async Task Send_PostXmlUtf8_Ok()
         {
             var request = new HttpRequest("http://httpbin.org/post", HttpMethod.Post)
             {
-                //Content = new HttpRequestStringContent(@"message=Hello%20World!!")
-                //{
-                //    ContentType = "application/x-www-form-urlencoded",
-                //    CharacterSet = "charset=utf-7"
-                //}
+                Content = new StringContent(@"<message>Hello World!!</message>", Encoding.UTF8, "text/xml")
+            };
+
+            using (var response = await _sut.SendAsync(request))
+            {
+                var content = await response.Message.Content.ReadAsStringAsync();
+
+                content.ShouldContain("Hello World");
+
+                response.Message.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
+
+                response.Message.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
+
+                response.Message.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+                response.Exception.ShouldBeNull();
+            }
+        }
+
+        [Test]
+        public async Task Send_PostFormUrlEncodedUtf7_Ok()
+        {
+            var request = new HttpRequest("http://httpbin.org/post", HttpMethod.Post)
+            {
                 Content = new FormUrlEncodedContent(new KeyValuePair<string, string>[] { new KeyValuePair<string, string>("message", "hello world") } )
             };
 
-            using (var response = _sut.Send(request))
+            request.Message.Content.Headers.ContentType.CharSet = "utf-7";
+
+            using (var response = await _sut.SendAsync(request))
             {
-                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                var content = await response.Message.Content.ReadAsStringAsync();
 
-                //content.ShouldContain("Hello World");
+                content.ShouldContain("hello world");
 
-                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
+                response.Message.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
+                response.Message.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
-                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
+                response.Message.StatusCode.ShouldBe(HttpStatusCode.OK);
 
                 response.Exception.ShouldBeNull();
             }
         }
 
         [Test]
-        public void Send_PostFormUrlEncodedUtf8_Ok()
+        public async Task Send_PostFormUrlEncodedUtf8_Ok()
         {
             var request = new HttpRequest("http://httpbin.org/post", HttpMethod.Post)
             {
-                //Content = new HttpRequestStringContent(@"message=Hello%20World!!")
-                //{
-                //    ContentType = "application/x-www-form-urlencoded",
-                //    CharacterSet = "charset=utf-8"
-                //}
                 Content = new FormUrlEncodedContent(new KeyValuePair<string, string>[] { new KeyValuePair<string, string>("message", "hello world") })
             };
 
-            using (var response = _sut.Send(request))
+            using (var response = await _sut.SendAsync(request))
             {
-                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                var content = await response.Message.Content.ReadAsStringAsync();
 
-                content.ShouldContain("Hello World");
+                content.ShouldContain("hello world");
 
-                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
+                response.Message.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
+                response.Message.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
-                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
+                response.Message.StatusCode.ShouldBe(HttpStatusCode.OK);
 
                 response.Exception.ShouldBeNull();
             }
         }
 
         [Test]
-        public void Send_PostJsonUtf7_Ok()
+        public async Task Send_PostJsonUtf7_Ok()
         {
             var request = new HttpRequest("http://httpbin.org/post", HttpMethod.Post)
             {
-                //Content = new HttpRequestStringContent(@"{""message"":""Hello World!!""}")
-                //{
-                //    ContentType = "application/json",
-                //    CharacterSet = "charset=utf-7"
-                //}
                 Content = new StringContent(@"{""message"":""Hello World!!""}", Encoding.UTF7, "application/json")
             };
 
-            using (var response = _sut.Send(request))
+            using (var response = await _sut.SendAsync(request))
             {
-                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                var content = await response.Message.Content.ReadAsStringAsync();
 
-                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
+                response.Message.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
+                response.Message.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
-                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
+                response.Message.StatusCode.ShouldBe(HttpStatusCode.OK);
 
                 response.Exception.ShouldBeNull();
             }
         }
 
         [Test]
-        public void Send_PutJsonUtf8_Ok()
+        public async Task Send_PutJsonUtf8_Ok()
         {
             var request = new HttpRequest("http://httpbin.org/put", HttpMethod.Put)
             {
-                //Content = new HttpRequestStringContent(@"{""message"":""Hello World!!""}")
-                //{
-                //    ContentType = "application/json",
-                //    CharacterSet = "charset=utf-8"
-                //}
                 Content = new StringContent(@"{""message"":""Hello World!!""}", Encoding.UTF8, "application/json")
             };
 
-            using (var response = _sut.Send(request))
+            using (var response = await _sut.SendAsync(request))
             {
-                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                var content = await response.Message.Content.ReadAsStringAsync();
 
                 content.ShouldContain("Hello World");
 
-                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
+                response.Message.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
+                response.Message.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
-                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
+                response.Message.StatusCode.ShouldBe(HttpStatusCode.OK);
 
                 response.Exception.ShouldBeNull();
             }
         }
 
         [Test]
-        public void Send_Delete_Ok()
+        public async Task Send_Delete_Ok()
         {
             var request = new HttpRequest("http://httpbin.org/delete", HttpMethod.Delete)
             {
-                //Content = new HttpRequestStringContent(@"{""message"":""Hello World!!""}")
-                //{
-                //    ContentType = "application/json",
-                //    CharacterSet = "charset=utf-8"
-                //}
                 Content = new StringContent(@"{""message"":""Hello World!!""}", Encoding.UTF8, "application/json")
             };
 
-            using (var response = _sut.Send(request))
+            using (var response = await _sut.SendAsync(request))
             {
-                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                var content = await response.Message.Content.ReadAsStringAsync();
 
                 content.ShouldContain("Hello World");
 
-                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
+                response.Message.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
+                response.Message.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
-                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
+                response.Message.StatusCode.ShouldBe(HttpStatusCode.OK);
 
                 response.Exception.ShouldBeNull();
             }
         }
 
         [Test]
-        public void Send_Get_TimeOut()
+        public async Task Send_Get_TimeOut()
         {
-            var request = new HttpRequest("http://httpbin.org/delay/5", HttpMethod.Get)
+            var client = new System.Net.Http.HttpClient
+            {
+                Timeout = TimeSpan.FromMilliseconds(10)
+            };
+            var request = new HttpRequest("http://httpbin.org/delay/5", HttpMethod.Get, client)
                           {
-                              Timeout = 10
                           };
 
-            using (var response = _sut.Send(request))
+            using (var response = await _sut.SendAsync(request))
             {
-                response.HttpStatusCode.ShouldBeNull();
+                response.Message.ShouldBeNull();
 
                 response.Exception.ShouldNotBeNull();
             }
         }
 
-
-        //[Test]
-        //public async void SendAsync_Get_TimeOut()
-        //{
-        //    var request = new HttpRequest("http://httpbin.org/delay/5", HttpMethod.Get)
-        //    {
-        //        Timeout = 10
-        //    };
-
-        //    using (var response = await _sut.SendAsync(request))
-        //    {
-        //        response.HttpStatusCode.ShouldBeNull();
-
-        //        response.HttpExceptionStatus.ShouldBe(WebExceptionStatus.Timeout);
-
-        //        response.Exception.ShouldNotBeNull();
-        //    }
-        //}
-
         [Test]
-        public void Send_GetGzip_Ok()
+        public async Task Send_GetGzip_Ok()
         {
             HttpClientHandler handler = new HttpClientHandler()
             {
@@ -560,17 +492,17 @@ namespace Jal.HttpClient.Tests
 
             var request = new HttpRequest("http://httpbin.org/gzip", HttpMethod.Get, httpclient);
 
-            using (var response = _sut.Send(request))
+            using (var response = await _sut.SendAsync(request))
             {
-                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                var content = await response.Message.Content.ReadAsStringAsync();
 
                 content.ShouldContain("gzipped");
 
-                response.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
+                response.Message.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
-                //response.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
+                //response.Message.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
-                response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
+                response.Message.StatusCode.ShouldBe(HttpStatusCode.OK);
 
                 response.Exception.ShouldBeNull();
             }
@@ -584,17 +516,17 @@ namespace Jal.HttpClient.Tests
         //        Decompression = DecompressionMethods.Deflate
         //    };
 
-        //    using (var response = _sut.Send(request))
+        //    using (var response = await _sut.SendAsync(request))
         //    {
-        //        var content = response.Content.Read();
+        //        var content = response.Message.Content.Read();
 
-        //        response.Content.IsString().ShouldBeTrue();
+        //        response.Message.Content.IsString().ShouldBeTrue();
 
         //        content.ShouldContain("gzipped");
 
-        //        response.Content.ContentType.ShouldBe("application/json");
+        //        response.Message.Content.ContentType.ShouldBe("application/json");
 
-        //        response.HttpStatusCode.ShouldBe(HttpStatusCode.OK);
+        //        response.Message.StatusCode.ShouldBe(HttpStatusCode.OK);
 
         //        response.HttpExceptionStatus.ShouldBeNull();
 

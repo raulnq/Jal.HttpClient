@@ -17,7 +17,7 @@ namespace Jal.HttpClient.Extensions
             {
                 throw new ArgumentNullException(nameof(id));
             }
-            return descriptor.WithIdentity(new HttpIdentity(id) { ParentId = parentid, OperationId = null });
+            return descriptor.WithIdentity(new HttpIdentity(id) { ParentId = parentid, OperationId = operationid });
         }
 
         public static IHttpDescriptor MultiPartFormData(this IHttpDescriptor descriptor, Action<IHttpMultiPartFormDataContentDescriptor> contentTypeDescriptorAction)
@@ -53,28 +53,28 @@ namespace Jal.HttpClient.Extensions
                 }
             }
 
-            return descriptor.WithContent(content).WithContentType("application/x-www-form-urlencoded").Utf8();
+            return descriptor.WithContent(content).WithContentType("application/x-www-form-urlencoded");
         }
 
         public static IHttpContentTypeDescriptor Json(this IHttpDescriptor descriptor, string content)
         {
-            return descriptor.WithContent(content).WithContentType("application/json").Utf8();
+            return descriptor.WithContent(content).WithContentType("application/json");
         }
 
         public static IHttpContentTypeDescriptor Xml(this IHttpDescriptor descriptor, string content)
         {
-            return descriptor.WithContent(content).WithContentType("text/xml").Utf8();
+            return descriptor.WithContent(content).WithContentType("text/xml");
         }
 
         public static IHttpContentTypeDescriptor Text(this IHttpDescriptor descriptor, string content)
         {
-            return descriptor.WithContent(content).WithContentType("text/plain").Utf8();
+            return descriptor.WithContent(content).WithContentType("text/plain");
 
         }
 
         public static IHttpContentTypeDescriptor Html(this IHttpDescriptor descriptor, string content)
         {
-            return descriptor.WithContent(content).WithContentType("text/html").Utf8();
+            return descriptor.WithContent(content).WithContentType("text/html");
         }
 
         public static IHttpContentTypeDescriptor WithContent(this IHttpDescriptor descriptor, string content)

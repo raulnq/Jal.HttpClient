@@ -9,7 +9,7 @@ using Jal.HttpClient.Model;
 
 namespace Jal.HttpClient.Common.Logging
 {
-    public class CommonLoggingMiddelware : IMiddleware<HttpMessageWrapper>, IMiddlewareAsync<HttpMessageWrapper>
+    public class CommonLoggingMiddelware : IMiddlewareAsync<HttpWrapper>
     {
         private readonly ILog _log;
 
@@ -29,9 +29,9 @@ namespace Jal.HttpClient.Common.Logging
                 builder.AppendLine($"{response.Exception.Message}");
             }
 
-            if (response.Exception==null && IsString(response.Content))
+            if (response.Exception==null && IsString(response.Message.Content))
             {
-                builder.AppendLine($"{Truncate(await response.Content.ReadAsStringAsync().ConfigureAwait(false))}");
+                builder.AppendLine($"{Truncate(await response.Message.Content.ReadAsStringAsync().ConfigureAwait(false))}");
             }
 
             return builder;
@@ -64,20 +64,7 @@ namespace Jal.HttpClient.Common.Logging
             return content.Length <= 4096 ? content : content.Substring(0, 4096) + "...";
         }
 
-        public void Execute(Context<HttpMessageWrapper> context, Action<Context<HttpMessageWrapper>> next)
-        {
-            var requestbuilder = BuildRequestLog(context.Data.Request).GetAwaiter().GetResult();
-
-            _log.Info(requestbuilder.ToString());
-
-            next(context);
-
-            var responsebuilder = BuildResponseLog(context.Data.Response, context.Data.Request).GetAwaiter().GetResult();
-
-            _log.Info(responsebuilder.ToString());
-        }
-
-        public async Task ExecuteAsync(Context<HttpMessageWrapper> context, Func<Context<HttpMessageWrapper>, Task> next)
+        public async Task ExecuteAsync(Context<HttpWrapper> context, Func<Context<HttpWrapper>, Task> next)
         {
             var requestbuilder = await BuildRequestLog(context.Data.Request);
 
