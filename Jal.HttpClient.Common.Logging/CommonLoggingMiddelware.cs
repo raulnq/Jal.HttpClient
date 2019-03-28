@@ -39,7 +39,7 @@ namespace Jal.HttpClient.Common.Logging
 
         public bool IsString(HttpContent content)
         {
-            var contenttype = content.Headers.ContentType.MediaType;
+            var contenttype = content.Headers?.ContentType?.MediaType;
 
             return !string.IsNullOrWhiteSpace(contenttype) && (contenttype.Contains("text") || contenttype.Contains("xml") || contenttype.Contains("json") || contenttype.Contains("html"));
         }
