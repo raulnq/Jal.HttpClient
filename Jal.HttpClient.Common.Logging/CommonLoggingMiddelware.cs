@@ -22,14 +22,14 @@ namespace Jal.HttpClient.Common.Logging
         {
             StringBuilder builder = new StringBuilder();
 
-            builder.AppendLine($"Id: {request.Identity.Id}, Duration: {response.Duration} ms, {response.Message.ToString()}");
+            builder.AppendLine($"Id: {request.Identity.Id}, Duration: {response.Duration} ms, {response.Message?.ToString()}");
 
             if (response.Exception != null)
             {
                 builder.AppendLine($"{response.Exception.Message}");
             }
 
-            if (response.Exception==null && IsString(response.Message.Content))
+            if (response.Exception==null && IsString(response.Message?.Content))
             {
                 builder.AppendLine($"{Truncate(await response.Message.Content.ReadAsStringAsync().ConfigureAwait(false))}");
             }
@@ -39,7 +39,7 @@ namespace Jal.HttpClient.Common.Logging
 
         public bool IsString(HttpContent content)
         {
-            var contenttype = content.Headers?.ContentType?.MediaType;
+            var contenttype = content?.Headers?.ContentType?.MediaType;
 
             return !string.IsNullOrWhiteSpace(contenttype) && (contenttype.Contains("text") || contenttype.Contains("xml") || contenttype.Contains("json") || contenttype.Contains("html"));
         }
