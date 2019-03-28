@@ -60,7 +60,9 @@ namespace Jal.HttpClient.ApplicationInsights
 
                 await next(context);
 
-                if (response.Message.StatusCode == HttpStatusCode.OK)
+                response = context.Data.Response;
+
+                if (response.Message?.StatusCode == HttpStatusCode.OK)
                 {
                     telemetry.Success = true;
 
@@ -70,7 +72,7 @@ namespace Jal.HttpClient.ApplicationInsights
                 {
                     telemetry.Success = false;
 
-                    if (response.Message.StatusCode != null)
+                    if (response.Message?.StatusCode != null)
                     {
                         telemetry.ResultCode = ((int)response.Message.StatusCode).ToString();
                     }
