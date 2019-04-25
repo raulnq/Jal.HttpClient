@@ -23,14 +23,15 @@ namespace Jal.HttpClient.Extensions
             descriptor.Add<BasicHttpAuthenticatorMiddleware>(y => { y.Add("username", username); y.Add("password", password); });
         }
 
-        public static void UseMemoryCache(this IHttpMiddlewareDescriptor descriptor, double durationinseconds, Func<HttpRequest, string> keybuilder, string cachemode = "sliding", Action<HttpResponseMessage> oncacheget=null)
+        public static void UseMemoryCache(this IHttpMiddlewareDescriptor descriptor, double durationinseconds, Func<HttpRequest, string> keybuilder, Func<HttpResponse, bool> cachewhen, string cachemode = "sliding", Action<HttpResponseMessage> oncacheget=null)
         {
             descriptor.Add<MemoryCacheMiddleware>(y => 
             {
                 y.Add("durationinseconds", durationinseconds);
                 y.Add("keybuilder", keybuilder);
                 y.Add("cachemode", cachemode);
-                if(oncacheget!=null)
+                y.Add("cachewhen", cachewhen);
+                if (oncacheget!=null)
                 {
                     y.Add("oncacheget", oncacheget);
                 }

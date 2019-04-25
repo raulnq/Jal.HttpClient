@@ -13,11 +13,13 @@ namespace Jal.HttpClient.Impl
     {
         public async Task ExecuteAsync(Context<HttpWrapper> context, Func<Context<HttpWrapper>, Task> next)
         {
-            if (context.Data.Request.Context.ContainsKey("durationinseconds") && context.Data.Request.Context.ContainsKey("cachemode") && context.Data.Request.Context.ContainsKey("keybuilder"))
+            if (context.Data.Request.Context.ContainsKey("durationinseconds") && context.Data.Request.Context.ContainsKey("cachemode") && context.Data.Request.Context.ContainsKey("keybuilder") && context.Data.Request.Context.ContainsKey("cachewhen"))
             {
                 var durationinseconds = context.Data.Request.Context["durationinseconds"] as double?;
 
                 var mode = context.Data.Request.Context["cachemode"] as string;
+
+                var when = context.Data.Request.Context["cachewhen"] as Func<HttpResponse, bool>;
 
                 var keybuilder = context.Data.Request.Context["keybuilder"] as Func<HttpRequest, string>;
 
@@ -64,7 +66,10 @@ namespace Jal.HttpClient.Impl
                         policy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.UtcNow.AddSeconds(durationinseconds.Value) };
                     }
 
-                    cache.Set(key, copyforcache, policy);
+                    if(when(context.Data.Response))
+                    {
+                        cache.Set(key, copyforcache, policy);
+                    }
                 }
                 else
                 {
