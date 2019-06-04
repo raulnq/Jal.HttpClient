@@ -10,6 +10,7 @@ namespace Jal.HttpClient.LightInject.Polly.Installer
         public void Compose(IServiceRegistry serviceRegistry)
         {
             serviceRegistry.Register<IMiddlewareAsync<HttpWrapper>, OnConditionRetryMiddelware>(typeof(OnConditionRetryMiddelware).FullName, new PerContainerLifetime());
+            serviceRegistry.Register<IMiddlewareAsync<HttpWrapper>, CircuitBreakerMiddelware>(typeof(CircuitBreakerMiddelware).FullName, new PerContainerLifetime());
         }
     }
 }

@@ -31,7 +31,6 @@ namespace Jal.HttpClient.Polly
                             .RetryAsync(retrycount.Value, (c, r) => { context.Index = currentindex; onretry(c, r); context.Data.Request.Message = context.Data.Request.Message.Clone(); })
                             .ExecuteAsync(async () =>
                             {
-
                                 await next(context);
 
                                 return context.Data.Response;

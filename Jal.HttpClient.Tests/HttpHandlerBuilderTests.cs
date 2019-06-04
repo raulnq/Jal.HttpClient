@@ -17,6 +17,9 @@ using Jal.HttpClient.Extensions;
 using Jal.Locator.CastleWindsor.Installer;
 using Jal.ChainOfResponsability.Installer;
 using System;
+using Polly.CircuitBreaker;
+using Polly;
+using Jal.HttpClient.Model;
 
 namespace Jal.HttpClient.Tests
 {
@@ -129,6 +132,45 @@ namespace Jal.HttpClient.Tests
                 var content = await response.Message.Content.ReadAsStringAsync();
 
                 retries.ShouldBe(3);
+
+                response.Message.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
+
+                response.Message.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
+
+                response.Message.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+                response.Exception.ShouldBeNull();
+            }
+        }
+
+        [Test]
+        public async Task Send_Get_CircuitBreaker_Ok()
+        {
+            CircuitBreakerPolicy<HttpResponse> breakerPolicy = Policy
+            .HandleResult<HttpResponse>(r => r.Message?.StatusCode!= HttpStatusCode.OK )
+            .CircuitBreakerAsync(2, TimeSpan.FromSeconds(10));
+
+            using (var response = await _sut.Get("http://httpbin.org/status/500").WithMiddleware(x => x.UseCircuitBreaker(breakerPolicy)).SendAsync())
+            {
+                response.Message.StatusCode.ShouldBe(HttpStatusCode.InternalServerError);
+            }
+
+            using (var response = await _sut.Get("http://httpbin.org/status/500").WithMiddleware(x => x.UseCircuitBreaker(breakerPolicy)).SendAsync())
+            {
+                response.Message.StatusCode.ShouldBe(HttpStatusCode.InternalServerError);
+            }
+
+            using (var response = await _sut.Get("http://httpbin.org/get").WithMiddleware(x => x.UseCircuitBreaker(breakerPolicy)).SendAsync())
+            {
+                response.Message.ShouldBeNull();
+            }
+
+            await Task.Delay(TimeSpan.FromSeconds(15));
+
+            using (var response = await _sut.Get("http://httpbin.org/get").WithMiddleware(x => x.UseCircuitBreaker(breakerPolicy)).SendAsync())
+            {
+
+                var content = await response.Message.Content.ReadAsStringAsync();
 
                 response.Message.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 

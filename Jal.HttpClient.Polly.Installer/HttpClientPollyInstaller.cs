@@ -12,6 +12,7 @@ namespace Jal.HttpClient.Polly.Installer
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             container.Register(Component.For<IMiddlewareAsync<HttpWrapper>>().ImplementedBy<OnConditionRetryMiddelware>().Named(typeof(OnConditionRetryMiddelware).FullName));
+            container.Register(Component.For<IMiddlewareAsync<HttpWrapper>>().ImplementedBy<CircuitBreakerMiddelware>().Named(typeof(CircuitBreakerMiddelware).FullName));
         }
     }
 }

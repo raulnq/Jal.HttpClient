@@ -1,6 +1,7 @@
 ﻿using Jal.HttpClient.Interface.Fluent;
 using Jal.HttpClient.Model;
 using Polly;
+using Polly.CircuitBreaker;
 using System;
 
 namespace Jal.HttpClient.Polly
@@ -17,6 +18,13 @@ namespace Jal.HttpClient.Polly
                 {
                     x.Add("onretry", onretry);
                 }
+            });
+        }
+
+        public static void UseCircuitBreaker(this IHttpMiddlewareDescriptor descriptor, CircuitBreakerPolicy<HttpResponse> policy)
+        {
+            descriptor.Add<CircuitBreakerMiddelware>(x => {
+                x.Add("circuitbreakerpolicy", policy);
             });
         }
     }
