@@ -59,11 +59,11 @@
     <Reference Include="Common.Logging.Core, Version=3.4.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
       <HintPath>..\packages\Common.Logging.Core.3.4.1\lib\net40\Common.Logging.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Jal.ChainOfResponsability, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Jal.ChainOfResponsability.1.0.3\lib\netstandard2.0\Jal.ChainOfResponsability.dll</HintPath>
+    <Reference Include="Jal.ChainOfResponsability, Version=1.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Jal.ChainOfResponsability.1.0.4\lib\netstandard2.0\Jal.ChainOfResponsability.dll</HintPath>
     </Reference>
-    <Reference Include="Jal.ChainOfResponsability.Installer, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Jal.ChainOfResponsability.Installer.1.0.3\lib\netstandard2.0\Jal.ChainOfResponsability.Installer.dll</HintPath>
+    <Reference Include="Jal.ChainOfResponsability.Installer, Version=1.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Jal.ChainOfResponsability.Installer.1.0.4\lib\netstandard2.0\Jal.ChainOfResponsability.Installer.dll</HintPath>
     </Reference>
     <Reference Include="Jal.Locator, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Jal.Locator.1.1.1\lib\net45\Jal.Locator.dll</HintPath>
