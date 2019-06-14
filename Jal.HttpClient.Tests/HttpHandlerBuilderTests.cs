@@ -185,7 +185,7 @@ namespace Jal.HttpClient.Tests
         [Test]
         public async Task Send_Get_MemoryCache_Ok()
         {
-            using (var response = await _sut.Get("http://httpbin.org/get").WithMiddleware(x => x.UseMemoryCache(30, y => y.Message.RequestUri.AbsoluteUri, z=>z.Message.StatusCode==HttpStatusCode.OK)).WithHeaders(x => x.Add("header", "old")).SendAsync())
+            using (var response = await _sut.Get("http://httpbin.org/get").WithMiddleware(x => { x.AddTrackingInformation(); x.UseCommonLogging(); x.UseMemoryCache(30, y => y.Message.RequestUri.AbsoluteUri, z => z.Message.StatusCode == HttpStatusCode.OK); }).WithIdentity("a","b","c").WithHeaders(x => x.Add("header", "old")).SendAsync())
             {
                 var content = await response.Message.Content.ReadAsStringAsync();
 
@@ -202,7 +202,7 @@ namespace Jal.HttpClient.Tests
                 response.Exception.ShouldBeNull();
             }
 
-            using (var response = await _sut.Get("http://httpbin.org/get").WithMiddleware(x => x.UseMemoryCache(30, y => y.Message.RequestUri.AbsoluteUri, z => z.Message.StatusCode == HttpStatusCode.OK)).WithHeaders(x => x.Add("header", "new")).SendAsync())
+            using (var response = await _sut.Get("http://httpbin.org/get").WithMiddleware(x => { x.AddTrackingInformation(); x.UseCommonLogging(); x.UseMemoryCache(30, y => y.Message.RequestUri.AbsoluteUri, z => z.Message.StatusCode == HttpStatusCode.OK); }).WithHeaders(x => x.Add("header", "new")).SendAsync())
             {
 
                 var content = await response.Message.Content.ReadAsStringAsync();

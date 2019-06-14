@@ -9,6 +9,7 @@ using Jal.HttpClient.Extensions;
 
 namespace Jal.HttpClient.Impl
 {
+
     public class MemoryCacheMiddleware : IMiddlewareAsync<HttpWrapper>
     {
         public async Task ExecuteAsync(Context<HttpWrapper> context, Func<Context<HttpWrapper>, Task> next)
@@ -68,6 +69,8 @@ namespace Jal.HttpClient.Impl
 
                     if(when(context.Data.Response))
                     {
+                        copyforcache.Headers.Add("from-cache", "yes");
+
                         cache.Set(key, copyforcache, policy);
                     }
                 }

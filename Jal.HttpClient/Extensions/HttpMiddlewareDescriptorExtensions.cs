@@ -13,6 +13,11 @@ namespace Jal.HttpClient.Extensions
             descriptor.Add<TokenAuthenticatorMiddleware>(y => { y.Add("tokenvalue", tokenvalue); y.Add("tokentype", "Bearer"); });
         }
 
+        public static void AddTrackingInformation(this IHttpMiddlewareDescriptor descriptor, string idheadername="correlationid", string parentidheadername = "parentid", string operationidheadername = "operationid")
+        {
+            descriptor.Add<IdentityTrackerMiddleware>(y => { y.Add("idheadername", idheadername); y.Add("parentidheadername", parentidheadername); y.Add("operationidheadername", operationidheadername); });
+        }
+
         public static void AuthorizedByToken(this IHttpMiddlewareDescriptor descriptor, string tokenvalue, string tokentype)
         {
             descriptor.Add<TokenAuthenticatorMiddleware>(y => { y.Add("tokenvalue", tokenvalue); y.Add("tokentype", tokentype); });

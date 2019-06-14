@@ -23,7 +23,8 @@ namespace Jal.HttpClient.Installer
             container.Register(Component.For<IMiddlewareAsync<HttpWrapper>>().ImplementedBy<BasicHttpAuthenticatorMiddleware>().Named(typeof(BasicHttpAuthenticatorMiddleware).FullName));
             container.Register(Component.For<IMiddlewareAsync<HttpWrapper>>().ImplementedBy<TokenAuthenticatorMiddleware>().Named(typeof(TokenAuthenticatorMiddleware).FullName));
             container.Register(Component.For<IMiddlewareAsync<HttpWrapper>>().ImplementedBy<MemoryCacheMiddleware>().Named(typeof(MemoryCacheMiddleware).FullName));
-            
+            container.Register(Component.For<IMiddlewareAsync<HttpWrapper>>().ImplementedBy<IdentityTrackerMiddleware>().Named(typeof(IdentityTrackerMiddleware).FullName));
+
         }
 
     }
