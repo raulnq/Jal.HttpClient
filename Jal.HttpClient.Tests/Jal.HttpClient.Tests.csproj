@@ -80,6 +80,12 @@
     <Reference Include="Polly, Version=6.0.0.0, Culture=neutral, PublicKeyToken=c8a3ffc3f8f825cc, processorArchitecture=MSIL">
       <HintPath>..\packages\Polly.6.1.0\lib\netstandard1.1\Polly.dll</HintPath>
     </Reference>
+    <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.2.5.0\lib\net46\Serilog.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Sinks.Console, Version=3.1.1.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.Sinks.Console.3.1.1\lib\net45\Serilog.Sinks.Console.dll</HintPath>
+    </Reference>
     <Reference Include="Shouldly, Version=3.0.0.0, Culture=neutral, PublicKeyToken=6042cbcb05cbc941, processorArchitecture=MSIL">
       <HintPath>..\packages\Shouldly.3.0.0\lib\net40\Shouldly.dll</HintPath>
     </Reference>
@@ -135,6 +141,14 @@
     <ProjectReference Include="..\Jal.HttpClient.Polly\Jal.HttpClient.Polly.csproj">
       <Project>{993ffb99-546d-4b46-8b40-6313c3dce3ec}</Project>
       <Name>Jal.HttpClient.Polly</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Jal.HttpClient.Serilog.Installer\Jal.HttpClient.Serilog.Installer.csproj">
+      <Project>{4022e3b2-467b-471e-865a-04f1d47aefae}</Project>
+      <Name>Jal.HttpClient.Serilog.Installer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Jal.HttpClient.Serilog\Jal.HttpClient.Serilog.csproj">
+      <Project>{b1e2c490-4332-45a9-b2e0-ba424635d5d5}</Project>
+      <Name>Jal.HttpClient.Serilog</Name>
     </ProjectReference>
     <ProjectReference Include="..\Jal.HttpClient\Jal.HttpClient.csproj">
       <Project>{5bbe156d-e724-47d0-88b8-0ec6b0fb7e33}</Project>

@@ -20,6 +20,9 @@ using System;
 using Polly.CircuitBreaker;
 using Polly;
 using Jal.HttpClient.Model;
+using Jal.HttpClient.Serilog.Installer;
+using Jal.HttpClient.Serilog;
+using Serilog;
 
 namespace Jal.HttpClient.Tests
 {
@@ -47,15 +50,21 @@ namespace Jal.HttpClient.Tests
 
             container.Install(new HttpClientCommonLoggingInstaller());
 
+            container.Install(new HttpClientSerilogInstaller());
+
             container.Install(new HttpClientPollyInstaller());
 
             _sut = container.Resolve<IHttpFluentHandler>();
+
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}{Properties}")
+                .CreateLogger();
         }
 
         [Test]
         public async Task Send_Get_Ok()
         {
-            using (var response = await _sut.Get("http://httpbin.org/ip").WithMiddleware(x=>x.UseCommonLogging()).SendAsync())
+            using (var response = await _sut.Get("http://httpbin.org/ip").WithMiddleware(x=>x.UseSerilog()).SendAsync())
             {
                 var content = await response.Message.Content.ReadAsStringAsync();
 
@@ -243,7 +252,7 @@ namespace Jal.HttpClient.Tests
         [Test]
         public async Task Send_PostJsonUtf8_Ok()
         {
-            using (var response = await _sut.Post("http://httpbin.org/post").WithMiddleware(x => x.UseCommonLogging()).Json(@"{""message"":""Hello World!!""}").SendAsync())
+            using (var response = await _sut.Post("http://httpbin.org/post").WithMiddleware(x => x.UseSerilog()).Json(@"{""message"":""Hello World!!""}").SendAsync())
             {
                 var content = await response.Message.Content.ReadAsStringAsync();
 
@@ -338,7 +347,7 @@ namespace Jal.HttpClient.Tests
         [Test]
         public async Task Send_GetWithQueryParameters_Ok()
         {
-            using (var response = await _sut.Get("http://httpbin.org/get").WithQueryParameters(x=>x.Add("parameter","value")).SendAsync())
+            using (var response = await _sut.Get("http://httpbin.org/get").WithMiddleware(x => x.UseSerilog()).WithQueryParameters(x=>x.Add("parameter","value")).SendAsync())
             {
                 var content = await response.Message.Content.ReadAsStringAsync();
 
