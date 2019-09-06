@@ -18,11 +18,11 @@ namespace Jal.HttpClient.Serilog
             {
                 try
                 {
-                    log = log.ForContext("content", await response.Message.Content.ReadAsStringAsync().ConfigureAwait(false), true);
+                    log = log.ForContext("Content", await response.Message.Content.ReadAsStringAsync().ConfigureAwait(false), true);
                 }
                 catch (Exception)
                 {
-                    log = log.ForContext("content", "error to log", true);
+                    log = log.ForContext("Content", "error to log", true);
                 }
                 
             }
@@ -31,11 +31,11 @@ namespace Jal.HttpClient.Serilog
             {
                 try
                 {
-                    log = log.ForContext("headers", response.Message.Headers.ToDictionary(x => x.Key, x => x.Value), true);
+                    log = log.ForContext("Headers", response.Message.Headers.ToDictionary(x => x.Key, x => x.Value), true);
                 }
                 catch (Exception)
                 {
-                    log = log.ForContext("headers", "error to log", true);
+                    log = log.ForContext("Headers", "error to log", true);
                 }
                 
             }
@@ -44,22 +44,22 @@ namespace Jal.HttpClient.Serilog
             {
                 if (response.Exception != null)
                 {
-                    log.Error(response.Exception, "Id: {id}, Duration: {duration} ms, StatusCode: {statuscode}, ReasonPhrase: {reasonphrase}, Version: {version}", request.Identity.Id, response.Duration, response.Message.StatusCode, response.Message.ReasonPhrase.ToString(), response.Message.Version.ToString());
+                    log.Error(response.Exception, "Id: {Id}, Duration: {Duration} ms, StatusCode: {StatusCode}, ReasonPhrase: {ReasonPhrase}, Version: {Version}", request.Identity.Id, response.Duration, response.Message.StatusCode, response.Message.ReasonPhrase.ToString(), response.Message.Version.ToString());
                 }
                 else
                 {
-                    log.Information("Id: {id}, Duration: {duration} ms, StatusCode: {statuscode}, ReasonPhrase: {reasonphrase}, Version: {version}", request.Identity.Id, response.Duration, response.Message.StatusCode, response.Message.ReasonPhrase.ToString(), response.Message.Version.ToString());
+                    log.Information("Id: {Id}, Duration: {Duration} ms, StatusCode: {StatusCode}, ReasonPhrase: {ReasonPhrase}, Version: {Version}", request.Identity.Id, response.Duration, response.Message.StatusCode, response.Message.ReasonPhrase.ToString(), response.Message.Version.ToString());
                 }
             }
             else
             {
                 if (response.Exception != null)
                 {
-                    log.Error(response.Exception, "Id: {id}, Duration: {duration} ms", request.Identity.Id, response.Duration);
+                    log.Error(response.Exception, "Id: {Id}, Duration: {Duration} ms", request.Identity.Id, response.Duration);
                 }
                 else
                 {
-                    log.Information("Id: {id}, Duration: {duration} ms", request.Identity.Id, response.Duration);
+                    log.Information("Id: {Id}, Duration: {Duration} ms", request.Identity.Id, response.Duration);
                 }
                 
             }
@@ -80,11 +80,11 @@ namespace Jal.HttpClient.Serilog
             {
                 try
                 {
-                    log = log.ForContext("content", await request.Message.Content.ReadAsStringAsync().ConfigureAwait(false), true);
+                    log = log.ForContext("Content", await request.Message.Content.ReadAsStringAsync().ConfigureAwait(false), true);
                 }
                 catch (Exception)
                 {
-                    log = log.ForContext("content", "error to log", true);
+                    log = log.ForContext("Content", "error to log", true);
                 }
                 
             }
@@ -93,16 +93,16 @@ namespace Jal.HttpClient.Serilog
             {
                 try
                 {
-                    log = log.ForContext("headers", request.Message.Headers.ToDictionary(x => x.Key, x => x.Value), true);
+                    log = log.ForContext("Headers", request.Message.Headers.ToDictionary(x => x.Key, x => x.Value), true);
                 }
                 catch (Exception)
                 {
-                    log = log.ForContext("headers", "error to log", true);
+                    log = log.ForContext("Headers", "error to log", true);
                 }
                 
             }
 
-            log.Information("Id: {id}, Method: {method}, RequestUri: {requesturi}, Version: {version}", request.Identity.Id, request.Message.Method, request.Message.RequestUri.ToString(), request.Message.Version.ToString());
+            log.Information("Id: {Id}, Method: {Method}, RequestUri: {RequestUri}, Version: {Version}", request.Identity.Id, request.Message.Method, request.Message.RequestUri.ToString(), request.Message.Version.ToString());
         }
 
         public async Task ExecuteAsync(Context<HttpWrapper> context, Func<Context<HttpWrapper>, Task> next)
