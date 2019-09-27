@@ -14,7 +14,7 @@ namespace Jal.HttpClient.Serilog
         {
             var log = Log.Logger;
 
-            if (response.Message.Content != null && IsString(response.Message.Content))
+            if (response.Message!=null && response.Message.Content != null && IsString(response.Message.Content))
             {
                 try
                 {
@@ -24,7 +24,6 @@ namespace Jal.HttpClient.Serilog
                 {
                     log = log.ForContext("Content", "error to log", true);
                 }
-                
             }
 
             if (response.Message != null && response.Message.Headers != null)
@@ -37,31 +36,29 @@ namespace Jal.HttpClient.Serilog
                 {
                     log = log.ForContext("Headers", "error to log", true);
                 }
-                
             }
 
             if (response.Message!=null)
             {
                 if (response.Exception != null)
                 {
-                    log.Error(response.Exception, "Id: {Id}, Duration: {Duration} ms, StatusCode: {StatusCode}, ReasonPhrase: {ReasonPhrase}, Version: {Version}", request.Identity.Id, response.Duration, response.Message.StatusCode, response.Message.ReasonPhrase.ToString(), response.Message.Version.ToString());
+                    log.Error(response.Exception, "Id: {Id}, RequestUri: {RequestUri}, Duration: {Duration} ms, StatusCode: {StatusCode}, ReasonPhrase: {ReasonPhrase}, Version: {Version}", request.Identity.Id, request.Message.RequestUri.ToString(), response.Duration, response.Message.StatusCode, response.Message.ReasonPhrase.ToString(), response.Message.Version.ToString());
                 }
                 else
                 {
-                    log.Information("Id: {Id}, Duration: {Duration} ms, StatusCode: {StatusCode}, ReasonPhrase: {ReasonPhrase}, Version: {Version}", request.Identity.Id, response.Duration, response.Message.StatusCode, response.Message.ReasonPhrase.ToString(), response.Message.Version.ToString());
+                    log.Information("Id: {Id}, RequestUri: {RequestUri}, Duration: {Duration} ms, StatusCode: {StatusCode}, ReasonPhrase: {ReasonPhrase}, Version: {Version}", request.Identity.Id, request.Message.RequestUri.ToString(), response.Duration, response.Message.StatusCode, response.Message.ReasonPhrase.ToString(), response.Message.Version.ToString());
                 }
             }
             else
             {
                 if (response.Exception != null)
                 {
-                    log.Error(response.Exception, "Id: {Id}, Duration: {Duration} ms", request.Identity.Id, response.Duration);
+                    log.Error(response.Exception, "Id: {Id}, RequestUri: {RequestUri}, Duration: {Duration} ms", request.Identity.Id, request.Message.RequestUri.ToString(), response.Duration);
                 }
                 else
                 {
-                    log.Information("Id: {Id}, Duration: {Duration} ms", request.Identity.Id, response.Duration);
+                    log.Information("Id: {Id}, RequestUri: {RequestUri}, Duration: {Duration} ms", request.Identity.Id, request.Message.RequestUri.ToString(), response.Duration);
                 }
-                
             }
         }
 
