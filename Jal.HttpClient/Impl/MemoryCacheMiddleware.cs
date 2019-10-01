@@ -54,24 +54,24 @@ namespace Jal.HttpClient.Impl
 
                     await next(context);
 
-                    var copy = await context.Data.Response.Message.Clone();
-
-                    var copyforcache = await copy.Clone();
-
-                    context.Data.Response.Message = copy;
-
-                    var policy = new CacheItemPolicy { SlidingExpiration = TimeSpan.FromSeconds(durationinseconds.Value) };
-
-                    if (mode == "absolute")
+                    if (context.Data.Response.Message!=null && when(context.Data.Response))
                     {
-                        policy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.UtcNow.AddSeconds(durationinseconds.Value) };
-                    }
+                        var copy = await context.Data.Response.Message.Clone();
 
-                    if(when(context.Data.Response))
-                    {
+                        var copyforcache = await copy.Clone();
+
+                        var policy = new CacheItemPolicy { SlidingExpiration = TimeSpan.FromSeconds(durationinseconds.Value) };
+
+                        if (mode == "absolute")
+                        {
+                            policy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.UtcNow.AddSeconds(durationinseconds.Value) };
+                        }
+
                         copyforcache.Headers.Add("from-cache", "yes");
 
                         cache.Set(key, copyforcache, policy);
+
+                        context.Data.Response.Message = copy;
                     }
                 }
                 else
