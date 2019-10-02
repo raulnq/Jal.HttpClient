@@ -47,6 +47,14 @@ namespace Jal.HttpClient.Impl
             {
                 response.Exception = tce;
             }
+            catch (OperationCanceledException oce)
+            {
+                response.Exception = oce;
+            }
+            catch (Exception ex)
+            {
+                response.Exception = ex;
+            }
             finally
             {
                 stopWatch.Stop();

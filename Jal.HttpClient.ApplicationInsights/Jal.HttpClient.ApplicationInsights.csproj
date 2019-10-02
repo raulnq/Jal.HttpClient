@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Authors>Raul Naupari</Authors>
-    <Version>1.0.9</Version>
+    <Version>1.1.0</Version>
     <Company>Raul Naupari</Company>
     <Description>Jal.HttpClient library integration with Application Insights</Description>
     <Copyright />
