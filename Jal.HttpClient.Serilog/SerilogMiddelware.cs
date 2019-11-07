@@ -12,7 +12,7 @@ namespace Jal.HttpClient.Serilog
     {
         private async Task BuildResponseLog(HttpResponse response, HttpRequest request)
         {
-            var log = Log.Logger;
+            var log = Log.Logger.ForContext("Type", "client-response");
 
             if (response.Message!=null && response.Message.Content != null && IsString(response.Message.Content))
             {
@@ -46,7 +46,7 @@ namespace Jal.HttpClient.Serilog
                 }
                 else
                 {
-                    log.Information("Id: {Id}, RequestUri: {RequestUri}, Duration: {Duration} ms, StatusCode: {StatusCode}, ReasonPhrase: {ReasonPhrase}, Version: {Version}", request.Identity.Id, request.Message.RequestUri.ToString(), response.Duration, response.Message.StatusCode, response.Message.ReasonPhrase.ToString(), response.Message.Version.ToString());
+                    log.Debug("Id: {Id}, RequestUri: {RequestUri}, Duration: {Duration} ms, StatusCode: {StatusCode}, ReasonPhrase: {ReasonPhrase}, Version: {Version}", request.Identity.Id, request.Message.RequestUri.ToString(), response.Duration, response.Message.StatusCode, response.Message.ReasonPhrase.ToString(), response.Message.Version.ToString());
                 }
             }
             else
@@ -57,7 +57,7 @@ namespace Jal.HttpClient.Serilog
                 }
                 else
                 {
-                    log.Information("Id: {Id}, RequestUri: {RequestUri}, Duration: {Duration} ms", request.Identity.Id, request.Message.RequestUri.ToString(), response.Duration);
+                    log.Debug("Id: {Id}, RequestUri: {RequestUri}, Duration: {Duration} ms", request.Identity.Id, request.Message.RequestUri.ToString(), response.Duration);
                 }
             }
         }
@@ -71,7 +71,7 @@ namespace Jal.HttpClient.Serilog
 
         private async Task BuildRequestLog(HttpRequest request)
         {
-            var log = Log.Logger;
+            var log = Log.Logger.ForContext("Type", "client-request");
 
             if (request.Message.Content != null && request.Message.Content is StringContent)
             {
@@ -99,7 +99,7 @@ namespace Jal.HttpClient.Serilog
                 
             }
 
-            log.Information("Id: {Id}, Method: {Method}, RequestUri: {RequestUri}, Version: {Version}", request.Identity.Id, request.Message.Method, request.Message.RequestUri.ToString(), request.Message.Version.ToString());
+            log.Debug("Id: {Id}, Method: {Method}, RequestUri: {RequestUri}, Version: {Version}", request.Identity.Id, request.Message.Method, request.Message.RequestUri.ToString(), request.Message.Version.ToString());
         }
 
         public async Task ExecuteAsync(Context<HttpWrapper> context, Func<Context<HttpWrapper>, Task> next)

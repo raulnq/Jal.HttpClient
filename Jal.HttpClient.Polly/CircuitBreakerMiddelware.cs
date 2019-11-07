@@ -13,7 +13,7 @@ namespace Jal.HttpClient.Polly
         {
             if (context.Data.Request.Context.ContainsKey("circuitbreakerpolicy"))
             {
-                var policy = context.Data.Request.Context["circuitbreakerpolicy"] as CircuitBreakerPolicy<HttpResponse>;
+                var policy = context.Data.Request.Context["circuitbreakerpolicy"] as AsyncCircuitBreakerPolicy<HttpResponse>;
 
                 try
                 {

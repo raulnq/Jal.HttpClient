@@ -21,7 +21,7 @@ namespace Jal.HttpClient.Polly
             });
         }
 
-        public static void UseCircuitBreaker(this IHttpMiddlewareDescriptor descriptor, CircuitBreakerPolicy<HttpResponse> policy)
+        public static void UseCircuitBreaker(this IHttpMiddlewareDescriptor descriptor, AsyncCircuitBreakerPolicy<HttpResponse> policy)
         {
             descriptor.Add<CircuitBreakerMiddelware>(x => {
                 x.Add("circuitbreakerpolicy", policy);

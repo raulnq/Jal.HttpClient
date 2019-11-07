@@ -23,22 +23,23 @@ using Jal.HttpClient.Model;
 using Jal.HttpClient.Serilog.Installer;
 using Jal.HttpClient.Serilog;
 using Serilog;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Jal.HttpClient.Tests
 {
-    [TestFixture]
+    [TestClass]
     public class HttpHandlerBuilderTests
     {
         private IHttpFluentHandler _sut;
 
-        [SetUp]
+        [TestInitialize]
         public void Setup()
         {
             var log = LogManager.GetLogger("logger");
 
             var container = new WindsorContainer();
 
-            container.Kernel.Resolver.AddSubResolver(new ArrayResolver(container.Kernel));
+            container.Kernel.Resolver.AddSubResolver(new CollectionResolver(container.Kernel));
 
             container.Register(Component.For<ILog>().Instance(log));
 
@@ -61,7 +62,7 @@ namespace Jal.HttpClient.Tests
                 .CreateLogger();
         }
 
-        [Test]
+        [TestMethod]
         public async Task Send_Get_Ok()
         {
             using (var response = await _sut.Get("http://httpbin.org/ip").WithMiddleware(x=>x.UseSerilog()).SendAsync())
@@ -80,7 +81,7 @@ namespace Jal.HttpClient.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public async Task Send_Get_Authorized_Ok()
         {
             using (var response = await _sut.Get("http://httpbin.org/get").WithMiddleware(x => x.AuthorizedByToken("token","value")).SendAsync())
@@ -101,7 +102,7 @@ namespace Jal.HttpClient.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public async Task Send_Get_Retry_Ok()
         {
             var retries = 0;
@@ -129,7 +130,7 @@ namespace Jal.HttpClient.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public async Task Send_Get_AuthorizationAndRetry_Ok()
         {
             var retries = 0;
@@ -152,10 +153,10 @@ namespace Jal.HttpClient.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public async Task Send_Get_CircuitBreaker_Ok()
         {
-            CircuitBreakerPolicy<HttpResponse> breakerPolicy = Policy
+            AsyncCircuitBreakerPolicy<HttpResponse> breakerPolicy = Policy
             .HandleResult<HttpResponse>(r => r.Message?.StatusCode!= HttpStatusCode.OK )
             .CircuitBreakerAsync(2, TimeSpan.FromSeconds(10));
 
@@ -191,7 +192,7 @@ namespace Jal.HttpClient.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public async Task Send_Get_MemoryCache_Ok()
         {
             using (var response = await _sut.Get("http://httpbin.org/get").WithMiddleware(x => { x.AddTrackingInformation(); x.UseCommonLogging(); x.UseMemoryCache(30, y => y.Message.RequestUri.AbsoluteUri, z => z.Message.StatusCode == HttpStatusCode.OK); }).WithIdentity("a","b","c").WithHeaders(x => x.Add("header", "old")).SendAsync())
@@ -230,7 +231,7 @@ namespace Jal.HttpClient.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public async Task SendAsync_Get_Ok()
         {
             using (var response = await _sut.Get("http://httpbin.org/ip").SendAsync())
@@ -249,7 +250,7 @@ namespace Jal.HttpClient.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public async Task Send_PostJsonUtf8_Ok()
         {
             using (var response = await _sut.Post("http://httpbin.org/post").WithMiddleware(x => x.UseSerilog()).Json(@"{""message"":""Hello World!!""}").SendAsync())
@@ -268,7 +269,7 @@ namespace Jal.HttpClient.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public async Task Send_PostXmlUtf8_Ok()
         {
             using (var response = await _sut.Post("http://httpbin.org/post").Xml(@"<message>Hello World!!</message>").SendAsync())
@@ -287,7 +288,7 @@ namespace Jal.HttpClient.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public async Task Send_PostFormUrlEncodedArrayUtf8_Ok()
         {
             using (var response = await _sut.Post("http://httpbin.org/post").FormUrlEncoded(new[] { new KeyValuePair<string, string>("message", "Hello World"), new KeyValuePair<string, string>("array", "a a"), new KeyValuePair<string, string>("array", "bbb"), new KeyValuePair<string, string>("array", "c c"), }).SendAsync())
@@ -306,7 +307,7 @@ namespace Jal.HttpClient.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public async Task Send_PostFormUrlEncodedUtf8_Ok()
         {
             using (var response = await _sut.Post("http://httpbin.org/post").FormUrlEncoded(new [] {new KeyValuePair<string, string>("message", "Hello World") }).SendAsync())
@@ -325,7 +326,7 @@ namespace Jal.HttpClient.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public async Task Send_PostMultiPartFormDataUtf8_Ok()
         {
             using (var response = await _sut.Post("http://httpbin.org/post").MultiPartFormData(x =>
@@ -344,7 +345,7 @@ namespace Jal.HttpClient.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public async Task Send_GetWithQueryParameters_Ok()
         {
             using (var response = await _sut.Get("http://httpbin.org/get").WithMiddleware(x => x.UseSerilog()).WithQueryParameters(x=>x.Add("parameter","value")).SendAsync())
@@ -365,7 +366,7 @@ namespace Jal.HttpClient.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public async Task Send_GetWithHeaders_Ok()
         {
             using (var response = await _sut.Get("http://httpbin.org/get").WithHeaders(x => x.Add("Header1", "value")).SendAsync())
@@ -386,7 +387,7 @@ namespace Jal.HttpClient.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public async Task Send_Delete_Ok()
         {
             using (var response = await _sut.Delete("http://httpbin.org/delete").SendAsync())
@@ -395,7 +396,7 @@ namespace Jal.HttpClient.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public async Task Send_Get_TimeOut()
         {
             var client = new System.Net.Http.HttpClient

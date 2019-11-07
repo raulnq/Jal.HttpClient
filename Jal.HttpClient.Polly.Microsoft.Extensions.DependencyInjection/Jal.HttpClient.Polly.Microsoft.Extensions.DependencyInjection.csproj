@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Raul Naupari</Authors>
+    <Description>Microsoft.Extensions.DependencyInjection installer for the Jal.HttpClient.Polly library</Description>
+    <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/raulnq/Jal.HttpClient</PackageProjectUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Jal.HttpClient.Polly\Jal.HttpClient.Polly.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Jal.Locator.Microsoft.Extensions.DependencyInjection" Version="1.0.0" />
+  </ItemGroup>
+</Project>

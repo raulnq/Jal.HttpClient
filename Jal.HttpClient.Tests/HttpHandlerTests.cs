@@ -20,22 +20,23 @@ using System.Net.Http.Headers;
 using Jal.ChainOfResponsability.Installer;
 using Jal.Locator.CastleWindsor.Installer;
 using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Jal.HttpClient.Tests
 {
-    [TestFixture]
+    [TestClass]
     public class HttpHandlerTests
     {
         private IHttpHandler _sut;
 
-        [SetUp]
+        [TestInitialize]
         public void Setup()
         {
             var log = LogManager.GetLogger("logger");
 
             var container = new WindsorContainer();
 
-            container.Kernel.Resolver.AddSubResolver(new ArrayResolver(container.Kernel));
+            container.Kernel.Resolver.AddSubResolver(new CollectionResolver(container.Kernel));
 
             container.Register(Component.For<ILog>().Instance(log));
 
@@ -50,7 +51,7 @@ namespace Jal.HttpClient.Tests
             _sut = container.Resolve<IHttpHandler>();
         }
 
-        [Test]
+        [TestMethod]
         public async Task Send_Get_Ok()
         {
             using (var response = await _sut.SendAsync(new HttpRequest("http://httpbin.org/get", HttpMethod.Get)))
@@ -69,7 +70,7 @@ namespace Jal.HttpClient.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public async Task Send_GetWithHeaders_Ok()
         {
             var request = new HttpRequest("http://httpbin.org/get", HttpMethod.Get);
@@ -94,7 +95,7 @@ namespace Jal.HttpClient.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public async Task Send_GetWithDuplicatedHeaders_Ok()
         {
             var request = new HttpRequest("http://httpbin.org/get", HttpMethod.Get);
@@ -121,7 +122,7 @@ namespace Jal.HttpClient.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public async Task Send_GetWithQueryParameters_Ok()
         {
             var request = new HttpRequest("http://httpbin.org/get", HttpMethod.Get);
@@ -145,7 +146,7 @@ namespace Jal.HttpClient.Tests
                 response.Exception.ShouldBeNull();
             }
         }
-        [Test]
+        [TestMethod]
         public async Task Send_GetXml_Ok()
         {
             using (var response = await _sut.SendAsync(new HttpRequest("http://httpbin.org/xml", HttpMethod.Get)))
@@ -164,7 +165,7 @@ namespace Jal.HttpClient.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public async Task Send_GetHtml_Ok()
         {
             using (var response = await _sut.SendAsync(new HttpRequest("http://httpbin.org/html", HttpMethod.Get)))
@@ -183,28 +184,28 @@ namespace Jal.HttpClient.Tests
             }
         }
 
-        [Test]
-        public async Task Send_GetImagePng_Ok()
-        {
-            using (var response = await _sut.SendAsync(new HttpRequest("http://httpbin.org/image/png", HttpMethod.Get)))
-            {
-                var image = Image.FromStream(await response.Message.Content.ReadAsStreamAsync());
+        //[TestMethod]
+        //public async Task Send_GetImagePng_Ok()
+        //{
+        //    using (var response = await _sut.SendAsync(new HttpRequest("http://httpbin.org/image/png", HttpMethod.Get)))
+        //    {
+        //        var image = Image.FromStream(await response.Message.Content.ReadAsStreamAsync());
 
-                var same = ImageFormat.Png.Equals(image.RawFormat);
+        //        var same = ImageFormat.Png.Equals(image.RawFormat);
 
-                same.ShouldBeTrue();
+        //        same.ShouldBeTrue();
 
-                response.Message.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
+        //        response.Message.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
-                response.Message.Content.Headers.ContentType.MediaType.ShouldBe("image/png");
+        //        response.Message.Content.Headers.ContentType.MediaType.ShouldBe("image/png");
 
-                response.Message.StatusCode.ShouldBe(HttpStatusCode.OK);
+        //        response.Message.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-                response.Exception.ShouldBeNull();
-            }
-        }
+        //        response.Exception.ShouldBeNull();
+        //    }
+        //}
 
-        [Test]
+        [TestMethod]
         public async Task Send_Get404_Ok()
         {
             using (var response = await _sut.SendAsync(new HttpRequest("http://httpbin.org/status/404", HttpMethod.Get)))
@@ -219,7 +220,7 @@ namespace Jal.HttpClient.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public async Task Send_Get500_Ok()
         {
             using (var response = await _sut.SendAsync(new HttpRequest("http://httpbin.org/status/500", HttpMethod.Get)))
@@ -234,7 +235,7 @@ namespace Jal.HttpClient.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public async Task Send_PostJsonUtf8_Ok()
         {
             var request = new HttpRequest("http://httpbin.org/post", HttpMethod.Post)
@@ -258,7 +259,7 @@ namespace Jal.HttpClient.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public async Task Send_PostStreamJsonUtf8_Ok()
         {
             var streamcontent = new StreamContent(new MemoryStream(Encoding.UTF8.GetBytes(@"{""message"":""Hello World!!""}")));
@@ -286,7 +287,7 @@ namespace Jal.HttpClient.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public async Task Send_PostStreamJsonUtf7_Ok()
         {
             var streamcontent = new StreamContent(new MemoryStream(Encoding.UTF7.GetBytes(@"{""message"":""Hello World!!""}")));
@@ -317,7 +318,7 @@ namespace Jal.HttpClient.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public async Task Send_PostXmlUtf8_Ok()
         {
             var request = new HttpRequest("http://httpbin.org/post", HttpMethod.Post)
@@ -341,7 +342,7 @@ namespace Jal.HttpClient.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public async Task Send_PostFormUrlEncodedUtf7_Ok()
         {
             var request = new HttpRequest("http://httpbin.org/post", HttpMethod.Post)
@@ -367,7 +368,7 @@ namespace Jal.HttpClient.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public async Task Send_PostFormUrlEncodedUtf8_Ok()
         {
             var request = new HttpRequest("http://httpbin.org/post", HttpMethod.Post)
@@ -391,7 +392,7 @@ namespace Jal.HttpClient.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public async Task Send_PostJsonUtf7_Ok()
         {
             var request = new HttpRequest("http://httpbin.org/post", HttpMethod.Post)
@@ -413,7 +414,7 @@ namespace Jal.HttpClient.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public async Task Send_PutJsonUtf8_Ok()
         {
             var request = new HttpRequest("http://httpbin.org/put", HttpMethod.Put)
@@ -437,7 +438,7 @@ namespace Jal.HttpClient.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public async Task Send_Delete_Ok()
         {
             var request = new HttpRequest("http://httpbin.org/delete", HttpMethod.Delete)
@@ -461,7 +462,7 @@ namespace Jal.HttpClient.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public async Task Send_Get_TimeOut()
         {
             var client = new System.Net.Http.HttpClient
@@ -480,7 +481,7 @@ namespace Jal.HttpClient.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public async Task Send_GetGzip_Ok()
         {
             HttpClientHandler handler = new HttpClientHandler()
