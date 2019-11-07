@@ -58,7 +58,7 @@ namespace Jal.HttpClient.Tests
             _sut = container.Resolve<IHttpFluentHandler>();
 
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}{Properties}")
+                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}{Properties}").MinimumLevel.Verbose()
                 .CreateLogger();
         }
 
