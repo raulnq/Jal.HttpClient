@@ -10,7 +10,7 @@ namespace Jal.HttpClient.Polly
 {
     public class OnConditionRetryMiddelware : IMiddlewareAsync<HttpWrapper>
     {
-        public async Task ExecuteAsync(Context<HttpWrapper> context, Func<Context<HttpWrapper>, Task> next)
+        public Task ExecuteAsync(Context<HttpWrapper> context, Func<Context<HttpWrapper>, Task> next)
         {
             var currentindex = context.Index;
 
@@ -22,24 +22,21 @@ namespace Jal.HttpClient.Polly
 
                 if (retrycount != null && retrycondition != null)
                 {
-                    if (context.Data.Request.Context.ContainsKey("onretry"))
+                    if (context.Data.Request.Context.ContainsKey("onretry") && context.Data.Request.Context["onretry"] is Action<DelegateResult<HttpResponse>, int> onretry)
                     {
-                        if (context.Data.Request.Context["onretry"] is Action<DelegateResult<HttpResponse>, int> onretry)
+                        return Policy
+                        .HandleResult<HttpResponse>(retrycondition)
+                        .RetryAsync(retrycount.Value, (c, r) => { context.Index = currentindex; onretry(c, r); context.Data.Request.Message = context.Data.Request.Message.Clone(); })
+                        .ExecuteAsync(async () =>
                         {
-                            await Policy
-                            .HandleResult<HttpResponse>(retrycondition)
-                            .RetryAsync(retrycount.Value, (c, r) => { context.Index = currentindex; onretry(c, r); context.Data.Request.Message = context.Data.Request.Message.Clone(); })
-                            .ExecuteAsync(async () =>
-                            {
-                                await next(context);
+                            await next(context);
 
-                                return context.Data.Response;
-                            });
-                        }
+                            return context.Data.Response;
+                        });
                     }
                     else
                     {
-                        await Policy
+                        return Policy
                         .HandleResult<HttpResponse>(retrycondition)
                         .RetryAsync(retrycount.Value, (c, r) => { context.Index = currentindex; context.Data.Request.Message = context.Data.Request.Message.Clone(); })
                                .ExecuteAsync(async () => {
@@ -52,12 +49,12 @@ namespace Jal.HttpClient.Polly
                 }
                 else
                 {
-                    await next(context);
+                    return next(context);
                 }
             }
             else
             {
-                await next(context);
+                return next(context);
             }
             
         }

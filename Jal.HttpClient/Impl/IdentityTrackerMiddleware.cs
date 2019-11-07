@@ -8,7 +8,7 @@ namespace Jal.HttpClient.Impl
 {
     public class IdentityTrackerMiddleware : IMiddlewareAsync<HttpWrapper>
     {
-        public async Task ExecuteAsync(Context<HttpWrapper> context, Func<Context<HttpWrapper>, Task> next)
+        public Task ExecuteAsync(Context<HttpWrapper> context, Func<Context<HttpWrapper>, Task> next)
         {
             if(context.Data.Request.Identity!=null)
             {
@@ -34,7 +34,7 @@ namespace Jal.HttpClient.Impl
                 }
             }
 
-            await next(context);
+            return next(context);
         }
     }
 }

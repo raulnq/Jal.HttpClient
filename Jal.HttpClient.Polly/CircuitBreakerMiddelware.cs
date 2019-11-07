@@ -9,7 +9,7 @@ namespace Jal.HttpClient.Polly
 {
     public class CircuitBreakerMiddelware : IMiddlewareAsync<HttpWrapper>
     {
-        public async Task ExecuteAsync(Context<HttpWrapper> context, Func<Context<HttpWrapper>, Task> next)
+        public Task ExecuteAsync(Context<HttpWrapper> context, Func<Context<HttpWrapper>, Task> next)
         {
             if (context.Data.Request.Context.ContainsKey("circuitbreakerpolicy"))
             {
@@ -17,7 +17,7 @@ namespace Jal.HttpClient.Polly
 
                 try
                 {
-                    await policy.ExecuteAsync(async () =>
+                    return policy.ExecuteAsync(async () =>
                     {
                         await next(context);
 
@@ -33,10 +33,11 @@ namespace Jal.HttpClient.Polly
 
                     context.Data.Response = response;
                 }
+                return next(context);
             }
             else
             {
-                await next(context);
+                return next(context);
             }
                 
         }
