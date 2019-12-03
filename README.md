@@ -29,7 +29,7 @@ var container = new ServiceContainer();
 ```
 Install the installer class included in the Jal.HttpClient.LightInject.Installer library
 ```c++
-container.RegisterHttpClient();
+container.RegisterFrom<HttpClientCompositionRoot>()
 ```			
 Resolve an instance of the IHttpHandler class
 ```c++
