@@ -3,126 +3,94 @@ Just another library to send HTTP requests and receve HTTP responses from a reso
 
 ## How to use?
 
-### Default Implementation
-
-    var httpclient = HttpHandler.Builder.Create;
-
 ### Castle Windsor Implementation
 
 Setup the Castle Windsor container
-
-    var container = new WindsorContainer();
-	
+```c++
+var container = new WindsorContainer();
+```	
 Install the installer class included in the Jal.HttpClient.Installer library
-
-    container.Install(new HttpClientInstaller());
-				
+```c++
+container.Install(new HttpClientInstaller());
+```			
 Resolve an instance of the IHttpHandler class
-
-    var httpclient = container.Resolve<IHttpHandler>();
-
+```c++
+var httpclient = container.Resolve<IHttpHandler>();
+```
 Send a request to https://github.com/raulnq
-
-    var response = httpclient.Send(new HttpRequest("https://github.com/raulnq", HttpMethod.Get));
-
+```c++
+var response = await httpclient.SendAsync(new HttpRequest("https://github.com/raulnq", HttpMethod.Get));
+```
 ### LightInject Implementation
 
 Setup the LightInject container
-
-    var container = new ServiceContainer();
-	
+```c++
+var container = new ServiceContainer();
+```
 Install the installer class included in the Jal.HttpClient.LightInject.Installer library
-
-    container.RegisterHttpClient();
-				
+```c++
+container.RegisterHttpClient();
+```			
 Resolve an instance of the IHttpHandler class
-
-    var httpclient = container.GetInstance<IHttpHandler>();
-	
+```c++
+var httpclient = container.GetInstance<IHttpHandler>();
+```
 Send a request to https://github.com/raulnq
-
-    var response = httpclient.Send(new HttpRequest("https://github.com/raulnq", HttpMethod.Get));
-    
+```c++
+var response = httpclient.SendAsync(new HttpRequest("https://github.com/raulnq", HttpMethod.Get));
+```
 ## Fluent API
  
 Resolve an instance of IHttpFluentHandler.
-
-    var httpclientfluent = HttpFluentHandler.Builder.UseHttpHandler(httpclient).Create;
-
-Or
-
-    var httpfluenthandler = container.Resolve<IHttpFluentHandler>();
-
-Or
-
-    var httpfluenthandler = container.GetInstance<IHttpFluentHandler>();
-
+```c++
+var httpfluenthandler = container.Resolve<IHttpFluentHandler>();
+```
 Get data
-
-    using (var response = httpfluenthandler.Get("https://github.com/raulnq").Send)
-    {
-        var content = response.Message.Content.Read();
-    }
-
+```c++
+using (var r = await httpfluenthandler.Get("https://github.com/raulnq").SendAsync())
+{
+    var content = r.Message.Content.Read();
+}
+```
 Post Json data
+```c++
+using (var r = httpfluenthandler.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").SendAsync())
+{
 
-    using (var response = httpfluenthandler.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").Send)
-    {
-        var code = response.Message.StatusCode;
-    }
-    
+}
+```
 Post Xml data
+```c++
+using (var r = httpfluenthandler.Post("http://httpbin.org/post").Xml(@"<message>Hello World!!</message>").SendAsync())
+{
 
-    using (var response = httpfluenthandler.Post("http://httpbin.org/post").Xml(@"<message>Hello World!!</message>").Send)
-    {
-        
-    }
-    
+}
+```
 Post Form url encoded data
+```c++
+using (var r = await httpfluenthandler.Post("http://httpbin.org/post").FormUrlEncoded(new [] {new KeyValuePair<string, string>("message", "Hello World") }).SendAsync())
+{
 
-    using (var response = httpfluenthandler.Post("http://httpbin.org/post").FormUrlEncoded(@"message=Hello%World!!").Send())
-    {
-
-    }
-    
+}
+```
 Get Async data
-
-    using (var response = await _sut.Get("http://httpbin.org/ip").SendAsync)
-    {
-
-    }
-    
-Post UTF-16 character set data
-
-    using (var response = httpfluenthandler.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").Utf16().Send)
-    {
-
-    }
-
-Post UTF-16 character set data
-
-    using (var response = httpfluenthandler.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").Utf8().Send)
-    {
-
-    }
-
-Setup timeout
-
-    using (var response = httpclientbuilder.Get("http://httpbin.org/delay/5").WithTimeout(10).Send)
-    {
-        
-    }
-
+```c++
+using (var r = await _sut.Get("http://httpbin.org/ip").SendAsync())
+{
+	var content = await r.Message.Content.ReadAsStringAsync();
+}
+```
 Send query parameters
+```c++
+using (var r = await httpclientbuilder.Get("http://httpbin.org/ip").WithQueryParameters( x=> { x.Add("x", "x"); x.Add("y","y"); }).SendAsync())
+{
 
-    using (var r = httpclientbuilder.Get("http://httpbin.org/ip").WithQueryParameters( x=> { x.Add("x", "x"); x.Add("y","y"); }).Send)
-    {
-
-    }
-
+}
+```
 Send headers
+```c++
+using (var r = await httpclientbuilder.Get("http://httpbin.org/ip").WithHeaders(x=> { x.Add("x", "x"); x.Add("y","y"); }).SendAsync())
+{
 
-    using (var r = httpclientbuilder.Get("http://httpbin.org/ip").WithHeaders(x=> { x.Add("x", "x"); x.Add("y","y"); }).Send)
-    {
-
-    }
+}
+```
