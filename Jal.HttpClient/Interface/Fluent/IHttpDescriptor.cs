@@ -1,12 +1,10 @@
 using System;
-using System.Net;
-using Jal.HttpClient.Model;
 
-namespace Jal.HttpClient.Interface.Fluent
+namespace Jal.HttpClient
 {
     public interface IHttpDescriptor : IHttpContentDescriptor, IHttpSenderDescriptor
     {
-        IHttpDescriptor WithIdentity(HttpIdentity identity);
+        IHttpDescriptor WithTracing(HttpTracingContext identity);
 
         IHttpDescriptor WithAcceptedType(string acceptedtype);
 

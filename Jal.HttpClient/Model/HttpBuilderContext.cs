@@ -1,10 +1,8 @@
 using System;
-using Jal.HttpClient.Interface;
-using Jal.HttpClient.Interface.Fluent;
 
-namespace Jal.HttpClient.Model
+namespace Jal.HttpClient
 {
-    public class HttpContextDescriptor
+    public class HttpBuilderContext
     {
         public HttpRequest Request { get; }
 
@@ -16,7 +14,7 @@ namespace Jal.HttpClient.Model
 
         public Action<IHttpMiddlewareDescriptor> MiddlewareDescriptorAction { get; set; }
 
-        public HttpContextDescriptor(HttpRequest request, IHttpHandler handler)
+        public HttpBuilderContext(HttpRequest request, IHttpHandler handler)
         {
             Request = request;
             Handler = handler;

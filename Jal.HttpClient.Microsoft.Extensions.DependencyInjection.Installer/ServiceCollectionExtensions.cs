@@ -1,32 +1,29 @@
-﻿using Jal.ChainOfResponsability.Intefaces;
-using Jal.HttpClient.Impl;
-using Jal.HttpClient.Impl.Fluent;
-using Jal.HttpClient.Interface;
-using Jal.HttpClient.Interface.Fluent;
-using Jal.HttpClient.Model;
-using Jal.Locator.Microsoft.Extensions.DependencyInjection.Interface;
-using Microsoft.Extensions.DependencyInjection;
-using Jal.Locator.Microsoft.Extensions.DependencyInjection.Extensions;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Jal.ChainOfResponsability;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Jal.ChainOfResponsability.Microsoft.Extensions.DependencyInjection;
 
 namespace Jal.HttpClient.Microsoft.Extensions.DependencyInjection.Installer
 {
     public static class ServiceCollectionExtensions
     {
-        public static INamedServiceCollection AddHttpClient(this INamedServiceCollection servicecollection)
+        public static IServiceCollection AddHttpClient(this IServiceCollection servicecollection)
         {
-            servicecollection.ServiceCollection.AddSingleton<IHttpFluentHandler, HttpFluentHandler>();
+            servicecollection.AddChainOfResponsability();
 
-            servicecollection.ServiceCollection.AddSingleton<IHttpHandler, HttpHandler>();
+            servicecollection.TryAddSingleton<IHttpFluentHandler, HttpFluentHandler>();
 
-            servicecollection.AddSingleton<IMiddlewareAsync<HttpWrapper>, BasicHttpAuthenticatorMiddleware>(typeof(BasicHttpAuthenticatorMiddleware).FullName);
+            servicecollection.TryAddSingleton<IHttpHandler, HttpHandler>();
 
-            servicecollection.AddSingleton<IMiddlewareAsync<HttpWrapper>, HttpMiddelware>(typeof(HttpMiddelware).FullName);
+            servicecollection.AddSingleton<IAsyncMiddleware<HttpContext>, BasicHttpAuthenticatorMiddleware>();
 
-            servicecollection.AddSingleton<IMiddlewareAsync<HttpWrapper>, TokenAuthenticatorMiddleware>(typeof(TokenAuthenticatorMiddleware).FullName);
+            servicecollection.AddSingleton<IAsyncMiddleware<HttpContext>, HttpMiddelware>();
 
-            servicecollection.AddSingleton<IMiddlewareAsync<HttpWrapper>, MemoryCacheMiddleware>(typeof(MemoryCacheMiddleware).FullName);
+            servicecollection.AddSingleton<IAsyncMiddleware<HttpContext>, TokenAuthenticatorMiddleware>();
 
-            servicecollection.AddSingleton<IMiddlewareAsync<HttpWrapper>, IdentityTrackerMiddleware>(typeof(IdentityTrackerMiddleware).FullName);
+            servicecollection.AddSingleton<IAsyncMiddleware<HttpContext>, MemoryCacheMiddleware>();
+
+            servicecollection.AddSingleton<IAsyncMiddleware<HttpContext>, TracingMiddleware>();
 
             return servicecollection;
         }

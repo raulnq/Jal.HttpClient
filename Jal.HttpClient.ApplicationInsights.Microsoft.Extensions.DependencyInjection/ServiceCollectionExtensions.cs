@@ -1,16 +1,14 @@
-﻿using Jal.Locator.Microsoft.Extensions.DependencyInjection.Interface;
-using Jal.ChainOfResponsability.Intefaces;
-using Jal.HttpClient.Model;
-using Jal.Locator.Microsoft.Extensions.DependencyInjection.Extensions;
-using Jal.HttpClient.ApplicationInsights;
+﻿using Jal.ChainOfResponsability;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Jal.HttpClient.LightInject.ApplicationInsights.Microsoft.Extensions.DependencyInjection
+namespace Jal.HttpClient.ApplicationInsights.Microsoft.Extensions.DependencyInjection
 {
     public static class ServiceCollectionExtensions
     {
-        public static INamedServiceCollection AddApplicationInsightsForHttpClient(this INamedServiceCollection servicecollection)
+        public static IServiceCollection AddApplicationInsightsForHttpClient(this IServiceCollection servicecollection)
         {
-            servicecollection.AddSingleton<IMiddlewareAsync<HttpWrapper>, ApplicationInsightsMiddelware>(typeof(ApplicationInsightsMiddelware).FullName);
+            servicecollection.AddSingleton<IAsyncMiddleware<HttpContext>, ApplicationInsightsMiddelware>();
 
             return servicecollection;
         }

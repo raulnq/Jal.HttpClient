@@ -1,8 +1,6 @@
-using Jal.HttpClient.Interface.Fluent;
-using Jal.HttpClient.Model;
 using System.Net.Http;
 
-namespace Jal.HttpClient.Impl.Fluent
+namespace Jal.HttpClient
 {
     public class HttpMultiPartFormDataContentDescriptor : IHttpMultiPartFormDataContentDescriptor
     {
@@ -17,6 +15,7 @@ namespace Jal.HttpClient.Impl.Fluent
         public IHttpMultiPartFormDataDispositionDescriptor WithContent(HttpContent requestContent)
         {
             _httpcontent.Add(requestContent);
+
             return new HttpMultiPartFormDataDispositionDescriptor(requestContent);
         }
     }

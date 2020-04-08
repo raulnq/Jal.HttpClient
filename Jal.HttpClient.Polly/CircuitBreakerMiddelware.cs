@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Jal.ChainOfResponsability.Intefaces;
-using Jal.ChainOfResponsability.Model;
-using Jal.HttpClient.Model;
+using Jal.ChainOfResponsability;
 using Polly.CircuitBreaker;
 
 namespace Jal.HttpClient.Polly
 {
-    public class CircuitBreakerMiddelware : IMiddlewareAsync<HttpWrapper>
+    public class CircuitBreakerMiddelware : IAsyncMiddleware<HttpContext>
     {
-        public Task ExecuteAsync(Context<HttpWrapper> context, Func<Context<HttpWrapper>, Task> next)
+        public const string CIRCUIT_BREAKER_POLICY_KEY = "circuitbreakerpolicy";
+
+        public Task ExecuteAsync(AsyncContext<HttpContext> context, Func<AsyncContext<HttpContext>, Task> next)
         {
-            if (context.Data.Request.Context.ContainsKey("circuitbreakerpolicy"))
+            if (context.Data.Request.Context.ContainsKey(CIRCUIT_BREAKER_POLICY_KEY))
             {
-                var policy = context.Data.Request.Context["circuitbreakerpolicy"] as AsyncCircuitBreakerPolicy<HttpResponse>;
+                var policy = context.Data.Request.Context[CIRCUIT_BREAKER_POLICY_KEY] as AsyncCircuitBreakerPolicy<HttpResponse>;
 
                 try
                 {
@@ -26,10 +26,7 @@ namespace Jal.HttpClient.Polly
                 }
                 catch (BrokenCircuitException<HttpResponse> ex)
                 {
-                    var response = new HttpResponse(context.Data.Request)
-                    {
-                        Exception = ex
-                    };
+                    var response = new HttpResponse(context.Data.Request, null, ex, 0);
 
                     context.Data.Response = response;
                 }

@@ -1,12 +1,8 @@
 ﻿using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
-using Jal.ChainOfResponsability.Intefaces;
-using Jal.HttpClient.Impl;
-using Jal.HttpClient.Impl.Fluent;
-using Jal.HttpClient.Interface;
-using Jal.HttpClient.Interface.Fluent;
-using Jal.HttpClient.Model;
+using Jal.ChainOfResponsability;
+using Jal.ChainOfResponsability.Installer;
 
 namespace Jal.HttpClient.Installer
 {
@@ -14,17 +10,42 @@ namespace Jal.HttpClient.Installer
     {
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
-            container.Register(
-                Component.For<IHttpHandler>().ImplementedBy<HttpHandler>(),
-                Component.For<IMiddlewareAsync<HttpWrapper>>().ImplementedBy<HttpMiddelware>().Named(typeof(HttpMiddelware).FullName),
-                Component.For<IHttpFluentHandler>().ImplementedBy<HttpFluentHandler>()
-                );
+            container.AddChainOfResponsability();
 
-            container.Register(Component.For<IMiddlewareAsync<HttpWrapper>>().ImplementedBy<BasicHttpAuthenticatorMiddleware>().Named(typeof(BasicHttpAuthenticatorMiddleware).FullName));
-            container.Register(Component.For<IMiddlewareAsync<HttpWrapper>>().ImplementedBy<TokenAuthenticatorMiddleware>().Named(typeof(TokenAuthenticatorMiddleware).FullName));
-            container.Register(Component.For<IMiddlewareAsync<HttpWrapper>>().ImplementedBy<MemoryCacheMiddleware>().Named(typeof(MemoryCacheMiddleware).FullName));
-            container.Register(Component.For<IMiddlewareAsync<HttpWrapper>>().ImplementedBy<IdentityTrackerMiddleware>().Named(typeof(IdentityTrackerMiddleware).FullName));
+            if (!container.Kernel.HasComponent(typeof(IHttpHandler)))
+            {
+                container.Register(Component.For<IHttpHandler>().ImplementedBy<HttpHandler>());
+            }
 
+            if (!container.Kernel.HasComponent(typeof(IHttpFluentHandler)))
+            {
+                container.Register(Component.For<IHttpFluentHandler>().ImplementedBy<HttpFluentHandler>());
+            }
+
+            if (!container.Kernel.HasComponent(typeof(HttpMiddelware).FullName))
+            {
+                container.Register(Component.For<IAsyncMiddleware<HttpContext>>().ImplementedBy<HttpMiddelware>().Named(typeof(HttpMiddelware).FullName));
+            }
+
+            if (!container.Kernel.HasComponent(typeof(BasicHttpAuthenticatorMiddleware).FullName))
+            {
+                container.Register(Component.For<IAsyncMiddleware<HttpContext>>().ImplementedBy<BasicHttpAuthenticatorMiddleware>().Named(typeof(BasicHttpAuthenticatorMiddleware).FullName));
+            }
+
+            if (!container.Kernel.HasComponent(typeof(TokenAuthenticatorMiddleware).FullName))
+            {
+                container.Register(Component.For<IAsyncMiddleware<HttpContext>>().ImplementedBy<TokenAuthenticatorMiddleware>().Named(typeof(TokenAuthenticatorMiddleware).FullName));
+            }
+
+            if (!container.Kernel.HasComponent(typeof(MemoryCacheMiddleware).FullName))
+            {
+                container.Register(Component.For<IAsyncMiddleware<HttpContext>>().ImplementedBy<MemoryCacheMiddleware>().Named(typeof(MemoryCacheMiddleware).FullName));
+            }
+
+            if (!container.Kernel.HasComponent(typeof(TracingMiddleware).FullName))
+            {
+                container.Register(Component.For<IAsyncMiddleware<HttpContext>>().ImplementedBy<TracingMiddleware>().Named(typeof(TracingMiddleware).FullName));
+            }
         }
 
     }

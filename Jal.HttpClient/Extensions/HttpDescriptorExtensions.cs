@@ -3,32 +3,29 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
-using Jal.HttpClient.Impl.Fluent;
-using Jal.HttpClient.Interface.Fluent;
-using Jal.HttpClient.Model;
 
-namespace Jal.HttpClient.Extensions
+namespace Jal.HttpClient
 {
     public static class HttpDescriptorExtensions
     {
-        public static IHttpDescriptor WithIdentity(this IHttpDescriptor descriptor, string id, string parentid=null, string operationid=null)
+        public static IHttpDescriptor WithTracing(this IHttpDescriptor descriptor, string requestid, string parentid=null, string operationid=null)
         {
-            if (string.IsNullOrWhiteSpace(id))
+            if (string.IsNullOrWhiteSpace(requestid))
             {
-                throw new ArgumentNullException(nameof(id));
+                throw new ArgumentNullException(nameof(requestid));
             }
-            return descriptor.WithIdentity(new HttpIdentity(id) { ParentId = parentid, OperationId = operationid });
+            return descriptor.WithTracing(new HttpTracingContext(requestid, parentid, operationid));
         }
 
         public static IHttpDescriptor MultiPartFormData(this IHttpDescriptor descriptor, Action<IHttpMultiPartFormDataContentDescriptor> contentTypeDescriptorAction)
         {
             var content = new MultipartFormDataContent();
-
+            
             var contentdescriptor = new HttpMultiPartFormDataContentDescriptor(content);
 
             contentTypeDescriptorAction(contentdescriptor);
 
-            descriptor.WithContent(content)/*.WithContentType("multipart/form-data")*/;
+            descriptor.WithContent(content);
 
             return descriptor;
         }
@@ -36,24 +33,7 @@ namespace Jal.HttpClient.Extensions
 
         public static IHttpContentTypeDescriptor FormUrlEncoded(this IHttpDescriptor descriptor, KeyValuePair<string,string>[] data)
         {
-            var content = string.Empty;
-
-            var first = true;
-
-            foreach (var keyvalue in data)
-            {
-                if (first)
-                {
-                    content = content + $"{WebUtility.UrlEncode(keyvalue.Key)}={WebUtility.UrlEncode(keyvalue.Value)}";
-                    first = false;
-                }
-                else
-                {
-                    content = content + $"&{WebUtility.UrlEncode(keyvalue.Key)}={WebUtility.UrlEncode(keyvalue.Value)}";
-                }
-            }
-
-            return descriptor.WithContent(content).WithContentType("application/x-www-form-urlencoded");
+            return descriptor.WithContent(new FormUrlEncodedContent(data));
         }
 
         public static IHttpContentTypeDescriptor Json(this IHttpDescriptor descriptor, string content)

@@ -1,4 +1,4 @@
-﻿namespace Jal.HttpClient.Interface.Fluent
+﻿namespace Jal.HttpClient
 {
     public interface IHttpContextDescriptor
     {

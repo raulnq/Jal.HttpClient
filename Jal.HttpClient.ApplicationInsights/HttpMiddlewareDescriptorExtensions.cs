@@ -1,6 +1,4 @@
-﻿using Jal.HttpClient.Interface.Fluent;
-
-namespace Jal.HttpClient.ApplicationInsights
+﻿namespace Jal.HttpClient.ApplicationInsights
 {
     public static class HttpMiddlewareDescriptorExtensions
     {

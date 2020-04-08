@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
@@ -8,8 +8,6 @@
 
   <ItemGroup>
     <PackageReference Include="Common.Logging" Version="3.4.1" />
-    <PackageReference Include="Jal.ChainOfResponsability.Installer" Version="1.0.5" />
-    <PackageReference Include="Jal.Locator.CastleWindsor" Version="1.1.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.3.2" />
     <PackageReference Include="MSTest.TestFramework" Version="1.3.2" />
@@ -19,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Jal.HttpClient.ApplicationInsights.Installer\Jal.HttpClient.ApplicationInsights.Installer.csproj" />
+    <ProjectReference Include="..\Jal.HttpClient.ApplicationInsights.Microsoft.Extensions.DependencyInjection\Jal.HttpClient.ApplicationInsights.Microsoft.Extensions.DependencyInjection.csproj" />
     <ProjectReference Include="..\Jal.HttpClient.Common.Logging.Installer\Jal.HttpClient.Common.Logging.Installer.csproj" />
     <ProjectReference Include="..\Jal.HttpClient.Installer\Jal.HttpClient.Installer.csproj" />
     <ProjectReference Include="..\Jal.HttpClient.LightInject.ApplicationInsights.Installer\Jal.HttpClient.LightInject.ApplicationInsights.Installer.csproj" />
@@ -26,8 +25,11 @@
     <ProjectReference Include="..\Jal.HttpClient.LightInject.Installer\Jal.HttpClient.LightInject.Installer.csproj" />
     <ProjectReference Include="..\Jal.HttpClient.LightInject.Polly.Installer\Jal.HttpClient.LightInject.Polly.Installer.csproj" />
     <ProjectReference Include="..\Jal.HttpClient.LightInject.Serilog.Installer\Jal.HttpClient.LightInject.Serilog.Installer.csproj" />
+    <ProjectReference Include="..\Jal.HttpClient.Microsoft.Extensions.DependencyInjection.Installer\Jal.HttpClient.Microsoft.Extensions.DependencyInjection.Installer.csproj" />
     <ProjectReference Include="..\Jal.HttpClient.Polly.Installer\Jal.HttpClient.Polly.Installer.csproj" />
+    <ProjectReference Include="..\Jal.HttpClient.Polly.Microsoft.Extensions.DependencyInjection\Jal.HttpClient.Polly.Microsoft.Extensions.DependencyInjection.csproj" />
     <ProjectReference Include="..\Jal.HttpClient.Serilog.Installer\Jal.HttpClient.Serilog.Installer.csproj" />
+    <ProjectReference Include="..\Jal.HttpClient.Serilog.Microsoft.Extensions.DependencyInjection\Jal.HttpClient.Serilog.Microsoft.Extensions.DependencyInjection.csproj" />
   </ItemGroup>
 
 </Project>

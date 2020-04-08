@@ -1,10 +1,8 @@
 using System.IO;
 using System.Net;
 using System.Net.Http;
-using Jal.HttpClient.Interface.Fluent;
-using Jal.HttpClient.Model;
 
-namespace Jal.HttpClient.Extensions
+namespace Jal.HttpClient
 {
     public static class HttpMultiPartFormDataContentDescriptorExtensions
     {

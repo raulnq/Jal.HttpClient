@@ -4,11 +4,9 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using Jal.HttpClient.Interface;
-using Jal.HttpClient.Model;
-using Jal.ChainOfResponsability.Fluent.Interfaces;
+using Jal.ChainOfResponsability;
 
-namespace Jal.HttpClient.Impl
+namespace Jal.HttpClient
 {
     public class HttpHandler : IHttpHandler
     {
@@ -53,9 +51,9 @@ namespace Jal.HttpClient.Impl
         {
             try
             {
-                var wrapper = new HttpWrapper(request);
+                var context = new HttpContext(request);
 
-                var chain = _pipelinebuilder.ForAsync<HttpWrapper>();
+                var chain = _pipelinebuilder.ForAsync<HttpContext>();
 
                 foreach (var type in request.MiddlewareTypes)
                 {
@@ -64,16 +62,13 @@ namespace Jal.HttpClient.Impl
 
                 UpdateRequestUri(request);
 
-                await chain.UseAsync<HttpMiddelware>().RunAsync(wrapper);
+                await chain.UseAsync<HttpMiddelware>().RunAsync(context, request.CancellationToken);
 
-                return wrapper.Response;
+                return context.Response;
             }
             catch (Exception ex)
             {
-                return new HttpResponse(request)
-                {
-                    Exception = ex
-                };
+                return new HttpResponse(request, null, ex, 0);
             }
         }
     }

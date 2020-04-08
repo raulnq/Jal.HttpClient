@@ -1,11 +1,10 @@
-﻿using Jal.ChainOfResponsability.Intefaces;
-using Jal.HttpClient.Model;
+﻿using Jal.ChainOfResponsability;
 using System;
 
-namespace Jal.HttpClient.Interface.Fluent
+namespace Jal.HttpClient
 {
     public interface IHttpMiddlewareDescriptor
     {
-        void Add<THttpMiddlewareType>(Action<IHttpContextDescriptor> action=null) where THttpMiddlewareType : IMiddlewareAsync<HttpWrapper>;
+        void Add<THttpMiddlewareType>(Action<IHttpContextDescriptor> action=null) where THttpMiddlewareType : IAsyncMiddleware<HttpContext>;
     }
 }

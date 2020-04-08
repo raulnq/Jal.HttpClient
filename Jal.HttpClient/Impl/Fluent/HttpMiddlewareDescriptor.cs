@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Linq;
-using Jal.ChainOfResponsability.Intefaces;
-using Jal.HttpClient.Interface.Fluent;
-using Jal.HttpClient.Model;
+using Jal.ChainOfResponsability;
 
-namespace Jal.HttpClient.Impl.Fluent
+namespace Jal.HttpClient
 {
     public class HttpMiddlewareDescriptor : IHttpMiddlewareDescriptor
     {
@@ -15,7 +13,7 @@ namespace Jal.HttpClient.Impl.Fluent
             _request = request;
         }
 
-        public void Add<THttpMiddlewareType>(Action<IHttpContextDescriptor> action = null) where THttpMiddlewareType : IMiddlewareAsync<HttpWrapper>
+        public void Add<THttpMiddlewareType>(Action<IHttpContextDescriptor> action = null) where THttpMiddlewareType : IAsyncMiddleware<HttpContext>
         {
             var type = typeof(THttpMiddlewareType);
             var item = _request.MiddlewareTypes.FirstOrDefault(x => x == type);

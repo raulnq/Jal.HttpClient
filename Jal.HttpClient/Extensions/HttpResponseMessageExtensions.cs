@@ -2,7 +2,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Jal.HttpClient.Extensions
+namespace Jal.HttpClient
 {
     public static class HttpResponseMessageExtensions
     {

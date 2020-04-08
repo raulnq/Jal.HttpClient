@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
 
-namespace Jal.HttpClient.Extensions
+namespace Jal.HttpClient
 {
     public static class HttpRequestMessageExtensions
     {

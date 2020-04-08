@@ -1,95 +1,135 @@
 # Jal.HttpClient
-Just another library to send HTTP requests and receve HTTP responses from a resource identified by a URI
+Just another library to wrap the HttpClient class
 
 ## How to use?
 
-### Castle Windsor Implementation
-
-Setup the Castle Windsor container
-```c++
-var container = new WindsorContainer();
-```	
-Install the installer class included in the Jal.HttpClient.Installer library
-```c++
-container.Install(new HttpClientInstaller());
-```			
-Resolve an instance of the IHttpHandler class
-```c++
-var httpclient = container.Resolve<IHttpHandler>();
-```
-Send a request to https://github.com/raulnq
-```c++
-var response = await httpclient.SendAsync(new HttpRequest("https://github.com/raulnq", HttpMethod.Get));
-```
-### LightInject Implementation
-
-Setup the LightInject container
-```c++
-var container = new ServiceContainer();
-```
-Install the installer class included in the Jal.HttpClient.LightInject.Installer library
-```c++
-container.RegisterFrom<HttpClientCompositionRoot>()
-```			
-Resolve an instance of the IHttpHandler class
-```c++
-var httpclient = container.GetInstance<IHttpHandler>();
-```
-Send a request to https://github.com/raulnq
-```c++
-var response = httpclient.SendAsync(new HttpRequest("https://github.com/raulnq", HttpMethod.Get));
-```
-## Fluent API
- 
-Resolve an instance of IHttpFluentHandler.
-```c++
-var httpfluenthandler = container.Resolve<IHttpFluentHandler>();
-```
-Get data
-```c++
-using (var r = await httpfluenthandler.Get("https://github.com/raulnq").SendAsync())
+#### Get
+```csharp
+using (var response = await client.Get("http://httpbin.org/ip").SendAsync())
 {
-    var content = r.Message.Content.Read();
+	var content = await response.Message.Content.ReadAsStringAsync();
 }
-```
-Post Json data
-```c++
-using (var r = httpfluenthandler.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").SendAsync())
+
+using (var response = await client.Get("http://httpbin.org/ip").WithQueryParameters( x=> { x.Add("x", "x"); x.Add("y","y"); }).SendAsync())
 {
 
 }
-```
-Post Xml data
-```c++
-using (var r = httpfluenthandler.Post("http://httpbin.org/post").Xml(@"<message>Hello World!!</message>").SendAsync())
-{
 
-}
-```
-Post Form url encoded data
-```c++
-using (var r = await httpfluenthandler.Post("http://httpbin.org/post").FormUrlEncoded(new [] {new KeyValuePair<string, string>("message", "Hello World") }).SendAsync())
-{
-
-}
-```
-Get Async data
-```c++
-using (var r = await _sut.Get("http://httpbin.org/ip").SendAsync())
-{
-	var content = await r.Message.Content.ReadAsStringAsync();
-}
-```
-Send query parameters
-```c++
-using (var r = await httpclientbuilder.Get("http://httpbin.org/ip").WithQueryParameters( x=> { x.Add("x", "x"); x.Add("y","y"); }).SendAsync())
-{
-
-}
-```
-Send headers
-```c++
 using (var r = await httpclientbuilder.Get("http://httpbin.org/ip").WithHeaders(x=> { x.Add("x", "x"); x.Add("y","y"); }).SendAsync())
+{
+
+}
+```
+#### Post
+```csharp
+using (var response = await client.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").SendAsync())
+{
+
+}
+
+using (var response = await client.Post("http://httpbin.org/post").Xml(@"<message>Hello World!!</message>").SendAsync())
+{
+
+}
+
+using (var response = await client.Post("http://httpbin.org/post").FormUrlEncoded(new [] {new KeyValuePair<string, string>("message", "Hello World") }).SendAsync())
+{
+
+}
+```
+#### Delete
+```csharp
+using (var response = await client.Delete("http://httpbin.org/delete").SendAsync())
+{
+    response.Message.StatusCode.ShouldBe(HttpStatusCode.OK);
+}
+```
+#### Patch, Put, Options and Head
+## IHttpFluentHandler interface building
+
+### Castle Windsor
+```csharp
+var container = new WindsorContainer();
+
+container.AddHttpClient();
+
+var client = container.Resolve<IHttpFluentHandler>();
+```
+### LightInject
+```csharp
+var container = new ServiceContainer();
+
+container.AddHttpClient();
+
+var client = container.GetInstance<IHttpFluentHandler>();
+```
+### Microsoft.Extensions.DependencyInjection
+```csharp
+var container = new ServiceCollection();
+
+container.AddHttpClient();
+
+var provider = container.BuildServiceProvider();
+
+var client = provider.GetService<IHttpFluentHandler>();
+```
+## Middlewares
+```csharp
+using (var response = await _sut.Get("http://httpbin.org/get").WithMiddleware(x =>
+{
+    x.AddTracingInformation();
+    x.AuthorizedByToken("token", "value");
+    x.UseMemoryCache(30, y => y.Message.RequestUri.AbsoluteUri, z => z.Message.StatusCode == HttpStatusCode.OK);
+}).SendAsync())
+{
+    var content = await response.Message.Content.ReadAsStringAsync();
+}
+### Serilog
+```csharp
+container.AddSerilogForHttpClient();
+...
+using (var response = await _sut.Get("http://httpbin.org/ip").WithMiddleware(x=>x.UseSerilog()).SendAsync())
+{
+
+}
+```
+### Polly
+```csharp
+container.AddPollyForHttpClient();
+...
+using (var response = await _sut.Get("http://httpbin.org/ip").WithMiddleware(x=>x.UseTimeout(5)).SendAsync())
+{
+
+}
+
+using (var response = await _sut.Get("http://httpbin.org/ip").WithMiddleware(x=>x.WithMiddleware(x => x.OnConditionRetry(3, y => y.Message?.StatusCode != HttpStatusCode.OK)).SendAsync())
+{
+
+}
+
+var policy = Policy
+.HandleResult<HttpResponse>(r => r.Message?.StatusCode!= HttpStatusCode.OK )
+.CircuitBreakerAsync(2, TimeSpan.FromSeconds(10));
+
+using (var response = await _sut.Get("http://httpbin.org/ip").WithMiddleware(x => x.UseCircuitBreaker(policy)).SendAsync())
+{
+    response.Message.StatusCode.ShouldBe(HttpStatusCode.InternalServerError);
+}
+```
+### Application Insights
+```csharp
+container.AddApplicationInsightsForHttpClient("appname");
+...
+using (var response = await _sut.Get("http://httpbin.org/ip").WithMiddleware(x=>x.UseApplicationInsights()).SendAsync())
+{
+
+}
+```
+### Common Logging
+```csharp
+container.AddCommonLoggingForHttpClient();
+...
+using (var response = await _sut.Get("http://httpbin.org/ip").WithMiddleware(x=>x.UseCommonLogging()).SendAsync())
 {
 
 }

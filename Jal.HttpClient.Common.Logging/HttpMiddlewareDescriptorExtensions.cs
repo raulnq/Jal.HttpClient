@@ -1,6 +1,4 @@
-﻿using Jal.HttpClient.Interface.Fluent;
-
-namespace Jal.HttpClient.Common.Logging
+﻿namespace Jal.HttpClient.Common.Logging
 {
     public static class HttpMiddlewareDescriptorExtensions
     {

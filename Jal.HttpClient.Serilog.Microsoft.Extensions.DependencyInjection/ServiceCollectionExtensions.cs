@@ -1,16 +1,14 @@
-﻿using Jal.ChainOfResponsability.Intefaces;
-using Jal.HttpClient.Model;
-using Jal.HttpClient.Serilog;
-using Jal.Locator.Microsoft.Extensions.DependencyInjection.Extensions;
-using Jal.Locator.Microsoft.Extensions.DependencyInjection.Interface;
+﻿using Jal.ChainOfResponsability;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Jal.HttpClient.LightInject.Serilog.Microsoft.Extensions.DependencyInjection
+namespace Jal.HttpClient.Serilog.Microsoft.Extensions.DependencyInjection
 {
     public static class ServiceCollectionExtensions
     {
-        public static INamedServiceCollection AddSerilogForHttpClient(this INamedServiceCollection servicecollection)
+        public static IServiceCollection AddSerilogForHttpClient(this IServiceCollection servicecollection)
         {
-            servicecollection.AddSingleton<IMiddlewareAsync<HttpWrapper>, SerilogMiddelware>(typeof(SerilogMiddelware).FullName);
+            servicecollection.AddSingleton<IAsyncMiddleware<HttpContext>, SerilogMiddelware>();
 
             return servicecollection;
         }

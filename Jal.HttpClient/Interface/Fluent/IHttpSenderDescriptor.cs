@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
-using Jal.HttpClient.Model;
 
-namespace Jal.HttpClient.Interface.Fluent
+namespace Jal.HttpClient
 {
     public interface IHttpSenderDescriptor
     {

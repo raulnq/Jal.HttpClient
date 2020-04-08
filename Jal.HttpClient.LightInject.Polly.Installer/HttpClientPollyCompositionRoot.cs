@@ -1,7 +1,7 @@
-﻿using Jal.ChainOfResponsability.Intefaces;
-using Jal.HttpClient.Model;
+﻿using Jal.ChainOfResponsability;
 using Jal.HttpClient.Polly;
 using LightInject;
+using System.Linq;
 
 namespace Jal.HttpClient.LightInject.Polly.Installer
 {
@@ -9,8 +9,23 @@ namespace Jal.HttpClient.LightInject.Polly.Installer
     {
         public void Compose(IServiceRegistry serviceRegistry)
         {
-            serviceRegistry.Register<IMiddlewareAsync<HttpWrapper>, OnConditionRetryMiddelware>(typeof(OnConditionRetryMiddelware).FullName, new PerContainerLifetime());
-            serviceRegistry.Register<IMiddlewareAsync<HttpWrapper>, CircuitBreakerMiddelware>(typeof(CircuitBreakerMiddelware).FullName, new PerContainerLifetime());
+            if (serviceRegistry.AvailableServices.All(x => x.ServiceName != typeof(OnConditionRetryMiddelware).FullName))
+            {
+                serviceRegistry.Register<IAsyncMiddleware<HttpContext>, OnConditionRetryMiddelware>(typeof(OnConditionRetryMiddelware).FullName, new PerContainerLifetime());
+            }
+
+            if (serviceRegistry.AvailableServices.All(x => x.ServiceName != typeof(CircuitBreakerMiddelware).FullName))
+            {
+                serviceRegistry.Register<IAsyncMiddleware<HttpContext>, CircuitBreakerMiddelware>(typeof(CircuitBreakerMiddelware).FullName, new PerContainerLifetime());
+            }
+
+            if (serviceRegistry.AvailableServices.All(x => x.ServiceName != typeof(TimeoutMiddelware).FullName))
+            {
+                serviceRegistry.Register<IAsyncMiddleware<HttpContext>, TimeoutMiddelware>(typeof(TimeoutMiddelware).FullName, new PerContainerLifetime());
+            }
+                
+            
+            
         }
     }
 }

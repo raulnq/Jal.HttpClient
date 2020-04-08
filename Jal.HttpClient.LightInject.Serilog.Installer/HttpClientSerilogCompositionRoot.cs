@@ -1,7 +1,7 @@
-﻿using Jal.ChainOfResponsability.Intefaces;
+﻿using Jal.ChainOfResponsability;
 using Jal.HttpClient.Serilog;
-using Jal.HttpClient.Model;
 using LightInject;
+using System.Linq;
 
 namespace Jal.HttpClient.LightInject.Serilog.Installer
 {
@@ -9,7 +9,11 @@ namespace Jal.HttpClient.LightInject.Serilog.Installer
     {
         public void Compose(IServiceRegistry serviceRegistry)
         {
-            serviceRegistry.Register<IMiddlewareAsync<HttpWrapper>, SerilogMiddelware>(typeof(SerilogMiddelware).FullName, new PerContainerLifetime());
+            if (serviceRegistry.AvailableServices.All(x => x.ServiceName != typeof(SerilogMiddelware).FullName))
+            {
+                serviceRegistry.Register<IAsyncMiddleware<HttpContext>, SerilogMiddelware>(typeof(SerilogMiddelware).FullName, new PerContainerLifetime());
+            }
+                
         }
     }
 }

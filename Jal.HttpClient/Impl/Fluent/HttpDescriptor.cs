@@ -1,28 +1,38 @@
 using System;
-using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
-using Jal.HttpClient.Interface;
-using Jal.HttpClient.Interface.Fluent;
-using Jal.HttpClient.Model;
 
-namespace Jal.HttpClient.Impl.Fluent
+namespace Jal.HttpClient
 {
     public class HttpDescriptor : IHttpDescriptor, IHttpContentTypeDescriptor
     {
-        private readonly Model.HttpContextDescriptor _httpcontext;
+        private readonly HttpBuilderContext _httpcontext;
         
-        public HttpDescriptor(string url, IHttpHandler httphandler, HttpMethod httpMethod, System.Net.Http.HttpClient httpclient)
+        public HttpDescriptor(string url, IHttpHandler httphandler, HttpMethod httpMethod, System.Net.Http.HttpClient httpclient, CancellationToken cancellationtoken=default(CancellationToken))
         {
             if(httpclient==null)
             {
-                _httpcontext = new Model.HttpContextDescriptor(new HttpRequest(url, httpMethod), httphandler);
+                _httpcontext = new HttpBuilderContext(new HttpRequest(url, httpMethod, cancellationtoken), httphandler);
             }
             else
             {
-                _httpcontext = new Model.HttpContextDescriptor(new HttpRequest(url, httpMethod, httpclient), httphandler);
+                _httpcontext = new HttpBuilderContext(new HttpRequest(url, httpMethod, httpclient, cancellationtoken), httphandler);
             }
             
+        }
+
+        public HttpDescriptor(string url, IHttpHandler httphandler, HttpMethod httpMethod, Func<System.Net.Http.HttpClient> factory, CancellationToken cancellationtoken = default(CancellationToken))
+        {
+            if (factory == null)
+            {
+                _httpcontext = new HttpBuilderContext(new HttpRequest(url, httpMethod, cancellationtoken), httphandler);
+            }
+            else
+            {
+                _httpcontext = new HttpBuilderContext(new HttpRequest(url, httpMethod, factory, cancellationtoken), httphandler);
+            }
+
         }
 
         public IHttpDescriptor WithAcceptedType(string acceptedtype)
@@ -53,7 +63,7 @@ namespace Jal.HttpClient.Impl.Fluent
             return this;
         }
 
-        public async Task<HttpResponse> SendAsync()
+        public Task<HttpResponse> SendAsync()
         {
             if (_httpcontext.QueryParemeterDescriptorAction != null)
             {
@@ -76,7 +86,7 @@ namespace Jal.HttpClient.Impl.Fluent
                 _httpcontext.HeaderDescriptorAction(headerDescriptor);
             }
 
-            return await _httpcontext.Handler.SendAsync(_httpcontext.Request);
+            return _httpcontext.Handler.SendAsync(_httpcontext.Request);
         }
 
         public IHttpDescriptor WithMiddleware(Action<IHttpMiddlewareDescriptor> action)
@@ -86,9 +96,9 @@ namespace Jal.HttpClient.Impl.Fluent
             return this;
         }
 
-        public IHttpDescriptor WithIdentity(HttpIdentity identity)
+        public IHttpDescriptor WithTracing(HttpTracingContext identity)
         {
-            _httpcontext.Request.Identity = identity;
+            _httpcontext.Request.Tracing = identity;
 
             return this;
         }

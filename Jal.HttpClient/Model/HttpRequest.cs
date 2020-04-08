@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Threading;
 
-namespace Jal.HttpClient.Model
+namespace Jal.HttpClient
 {
     public class HttpRequest : IDisposable
     {
-        public HttpRequestMessage Message { get; set; }
+        public HttpRequestMessage Message { get; private set; }
 
         public HttpContent Content
         {
@@ -20,7 +21,7 @@ namespace Jal.HttpClient.Model
             }
         }
 
-        public System.Net.Http.HttpClient Client { get; internal set; }
+        public System.Net.Http.HttpClient Client { get; private set; }
 
         public bool DisposeClient { get; }
 
@@ -30,21 +31,42 @@ namespace Jal.HttpClient.Model
 
         public List<HttpQueryParameter> QueryParameters { get; }
 
-        public HttpIdentity Identity { get; set; }
+        public HttpTracingContext Tracing { get; set; }
 
-        public HttpRequest(string uri, HttpMethod httpMethod):
-        this(uri, httpMethod, new System.Net.Http.HttpClient())
+        public CancellationToken CancellationToken { get; set; }
+
+        public HttpRequest(string uri, HttpMethod httpMethod, CancellationToken cancellationtoken = default(CancellationToken)) :
+        this(uri, httpMethod, new System.Net.Http.HttpClient(), cancellationtoken)
         {
             DisposeClient = true;
         }
 
-        public HttpRequest(string uri, HttpMethod method, Func<System.Net.Http.HttpClient> factory) :
-        this(uri, method, factory())
+        public HttpRequest(string uri, HttpMethod method, Func<System.Net.Http.HttpClient> factory, CancellationToken cancellationtoken = default(CancellationToken)) :
+        this(uri, method, factory(), cancellationtoken)
         {
 
         }
 
-        public HttpRequest(string uri, HttpMethod method, System.Net.Http.HttpClient client)
+        public HttpRequest(HttpRequestMessage message, HttpRequest request)
+        {
+            Message = message;
+
+            Client = request.Client;
+
+            QueryParameters = request.QueryParameters;
+
+            MiddlewareTypes = request.MiddlewareTypes;
+
+            Tracing = request.Tracing;
+
+            Context = request.Context;
+
+            DisposeClient = request.DisposeClient;
+
+            CancellationToken = request.CancellationToken;
+        }
+
+        public HttpRequest(string uri, HttpMethod method, System.Net.Http.HttpClient client, CancellationToken cancellationtoken=default(CancellationToken))
         {
             Message = new HttpRequestMessage(method, uri);
 
@@ -54,11 +76,13 @@ namespace Jal.HttpClient.Model
 
             MiddlewareTypes = new List<Type>();
 
-            Identity = new HttpIdentity(Guid.NewGuid().ToString());
+            Tracing = new HttpTracingContext(Guid.NewGuid().ToString(), string.Empty, string.Empty);
 
             Context = new Dictionary<string, object>();
 
             DisposeClient = false;
+
+            CancellationToken = cancellationtoken;
         }
 
         public void Dispose()

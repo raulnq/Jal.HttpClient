@@ -1,19 +1,18 @@
-﻿using Jal.ChainOfResponsability.Intefaces;
-using Jal.HttpClient.Model;
-using Jal.HttpClient.Polly;
-using Jal.Locator.Microsoft.Extensions.DependencyInjection.Extensions;
-using Jal.Locator.Microsoft.Extensions.DependencyInjection.Interface;
-using System;
+﻿using Jal.ChainOfResponsability;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Jal.HttpClient.LightInject.Polly.Microsoft.Extensions.DependencyInjection
+namespace Jal.HttpClient.Polly.Microsoft.Extensions.DependencyInjection
 {
     public static class ServiceCollectionExtensions
     {
-        public static INamedServiceCollection AddPollyForHttpClient(this INamedServiceCollection servicecollection)
+        public static IServiceCollection AddPollyForHttpClient(this IServiceCollection servicecollection)
         {
-            servicecollection.AddSingleton<IMiddlewareAsync<HttpWrapper>, OnConditionRetryMiddelware>(typeof(OnConditionRetryMiddelware).FullName);
+            servicecollection.AddSingleton<IAsyncMiddleware<HttpContext>, OnConditionRetryMiddelware>();
 
-            servicecollection.AddSingleton<IMiddlewareAsync<HttpWrapper>, CircuitBreakerMiddelware>(typeof(CircuitBreakerMiddelware).FullName);
+            servicecollection.AddSingleton<IAsyncMiddleware<HttpContext>, CircuitBreakerMiddelware>();
+
+            servicecollection.AddSingleton<IAsyncMiddleware<HttpContext>, TimeoutMiddelware>();
 
             return servicecollection;
         }

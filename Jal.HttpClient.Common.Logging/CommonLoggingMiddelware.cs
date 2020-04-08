@@ -3,13 +3,11 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Common.Logging;
-using Jal.ChainOfResponsability.Intefaces;
-using Jal.ChainOfResponsability.Model;
-using Jal.HttpClient.Model;
+using Jal.ChainOfResponsability;
 
 namespace Jal.HttpClient.Common.Logging
 {
-    public class CommonLoggingMiddelware : IMiddlewareAsync<HttpWrapper>
+    public class CommonLoggingMiddelware : IAsyncMiddleware<HttpContext>
     {
         private readonly ILog _log;
 
@@ -22,7 +20,7 @@ namespace Jal.HttpClient.Common.Logging
         {
             StringBuilder builder = new StringBuilder();
 
-            builder.AppendLine($"Id: {request.Identity.Id}, Duration: {response.Duration} ms, {response.Message?.ToString()}");
+            builder.AppendLine($"RequestId: {request.Tracing.RequestId}, Duration: {response.Duration} ms, {response.Message?.ToString()}");
 
             if (response.Exception != null)
             {
@@ -48,7 +46,7 @@ namespace Jal.HttpClient.Common.Logging
         {
             var builder = new StringBuilder();
 
-            builder.AppendLine($"Id: {request.Identity.Id}, {request.Message.ToString()}");
+            builder.AppendLine($"RequestId: {request.Tracing.RequestId}, {request.Message.ToString()}");
 
             if(request.Message.Content != null && request.Message.Content is StringContent)
             {
@@ -64,7 +62,7 @@ namespace Jal.HttpClient.Common.Logging
             return content.Length <= 4096 ? content : content.Substring(0, 4096) + "...";
         }
 
-        public async Task ExecuteAsync(Context<HttpWrapper> context, Func<Context<HttpWrapper>, Task> next)
+        public async Task ExecuteAsync(AsyncContext<HttpContext> context, Func<AsyncContext<HttpContext>, Task> next)
         {
             var requestbuilder = await BuildRequestLog(context.Data.Request);
 

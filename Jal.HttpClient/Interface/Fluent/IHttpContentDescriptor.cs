@@ -1,6 +1,6 @@
 using System.Net.Http;
 
-namespace Jal.HttpClient.Interface.Fluent
+namespace Jal.HttpClient
 {
     public interface IHttpContentDescriptor
     {

@@ -2,28 +2,22 @@
 using System.Net;
 using System.Threading.Tasks;
 using Castle.MicroKernel.Registration;
-using Castle.MicroKernel.Resolvers.SpecializedResolvers;
 using Castle.Windsor;
 using Common.Logging;
 using Jal.HttpClient.Installer;
-using Jal.HttpClient.Interface.Fluent;
 using Jal.HttpClient.Common.Logging;
 using Jal.HttpClient.Common.Logging.Installer;
-using NUnit.Framework;
 using Shouldly;
 using Jal.HttpClient.Polly.Installer;
 using Jal.HttpClient.Polly;
-using Jal.HttpClient.Extensions;
-using Jal.Locator.CastleWindsor.Installer;
-using Jal.ChainOfResponsability.Installer;
 using System;
 using Polly.CircuitBreaker;
 using Polly;
-using Jal.HttpClient.Model;
 using Jal.HttpClient.Serilog.Installer;
 using Jal.HttpClient.Serilog;
 using Serilog;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading;
 
 namespace Jal.HttpClient.Tests
 {
@@ -39,21 +33,15 @@ namespace Jal.HttpClient.Tests
 
             var container = new WindsorContainer();
 
-            container.Kernel.Resolver.AddSubResolver(new CollectionResolver(container.Kernel));
-
             container.Register(Component.For<ILog>().Instance(log));
 
-            container.Install(new HttpClientInstaller());
+            container.AddHttpClient();
 
-            container.Install(new ChainOfResponsabilityInstaller());
+            container.AddCommonLoggingForHttpClient();
 
-            container.Install(new ServiceLocatorInstaller());
+            container.AddSerilogForHttpClient();
 
-            container.Install(new HttpClientCommonLoggingInstaller());
-
-            container.Install(new HttpClientSerilogInstaller());
-
-            container.Install(new HttpClientPollyInstaller());
+            container.AddPollyForHttpClient();
 
             _sut = container.Resolve<IHttpFluentHandler>();
 
@@ -63,7 +51,7 @@ namespace Jal.HttpClient.Tests
         }
 
         [TestMethod]
-        public async Task Send_Get_Ok()
+        public async Task Send_Get_Serilog_Ok()
         {
             using (var response = await _sut.Get("http://httpbin.org/ip").WithMiddleware(x=>x.UseSerilog()).SendAsync())
             {
@@ -82,7 +70,7 @@ namespace Jal.HttpClient.Tests
         }
 
         [TestMethod]
-        public async Task Send_Get_Authorized_Ok()
+        public async Task Send_Get_AuthorizedByToken_Ok()
         {
             using (var response = await _sut.Get("http://httpbin.org/get").WithMiddleware(x => x.AuthorizedByToken("token","value")).SendAsync())
             {
@@ -103,13 +91,15 @@ namespace Jal.HttpClient.Tests
         }
 
         [TestMethod]
-        public async Task Send_Get_Retry_Ok()
+        public async Task Send_Get_Middlewares_Ok()
         {
             var retries = 0;
-            using (var response = await _sut.Get("http://httpbin.org/get").WithMiddleware(x => {
+            using (var response = await _sut.Get("http://httpbin.org/get?hi=1").WithMiddleware(x => {
+                x.AddTracingInformation();
                 x.AuthorizedByToken("token", "value");
                 x.OnConditionRetry(3, y => y.Message.StatusCode == HttpStatusCode.OK, (z, c) => { retries++; });
-                x.UseCommonLogging();
+                x.UseSerilog();
+                x.UseMemoryCache(30, y => y.Message.RequestUri.AbsoluteUri, z => z.Message.StatusCode == HttpStatusCode.OK);
             }).SendAsync())
             {
                 var content = await response.Message.Content.ReadAsStringAsync();
@@ -131,12 +121,11 @@ namespace Jal.HttpClient.Tests
         }
 
         [TestMethod]
-        public async Task Send_Get_AuthorizationAndRetry_Ok()
+        public async Task Send_Get_Retry_Ok()
         {
             var retries = 0;
             using (var response = await _sut.Get("http://httpbin.org/get")
-                .WithMiddleware(
-                    x => x.OnConditionRetry(3, y => y.Message.StatusCode == HttpStatusCode.OK, (z, c) => { retries++; }))
+                .WithMiddleware(x => x.OnConditionRetry(3, y => y.Message.StatusCode == HttpStatusCode.OK, (z, c) => { retries++; }))
                 .SendAsync())
             {
                 var content = await response.Message.Content.ReadAsStringAsync();
@@ -195,7 +184,7 @@ namespace Jal.HttpClient.Tests
         [TestMethod]
         public async Task Send_Get_MemoryCache_Ok()
         {
-            using (var response = await _sut.Get("http://httpbin.org/get").WithMiddleware(x => { x.AddTrackingInformation(); x.UseCommonLogging(); x.UseMemoryCache(30, y => y.Message.RequestUri.AbsoluteUri, z => z.Message.StatusCode == HttpStatusCode.OK); }).WithIdentity("a","b","c").WithHeaders(x => x.Add("header", "old")).SendAsync())
+            using (var response = await _sut.Get("http://httpbin.org/get").WithMiddleware(x => { x.UseMemoryCache(30, y => y.Message.RequestUri.AbsoluteUri, z => z.Message.StatusCode == HttpStatusCode.OK); }).WithHeaders(x => x.Add("header", "old")).SendAsync())
             {
                 var content = await response.Message.Content.ReadAsStringAsync();
 
@@ -212,7 +201,7 @@ namespace Jal.HttpClient.Tests
                 response.Exception.ShouldBeNull();
             }
 
-            using (var response = await _sut.Get("http://httpbin.org/get").WithMiddleware(x => { x.AddTrackingInformation(); x.UseCommonLogging(); x.UseMemoryCache(30, y => y.Message.RequestUri.AbsoluteUri, z => z.Message.StatusCode == HttpStatusCode.OK); }).WithHeaders(x => x.Add("header", "new")).SendAsync())
+            using (var response = await _sut.Get("http://httpbin.org/get").WithMiddleware(x => { x.UseCommonLogging(); x.UseMemoryCache(30, y => y.Message.RequestUri.AbsoluteUri, z => z.Message.StatusCode == HttpStatusCode.OK); }).WithHeaders(x => x.Add("header", "new")).SendAsync())
             {
 
                 var content = await response.Message.Content.ReadAsStringAsync();
@@ -226,6 +215,8 @@ namespace Jal.HttpClient.Tests
                 response.Message.Content.Headers.ContentLength.Value.ShouldBeGreaterThan(0);
 
                 response.Message.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+                response.Message.Headers.ShouldContain(x => x.Key == "from-cache");
 
                 response.Exception.ShouldBeNull();
             }
@@ -253,7 +244,7 @@ namespace Jal.HttpClient.Tests
         [TestMethod]
         public async Task Send_PostJsonUtf8_Ok()
         {
-            using (var response = await _sut.Post("http://httpbin.org/post").WithMiddleware(x => x.UseSerilog()).Json(@"{""message"":""Hello World!!""}").SendAsync())
+            using (var response = await _sut.Post("http://httpbin.org/post").Json(@"{""message"":""Hello World!!""}").SendAsync())
             {
                 var content = await response.Message.Content.ReadAsStringAsync();
 
@@ -348,7 +339,7 @@ namespace Jal.HttpClient.Tests
         [TestMethod]
         public async Task Send_GetWithQueryParameters_Ok()
         {
-            using (var response = await _sut.Get("http://httpbin.org/get").WithMiddleware(x => x.UseSerilog()).WithQueryParameters(x=>x.Add("parameter","value")).SendAsync())
+            using (var response = await _sut.Get("http://httpbin.org/get").WithQueryParameters(x=>x.Add("parameter","value")).SendAsync())
             {
                 var content = await response.Message.Content.ReadAsStringAsync();
 
@@ -392,35 +383,29 @@ namespace Jal.HttpClient.Tests
         {
             using (var response = await _sut.Delete("http://httpbin.org/delete").SendAsync())
             {
-
+                response.Message.StatusCode.ShouldBe(HttpStatusCode.OK);
             }
         }
 
         [TestMethod]
         public async Task Send_Get_TimeOut()
         {
-            var client = new System.Net.Http.HttpClient
+            using (var response = await _sut.Get("https://httpbin.org/delay/5").WithMiddleware(x=>x.UseTimeout(2)).SendAsync())
             {
-                Timeout = TimeSpan.FromMilliseconds(10)
-            };
-            using (var response = await _sut.Delete("https://httpbin.org/delay/5", client).SendAsync())
-            {
-
+                response.Message?.Content.ShouldBeNull();
             }
         }
 
-        //[Test]
-        //public void Send_GetGzip_Ok()
-        //{
-        //    var container = new WindsorContainer();
-
-        //    container.Kernel.Resolver.AddSubResolver(new ArrayResolver(container.Kernel));
-
-        //    container.Install(new HttpClientInstaller());
-
-        //    var httpclientbuilder = container.Resolve<IHttpFluentHandler>();
-
-        //    var response = httpclientbuilder.Get("http://httpbin.org/gzip").GZip().Send;
-        //}
+        [TestMethod]
+        public async Task Send_Get_CancellationToken()
+        {
+            using (var source = new CancellationTokenSource(TimeSpan.FromSeconds(3)))
+            {
+                using (var response = await _sut.Get("https://httpbin.org/delay/5", cancellationtoken: source.Token).SendAsync())
+                {
+                    response.Message?.Content.ShouldBeNull();
+                }
+            }
+        }
     }
 }

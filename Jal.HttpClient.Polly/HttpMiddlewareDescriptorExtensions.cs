@@ -1,6 +1,4 @@
-﻿using Jal.HttpClient.Interface.Fluent;
-using Jal.HttpClient.Model;
-using Polly;
+﻿using Polly;
 using Polly.CircuitBreaker;
 using System;
 
@@ -12,11 +10,11 @@ namespace Jal.HttpClient.Polly
         {
             descriptor.Add<OnConditionRetryMiddelware>(x=> {
 
-                x.Add("retrycount", retrycount);
-                x.Add("retrycondition", retrycondition);
+                x.Add(OnConditionRetryMiddelware.RETRY_COUNT_KEY, retrycount);
+                x.Add(OnConditionRetryMiddelware.RETRY_CONDITION_KEY, retrycondition);
                 if(onretry!=null)
                 {
-                    x.Add("onretry", onretry);
+                    x.Add(OnConditionRetryMiddelware.ON_RETRY_KEY, onretry);
                 }
             });
         }
@@ -24,7 +22,14 @@ namespace Jal.HttpClient.Polly
         public static void UseCircuitBreaker(this IHttpMiddlewareDescriptor descriptor, AsyncCircuitBreakerPolicy<HttpResponse> policy)
         {
             descriptor.Add<CircuitBreakerMiddelware>(x => {
-                x.Add("circuitbreakerpolicy", policy);
+                x.Add(CircuitBreakerMiddelware.CIRCUIT_BREAKER_POLICY_KEY, policy);
+            });
+        }
+
+        public static void UseTimeout(this IHttpMiddlewareDescriptor descriptor, int timeoutdurationinseconds=10)
+        {
+            descriptor.Add<TimeoutMiddelware>(x => {
+                x.Add(TimeoutMiddelware.TIMEOUT_DURATION_IN_SECONDS_KEY, timeoutdurationinseconds);
             });
         }
     }

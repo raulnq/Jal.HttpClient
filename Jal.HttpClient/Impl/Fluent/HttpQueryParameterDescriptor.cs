@@ -1,7 +1,4 @@
-using Jal.HttpClient.Interface.Fluent;
-using Jal.HttpClient.Model;
-
-namespace Jal.HttpClient.Impl.Fluent
+namespace Jal.HttpClient
 {
     public class HttpQueryParameterDescriptor : IHttpQueryParameterDescriptor
     {

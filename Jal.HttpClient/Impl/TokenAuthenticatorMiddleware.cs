@@ -1,20 +1,22 @@
-﻿using Jal.ChainOfResponsability.Intefaces;
-using Jal.ChainOfResponsability.Model;
-using Jal.HttpClient.Model;
+﻿using Jal.ChainOfResponsability;
 using System;
 using System.Threading.Tasks;
 
-namespace Jal.HttpClient.Impl
+namespace Jal.HttpClient
 {
-    public class TokenAuthenticatorMiddleware : IMiddlewareAsync<HttpWrapper>
+    public class TokenAuthenticatorMiddleware : IAsyncMiddleware<HttpContext>
     {
+        public const string TOKEN_VALUE_KEY= "tokenvalue";
+
+        public const string TOKEN_TYPE_KEY = "tokentype";
+
         private static void AddAuthorizationHeader(HttpRequest request)
         {
-            if(request.Context.ContainsKey("tokenvalue") && request.Context.ContainsKey("tokentype"))
+            if(request.Context.ContainsKey(TOKEN_VALUE_KEY) && request.Context.ContainsKey(TOKEN_TYPE_KEY))
             {
-                var token = request.Context["tokenvalue"] as string;
+                var token = request.Context[TOKEN_VALUE_KEY] as string;
 
-                var type = request.Context["tokentype"] as string;
+                var type = request.Context[TOKEN_TYPE_KEY] as string;
 
                 if (!string.IsNullOrWhiteSpace(token) && !string.IsNullOrWhiteSpace(type))
                 {
@@ -23,7 +25,7 @@ namespace Jal.HttpClient.Impl
             }
         }
 
-        public Task ExecuteAsync(Context<HttpWrapper> context, Func<Context<HttpWrapper>, Task> next)
+        public Task ExecuteAsync(AsyncContext<HttpContext> context, Func<AsyncContext<HttpContext>, Task> next)
         {
             AddAuthorizationHeader(context.Data.Request);
 

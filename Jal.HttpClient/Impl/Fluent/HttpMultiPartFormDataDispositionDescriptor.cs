@@ -1,7 +1,6 @@
-using Jal.HttpClient.Interface.Fluent;
 using System.Net.Http;
 
-namespace Jal.HttpClient.Impl.Fluent
+namespace Jal.HttpClient
 {
     public class HttpMultiPartFormDataDispositionDescriptor : IHttpMultiPartFormDataDispositionDescriptor, IHttpMultiPartFormDataContentTypeDescriptor
     {
@@ -15,17 +14,21 @@ namespace Jal.HttpClient.Impl.Fluent
         public IHttpMultiPartFormDataContentTypeDescriptor WithDisposition(string name, string filename = "")
         {
             var cd = new System.Net.Http.Headers.ContentDispositionHeaderValue(name);
+
             if(!string.IsNullOrEmpty(filename))
             {
                 cd.FileName = filename;
             }
+
             _httpcontent.Headers.ContentDisposition = cd;
+
             return this;
         }
 
         public IHttpMultiPartFormDataContentTypeDescriptor WithContentType(string contenttype)
         {
             _httpcontent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contenttype);
+
             return this;
         }
     }

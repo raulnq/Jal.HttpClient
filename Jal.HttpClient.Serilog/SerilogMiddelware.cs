@@ -2,13 +2,12 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Serilog;
-using Jal.ChainOfResponsability.Intefaces;
-using Jal.ChainOfResponsability.Model;
-using Jal.HttpClient.Model;
+using Jal.ChainOfResponsability;
 using System.Linq;
+
 namespace Jal.HttpClient.Serilog
 {
-    public class SerilogMiddelware : IMiddlewareAsync<HttpWrapper>
+    public class SerilogMiddelware : IAsyncMiddleware<HttpContext>
     {
         private async Task BuildResponseLog(HttpResponse response, HttpRequest request)
         {
@@ -42,22 +41,22 @@ namespace Jal.HttpClient.Serilog
             {
                 if (response.Exception != null)
                 {
-                    log.Error(response.Exception, "Id: {Id}, RequestUri: {RequestUri}, Duration: {Duration} ms, StatusCode: {StatusCode}, ReasonPhrase: {ReasonPhrase}, Version: {Version}", request.Identity.Id, request.Message.RequestUri.ToString(), response.Duration, response.Message.StatusCode, response.Message.ReasonPhrase.ToString(), response.Message.Version.ToString());
+                    log.Error(response.Exception, "RequestId: {RequestId}, RequestUri: {RequestUri}, Duration: {Duration} ms, StatusCode: {StatusCode}, ReasonPhrase: {ReasonPhrase}, Version: {Version}", request.Tracing.RequestId, request.Message.RequestUri.ToString(), response.Duration, response.Message.StatusCode, response.Message.ReasonPhrase.ToString(), response.Message.Version.ToString());
                 }
                 else
                 {
-                    log.Debug("Id: {Id}, RequestUri: {RequestUri}, Duration: {Duration} ms, StatusCode: {StatusCode}, ReasonPhrase: {ReasonPhrase}, Version: {Version}", request.Identity.Id, request.Message.RequestUri.ToString(), response.Duration, response.Message.StatusCode, response.Message.ReasonPhrase.ToString(), response.Message.Version.ToString());
+                    log.Debug("RequestId: {RequestId}, RequestUri: {RequestUri}, Duration: {Duration} ms, StatusCode: {StatusCode}, ReasonPhrase: {ReasonPhrase}, Version: {Version}", request.Tracing.RequestId, request.Message.RequestUri.ToString(), response.Duration, response.Message.StatusCode, response.Message.ReasonPhrase.ToString(), response.Message.Version.ToString());
                 }
             }
             else
             {
                 if (response.Exception != null)
                 {
-                    log.Error(response.Exception, "Id: {Id}, RequestUri: {RequestUri}, Duration: {Duration} ms", request.Identity.Id, request.Message.RequestUri.ToString(), response.Duration);
+                    log.Error(response.Exception, "RequestId: {RequestId}, RequestUri: {RequestUri}, Duration: {Duration} ms", request.Tracing.RequestId, request.Message.RequestUri.ToString(), response.Duration);
                 }
                 else
                 {
-                    log.Debug("Id: {Id}, RequestUri: {RequestUri}, Duration: {Duration} ms", request.Identity.Id, request.Message.RequestUri.ToString(), response.Duration);
+                    log.Debug("RequestId: {RequestId}, RequestUri: {RequestUri}, Duration: {Duration} ms", request.Tracing.RequestId, request.Message.RequestUri.ToString(), response.Duration);
                 }
             }
         }
@@ -99,10 +98,10 @@ namespace Jal.HttpClient.Serilog
                 
             }
 
-            log.Debug("Id: {Id}, Method: {Method}, RequestUri: {RequestUri}, Version: {Version}", request.Identity.Id, request.Message.Method, request.Message.RequestUri.ToString(), request.Message.Version.ToString());
+            log.Debug("RequestId: {RequestId}, Method: {Method}, RequestUri: {RequestUri}, Version: {Version}", request.Tracing.RequestId, request.Message.Method, request.Message.RequestUri.ToString(), request.Message.Version.ToString());
         }
 
-        public async Task ExecuteAsync(Context<HttpWrapper> context, Func<Context<HttpWrapper>, Task> next)
+        public async Task ExecuteAsync(AsyncContext<HttpContext> context, Func<AsyncContext<HttpContext>, Task> next)
         {
             await BuildRequestLog(context.Data.Request);
 

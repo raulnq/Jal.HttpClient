@@ -1,4 +1,4 @@
-﻿namespace Jal.HttpClient.Model
+﻿namespace Jal.HttpClient
 {
     public class HttpQueryParameter
     {

@@ -1,10 +1,6 @@
-﻿using Jal.ChainOfResponsability.Intefaces;
-using Jal.HttpClient.Impl;
-using Jal.HttpClient.Impl.Fluent;
-using Jal.HttpClient.Interface;
-using Jal.HttpClient.Interface.Fluent;
-using Jal.HttpClient.Model;
+﻿using Jal.ChainOfResponsability;
 using LightInject;
+using System.Linq;
 
 namespace Jal.HttpClient.LightInject.Installer
 {
@@ -12,13 +8,45 @@ namespace Jal.HttpClient.LightInject.Installer
     {
         public void Compose(IServiceRegistry serviceRegistry)
         {
-            serviceRegistry.Register<IHttpFluentHandler, HttpFluentHandler>(new PerContainerLifetime());
-            serviceRegistry.Register<IMiddlewareAsync<HttpWrapper>, BasicHttpAuthenticatorMiddleware>(typeof(BasicHttpAuthenticatorMiddleware).FullName, new PerContainerLifetime());
-            serviceRegistry.Register<IMiddlewareAsync<HttpWrapper>, HttpMiddelware>(typeof(HttpMiddelware).FullName, new PerContainerLifetime());
-            serviceRegistry.Register<IMiddlewareAsync<HttpWrapper>, TokenAuthenticatorMiddleware>(typeof(TokenAuthenticatorMiddleware).FullName, new PerContainerLifetime());
-            serviceRegistry.Register<IMiddlewareAsync<HttpWrapper>, MemoryCacheMiddleware>(typeof(MemoryCacheMiddleware).FullName, new PerContainerLifetime());
-            serviceRegistry.Register<IMiddlewareAsync<HttpWrapper>, IdentityTrackerMiddleware>(typeof(IdentityTrackerMiddleware).FullName, new PerContainerLifetime());
-            serviceRegistry.Register<IHttpHandler, HttpHandler>(new PerContainerLifetime());
+            if (serviceRegistry.AvailableServices.All(x => x.ServiceType != typeof(HttpHandler)))
+            {
+                serviceRegistry.Register<IHttpHandler, HttpHandler>(new PerContainerLifetime());
+            }
+
+            if (serviceRegistry.AvailableServices.All(x => x.ServiceType != typeof(HttpFluentHandler)))
+            {
+                serviceRegistry.Register<IHttpFluentHandler, HttpFluentHandler>(new PerContainerLifetime());
+            }
+
+            if (serviceRegistry.AvailableServices.All(x => x.ServiceName != typeof(BasicHttpAuthenticatorMiddleware).FullName))
+            {
+                serviceRegistry.Register<IAsyncMiddleware<HttpContext>, BasicHttpAuthenticatorMiddleware>(typeof(BasicHttpAuthenticatorMiddleware).FullName, new PerContainerLifetime());
+            }
+
+            if (serviceRegistry.AvailableServices.All(x => x.ServiceName != typeof(HttpMiddelware).FullName))
+            {
+                serviceRegistry.Register<IAsyncMiddleware<HttpContext>, HttpMiddelware>(typeof(HttpMiddelware).FullName, new PerContainerLifetime());
+            }
+
+            if (serviceRegistry.AvailableServices.All(x => x.ServiceName != typeof(TokenAuthenticatorMiddleware).FullName))
+            {
+                serviceRegistry.Register<IAsyncMiddleware<HttpContext>, TokenAuthenticatorMiddleware>(typeof(TokenAuthenticatorMiddleware).FullName, new PerContainerLifetime());
+            }
+
+            if (serviceRegistry.AvailableServices.All(x => x.ServiceName != typeof(MemoryCacheMiddleware).FullName))
+            {
+                serviceRegistry.Register<IAsyncMiddleware<HttpContext>, MemoryCacheMiddleware>(typeof(MemoryCacheMiddleware).FullName, new PerContainerLifetime());
+            }
+
+            if (serviceRegistry.AvailableServices.All(x => x.ServiceName != typeof(TracingMiddleware).FullName))
+            {
+                serviceRegistry.Register<IAsyncMiddleware<HttpContext>, TracingMiddleware>(typeof(TracingMiddleware).FullName, new PerContainerLifetime());
+            }
+                
+            
+            
+            
+            
         }
     }
 }

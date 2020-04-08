@@ -1,6 +1,4 @@
-﻿using Jal.HttpClient.Interface.Fluent;
-
-namespace Jal.HttpClient.Serilog
+﻿namespace Jal.HttpClient.Serilog
 {
     public static class HttpMiddlewareDescriptorExtensions
     {

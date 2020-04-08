@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
-using Jal.ChainOfResponsability.Intefaces;
-using Jal.ChainOfResponsability.Model;
-using Jal.HttpClient.Model;
+using Jal.ChainOfResponsability;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 
 namespace Jal.HttpClient.ApplicationInsights
 {
-    public class ApplicationInsightsMiddelware : IMiddlewareAsync<HttpWrapper>
+    public class ApplicationInsightsMiddelware : IAsyncMiddleware<HttpContext>
     {
         private readonly TelemetryClient _client;
 
@@ -21,13 +19,13 @@ namespace Jal.HttpClient.ApplicationInsights
             _applicationname = applicationname;
         }
 
-        public async Task ExecuteAsync(Context<HttpWrapper> context, Func<Context<HttpWrapper>, Task> next)
+        public async Task ExecuteAsync(AsyncContext<HttpContext> context, Func<AsyncContext<HttpContext>, Task> next)
         {
             var telemetry = new DependencyTelemetry()
             {
                 Name = context.Data.Request.Message.RequestUri.AbsolutePath,
 
-                Id = context.Data.Request.Identity.Id,
+                Id = context.Data.Request.Tracing.RequestId,
 
                 Timestamp = DateTime.UtcNow,
 
@@ -38,14 +36,14 @@ namespace Jal.HttpClient.ApplicationInsights
                 Type = "HTTP",
             };
 
-            if (!string.IsNullOrWhiteSpace(context.Data.Request.Identity.OperationId))
+            if (!string.IsNullOrWhiteSpace(context.Data.Request.Tracing.OperationId))
             {
-                telemetry.Context.Operation.Id = context.Data.Request.Identity.OperationId;
+                telemetry.Context.Operation.Id = context.Data.Request.Tracing.OperationId;
             }
 
-            if (!string.IsNullOrWhiteSpace(context.Data.Request.Identity.ParentId))
+            if (!string.IsNullOrWhiteSpace(context.Data.Request.Tracing.ParentId))
             {
-                telemetry.Context.Operation.ParentId = context.Data.Request.Identity.ParentId;
+                telemetry.Context.Operation.ParentId = context.Data.Request.Tracing.ParentId;
             }
 
             if (!string.IsNullOrWhiteSpace(_applicationname))
@@ -90,14 +88,14 @@ namespace Jal.HttpClient.ApplicationInsights
 
                 var telemetryexception = new ExceptionTelemetry(exception);
 
-                if (!string.IsNullOrWhiteSpace(context.Data.Request.Identity.OperationId))
+                if (!string.IsNullOrWhiteSpace(context.Data.Request.Tracing.OperationId))
                 {
-                    telemetryexception.Context.Operation.Id = context.Data.Request.Identity.OperationId;
+                    telemetryexception.Context.Operation.Id = context.Data.Request.Tracing.OperationId;
                 }
 
-                if (!string.IsNullOrWhiteSpace(context.Data.Request.Identity.ParentId))
+                if (!string.IsNullOrWhiteSpace(context.Data.Request.Tracing.ParentId))
                 {
-                    telemetryexception.Context.Operation.ParentId = context.Data.Request.Identity.ParentId;
+                    telemetryexception.Context.Operation.ParentId = context.Data.Request.Tracing.ParentId;
                 }
 
                 if (!string.IsNullOrWhiteSpace(_applicationname))

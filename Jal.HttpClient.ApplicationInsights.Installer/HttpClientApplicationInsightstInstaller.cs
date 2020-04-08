@@ -1,8 +1,7 @@
 ﻿using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
-using Jal.ChainOfResponsability.Intefaces;
-using Jal.HttpClient.Model;
+using Jal.ChainOfResponsability;
 
 namespace Jal.HttpClient.ApplicationInsights.Installer
 {
@@ -17,7 +16,10 @@ namespace Jal.HttpClient.ApplicationInsights.Installer
 
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
-            container.Register(Component.For<IMiddlewareAsync<HttpWrapper>>().ImplementedBy<ApplicationInsightsMiddelware>().Named(typeof(ApplicationInsightsMiddelware).FullName).DependsOn(new { applicationname = _applicationname }));
+            if (!container.Kernel.HasComponent(typeof(ApplicationInsightsMiddelware).FullName))
+            {
+                container.Register(Component.For<IAsyncMiddleware<HttpContext>>().ImplementedBy<ApplicationInsightsMiddelware>().Named(typeof(ApplicationInsightsMiddelware).FullName).DependsOn(new { applicationname = _applicationname }));
+            }
         }
     }
 }

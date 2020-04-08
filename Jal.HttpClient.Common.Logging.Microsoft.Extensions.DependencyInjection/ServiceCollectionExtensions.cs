@@ -1,16 +1,14 @@
-﻿using Jal.ChainOfResponsability.Intefaces;
-using Jal.HttpClient.Common.Logging;
-using Jal.HttpClient.Model;
-using Jal.Locator.Microsoft.Extensions.DependencyInjection.Extensions;
-using Jal.Locator.Microsoft.Extensions.DependencyInjection.Interface;
+﻿using Jal.ChainOfResponsability;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Jal.HttpClient.Common.Logging.Microsoft.Extensions.DependencyInjection
 {
     public static class ServiceCollectionExtensions
     {
-        public static INamedServiceCollection AddCommonLoggingForHttpClient(this INamedServiceCollection servicecollection)
+        public static IServiceCollection AddCommonLoggingForHttpClient(this IServiceCollection servicecollection)
         {
-            servicecollection.AddSingleton<IMiddlewareAsync<HttpWrapper>, CommonLoggingMiddelware>(typeof(CommonLoggingMiddelware).FullName);
+            servicecollection.AddSingleton<IAsyncMiddleware<HttpContext>, CommonLoggingMiddelware>();
 
             return servicecollection;
         }

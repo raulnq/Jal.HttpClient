@@ -3,68 +3,61 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Jal.ChainOfResponsability.Intefaces;
-using Jal.ChainOfResponsability.Model;
-using Jal.HttpClient.Model;
+using Jal.ChainOfResponsability;
 
-namespace Jal.HttpClient.Impl
+namespace Jal.HttpClient
 {
-    public class HttpMiddelware : IMiddlewareAsync<HttpWrapper>
+    public class HttpMiddelware : IAsyncMiddleware<HttpContext>
     {
-        public async Task ExecuteAsync(Context<HttpWrapper> context, Func<Context<HttpWrapper>, Task> next)
-        {
-            context.Data.Response = await SendAsync(context.Data.Request);
-        }
-
-        public async Task<HttpResponse> SendAsync(HttpRequest request)
+        public async Task ExecuteAsync(AsyncContext<HttpContext> context, Func<AsyncContext<HttpContext>, Task> next)
         {
             var stopWatch = new Stopwatch();
 
             stopWatch.Start();
 
-            HttpResponse response = new HttpResponse(request);
+            HttpResponseMessage message = null;
+
+            Exception exception = null;
+
+            double duration = 0;
 
             try
             {
                 //response.Message = await request.HttpClient.SendAsync(request.Message, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
-                response.Message = await request.Client.SendAsync(request.Message).ConfigureAwait(false);
-
-                return response;
+                message = await context.Data.Request.Client.SendAsync(context.Data.Request.Message, context.CancellationToken).ConfigureAwait(false);
             }
             catch (WebException we)
             {
-                response.Exception = we;
+                exception = we;
             }
             catch (InvalidOperationException ioe)
             {
-                response.Exception = ioe;
+                exception = ioe;
             }
             catch (HttpRequestException hre)
             {
-                response.Exception = hre;
+                exception = hre;
             }
             catch (TaskCanceledException tce)
             {
-                response.Exception = tce;
+                exception = tce;
             }
             catch (OperationCanceledException oce)
             {
-                response.Exception = oce;
+                exception = oce;
             }
             catch (Exception ex)
             {
-                response.Exception = ex;
+                exception = ex;
             }
             finally
             {
                 stopWatch.Stop();
 
-                if (response != null)
-                {
-                    response.Duration = stopWatch.Elapsed.TotalMilliseconds;
-                }
+                duration = stopWatch.Elapsed.TotalMilliseconds;
             }
-            return response;
+
+            context.Data.Response = new HttpResponse(context.Data.Request, message, exception, duration);
         }
     }
 }
