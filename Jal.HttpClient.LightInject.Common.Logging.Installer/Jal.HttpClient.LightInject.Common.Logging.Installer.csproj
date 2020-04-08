@@ -15,7 +15,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Jal.ChainOfResponsability.LightInject.Installer" Version="3.1.0" />
     <PackageReference Include="LightInject" Version="6.3.2" />
   </ItemGroup>
 
