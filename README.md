@@ -58,7 +58,7 @@ var container = new WindsorContainer();
 
 container.AddHttpClient();
 
-var client = container.Resolve<IHttpFluentHandler>();
+var client = container.GetHttpClient();
 ```
 ### LightInject [![NuGet](https://img.shields.io/nuget/v/Jal.HttpClient.LightInject.Installer.svg)](https://www.nuget.org/packages/Jal.HttpClient.LightInject.Installer)
 ```csharp
@@ -66,7 +66,7 @@ var container = new ServiceContainer();
 
 container.AddHttpClient();
 
-var client = container.GetInstance<IHttpFluentHandler>();
+var client = container.GetHttpClient();
 ```
 ### Microsoft.Extensions.DependencyInjection [![NuGet](https://img.shields.io/nuget/v/Jal.HttpClient.Microsoft.Extensions.DependencyInjection.Installer.svg)](https://www.nuget.org/packages/Jal.HttpClient.Microsoft.Extensions.DependencyInjection.Installer)
 ```csharp
@@ -76,7 +76,7 @@ container.AddHttpClient();
 
 var provider = container.BuildServiceProvider();
 
-var client = provider.GetService<IHttpFluentHandler>();
+var client = provider.GetHttpClient();
 ```
 ## Middlewares
 ```csharp

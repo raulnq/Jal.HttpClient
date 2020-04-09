@@ -2,12 +2,13 @@
 using Jal.ChainOfResponsability;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Jal.ChainOfResponsability.Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace Jal.HttpClient.Microsoft.Extensions.DependencyInjection.Installer
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddHttpClient(this IServiceCollection servicecollection)
+        public static IServiceCollection AddHttpClient(this IServiceCollection servicecollection, Action<IServiceCollection> action = null)
         {
             servicecollection.AddChainOfResponsability();
 
@@ -24,6 +25,11 @@ namespace Jal.HttpClient.Microsoft.Extensions.DependencyInjection.Installer
             servicecollection.AddSingleton<IAsyncMiddleware<HttpContext>, MemoryCacheMiddleware>();
 
             servicecollection.AddSingleton<IAsyncMiddleware<HttpContext>, TracingMiddleware>();
+
+            if (action != null)
+            {
+                action(servicecollection);
+            }
 
             return servicecollection;
         }

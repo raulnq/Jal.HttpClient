@@ -35,15 +35,16 @@ namespace Jal.HttpClient.Tests
 
             container.Register(Component.For<ILog>().Instance(log));
 
-            container.AddHttpClient();
+            container.AddHttpClient(c=>
+            {
+                c.AddCommonLoggingForHttpClient();
 
-            container.AddCommonLoggingForHttpClient();
+                c.AddSerilogForHttpClient();
 
-            container.AddSerilogForHttpClient();
+                c.AddPollyForHttpClient();
+            });
 
-            container.AddPollyForHttpClient();
-
-            _sut = container.Resolve<IHttpFluentHandler>();
+            _sut = container.GetHttpClient();
 
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}{Properties}").MinimumLevel.Verbose()

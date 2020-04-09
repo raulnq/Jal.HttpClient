@@ -42,11 +42,6 @@ namespace Jal.HttpClient.LightInject.Installer
             {
                 serviceRegistry.Register<IAsyncMiddleware<HttpContext>, TracingMiddleware>(typeof(TracingMiddleware).FullName, new PerContainerLifetime());
             }
-                
-            
-            
-            
-            
         }
     }
 }

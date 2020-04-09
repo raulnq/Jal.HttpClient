@@ -5,7 +5,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Raul Naupari</Authors>
     <Description>Microsoft.Extensions.DependencyInjection installer for the Jal.HttpClient.ApplicationInsights library</Description>
-    <Version>3.0.0</Version>
+    <Version>3.1.0</Version>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
   </PropertyGroup>
 

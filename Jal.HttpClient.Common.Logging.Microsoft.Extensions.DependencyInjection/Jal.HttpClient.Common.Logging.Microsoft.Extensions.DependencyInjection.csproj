@@ -6,7 +6,7 @@
     <Description>Microsoft.Extensions.DependencyInjection installer for the Jal.HttpClient.Common.Logging library</Description>
     <PackageProjectUrl>https://github.com/raulnq/Jal.HttpClient</PackageProjectUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>3.0.0</Version>
+    <Version>3.1.0</Version>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
   </PropertyGroup>
 

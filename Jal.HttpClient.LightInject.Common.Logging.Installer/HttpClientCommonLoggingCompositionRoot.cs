@@ -13,7 +13,6 @@ namespace Jal.HttpClient.LightInject.Common.Logging.Installer
             {
                 serviceRegistry.Register<IAsyncMiddleware<HttpContext>, CommonLoggingMiddelware>(typeof(CommonLoggingMiddelware).FullName, new PerContainerLifetime());
             }
-                
         }
     }
 }

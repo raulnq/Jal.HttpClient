@@ -5,7 +5,7 @@
         public string OperationId { get; }
         public string ParentId { get; }
         public string RequestId { get; }
-        public HttpTracingContext(string requestid, string parentid, string operationid)
+        public HttpTracingContext(string requestid, string parentid=null, string operationid=null)
         {
             RequestId = requestid;
             ParentId = parentid;
