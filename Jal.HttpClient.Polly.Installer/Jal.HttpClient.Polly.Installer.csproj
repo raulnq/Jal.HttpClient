@@ -7,7 +7,6 @@
     <Company>Raul Naupari</Company>
     <Description>Castle Windsor installer for the Jal.HttpClient.Polly library</Description>
     <Copyright />
-    <PackageLicenseUrl></PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/raulnq/Jal.HttpClient</PackageProjectUrl>
     <RepositoryUrl></RepositoryUrl>
     <PackageTags />
