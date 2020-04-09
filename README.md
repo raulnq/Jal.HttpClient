@@ -111,7 +111,7 @@ using (var response = await _sut.Get("http://httpbin.org/ip")
 }
 
 using (var response = await _sut.Get("http://httpbin.org/ip")
-    .WithMiddleware(x=>x.WithMiddleware(x => x.OnConditionRetry(3, y => y.Message?.StatusCode != HttpStatusCode.OK)).SendAsync())
+    .WithMiddleware(x => x.OnConditionRetry(3, y => y.Message?.StatusCode != HttpStatusCode.OK)).SendAsync())
 {
 
 }
