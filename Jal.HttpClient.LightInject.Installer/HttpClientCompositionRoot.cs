@@ -8,12 +8,12 @@ namespace Jal.HttpClient.LightInject.Installer
     {
         public void Compose(IServiceRegistry serviceRegistry)
         {
-            if (serviceRegistry.AvailableServices.All(x => x.ServiceType != typeof(HttpHandler)))
+            if (serviceRegistry.AvailableServices.All(x => x.ServiceType != typeof(IHttpHandler)))
             {
                 serviceRegistry.Register<IHttpHandler, HttpHandler>(new PerContainerLifetime());
             }
 
-            if (serviceRegistry.AvailableServices.All(x => x.ServiceType != typeof(HttpFluentHandler)))
+            if (serviceRegistry.AvailableServices.All(x => x.ServiceType != typeof(IHttpFluentHandler)))
             {
                 serviceRegistry.Register<IHttpFluentHandler, HttpFluentHandler>(new PerContainerLifetime());
             }
