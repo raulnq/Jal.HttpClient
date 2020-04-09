@@ -1,4 +1,4 @@
-# Jal.HttpClient
+# Jal.HttpClient [![NuGet](https://img.shields.io/nuget/v/Jal.HttpClient.svg)](https://www.nuget.org/packages/Jal.HttpClient)
 Just another library to wrap the HttpClient class
 
 ## How to use?
@@ -52,7 +52,7 @@ using (var response = await client.Delete("http://httpbin.org/delete").SendAsync
 #### Patch, Put, Options and Head
 ## IHttpFluentHandler interface building
 
-### Castle Windsor
+### Castle Windsor [![NuGet](https://img.shields.io/nuget/v/Jal.HttpClient.Installer.svg)](https://www.nuget.org/packages/Jal.HttpClient.Installer)
 ```csharp
 var container = new WindsorContainer();
 
@@ -60,7 +60,7 @@ container.AddHttpClient();
 
 var client = container.Resolve<IHttpFluentHandler>();
 ```
-### LightInject
+### LightInject [![NuGet](https://img.shields.io/nuget/v/Jal.HttpClient.LightInject.Installer.svg)](https://www.nuget.org/packages/Jal.HttpClient.LightInject.Installer)
 ```csharp
 var container = new ServiceContainer();
 
@@ -68,7 +68,7 @@ container.AddHttpClient();
 
 var client = container.GetInstance<IHttpFluentHandler>();
 ```
-### Microsoft.Extensions.DependencyInjection
+### Microsoft.Extensions.DependencyInjection [![NuGet](https://img.shields.io/nuget/v/Jal.HttpClient.Microsoft.Extensions.DependencyInjection.Installer.svg)](https://www.nuget.org/packages/Jal.HttpClient.Microsoft.Extensions.DependencyInjection.Installer)
 ```csharp
 var container = new ServiceCollection();
 
@@ -90,7 +90,7 @@ using (var response = await _sut.Get("http://httpbin.org/get").WithMiddleware(x 
     var content = await response.Message.Content.ReadAsStringAsync();
 }
 ```
-### Serilog
+### Serilog [![NuGet](https://img.shields.io/nuget/v/Jal.HttpClient.Serilog.svg)](https://www.nuget.org/packages/Jal.HttpClient.Serilog)
 ```csharp
 container.AddSerilogForHttpClient();
 ...
@@ -100,7 +100,7 @@ using (var response = await _sut.Get("http://httpbin.org/ip")
 
 }
 ```
-### Polly
+### Polly [![NuGet](https://img.shields.io/nuget/v/Jal.HttpClient.Polly.svg)](https://www.nuget.org/packages/Jal.HttpClient.Polly)
 ```csharp
 container.AddPollyForHttpClient();
 ...
@@ -126,7 +126,7 @@ using (var response = await _sut.Get("http://httpbin.org/ip")
     response.Message.StatusCode.ShouldBe(HttpStatusCode.InternalServerError);
 }
 ```
-### Application Insights
+### Application Insights [![NuGet](https://img.shields.io/nuget/v/Jal.HttpClient.ApplicationInsights.svg)](https://www.nuget.org/packages/Jal.HttpClient.ApplicationInsights)
 ```csharp
 container.AddApplicationInsightsForHttpClient("appname");
 ...
@@ -136,7 +136,7 @@ using (var response = await _sut.Get("http://httpbin.org/ip")
 
 }
 ```
-### Common Logging
+### Common Logging [![NuGet](https://img.shields.io/nuget/v/Jal.HttpClient.Common.Logging.svg)](https://www.nuget.org/packages/Jal.HttpClient.Common.Logging)
 ```csharp
 container.AddCommonLoggingForHttpClient();
 ...
