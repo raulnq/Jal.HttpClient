@@ -11,12 +11,9 @@ namespace Jal.HttpClient.ApplicationInsights
     {
         private readonly TelemetryClient _client;
 
-        private readonly string _applicationname;
-
-        public ApplicationInsightsMiddelware(TelemetryClient client, string applicationname)
+        public ApplicationInsightsMiddelware(TelemetryClient client)
         {
             _client = client;
-            _applicationname = applicationname;
         }
 
         public async Task ExecuteAsync(AsyncContext<HttpContext> context, Func<AsyncContext<HttpContext>, Task> next)
@@ -46,9 +43,9 @@ namespace Jal.HttpClient.ApplicationInsights
                 telemetry.Context.Operation.ParentId = context.Data.Request.Tracing.ParentId;
             }
 
-            if (!string.IsNullOrWhiteSpace(_applicationname))
+            if (!string.IsNullOrWhiteSpace(_client.Context.Cloud.RoleName))
             {
-                telemetry.Context.Cloud.RoleName = _applicationname;
+                telemetry.Context.Cloud.RoleName = _client.Context.Cloud.RoleName;
             }
 
             HttpResponse response = null;
@@ -98,9 +95,9 @@ namespace Jal.HttpClient.ApplicationInsights
                     telemetryexception.Context.Operation.ParentId = context.Data.Request.Tracing.ParentId;
                 }
 
-                if (!string.IsNullOrWhiteSpace(_applicationname))
+                if (!string.IsNullOrWhiteSpace(_client.Context.Cloud.RoleName))
                 {
-                    telemetryexception.Context.Cloud.RoleName = _applicationname;
+                    telemetryexception.Context.Cloud.RoleName = _client.Context.Cloud.RoleName;
                 }
 
                 _client.TrackException(telemetryexception);

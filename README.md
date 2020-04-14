@@ -82,7 +82,7 @@ var client = provider.GetHttpClient();
 ```csharp
 using (var response = await _sut.Get("http://httpbin.org/get").WithMiddleware(x =>
 {
-    x.AddTracingInformation();
+    x.AddTracing();
     x.AuthorizedByToken("token", "value");
     x.UseMemoryCache(30, y => y.Message.RequestUri.AbsoluteUri, z => z.Message.StatusCode == HttpStatusCode.OK);
 }).SendAsync())
@@ -92,7 +92,7 @@ using (var response = await _sut.Get("http://httpbin.org/get").WithMiddleware(x 
 ```
 ### Serilog [![NuGet](https://img.shields.io/nuget/v/Jal.HttpClient.Serilog.svg)](https://www.nuget.org/packages/Jal.HttpClient.Serilog)
 ```csharp
-container.AddSerilogForHttpClient();
+container.AddHttpClient(c=>c.Add<SerilogMiddelware>());
 ...
 using (var response = await _sut.Get("http://httpbin.org/ip")
     .WithMiddleware(x=>x.UseSerilog()).SendAsync())
@@ -102,7 +102,12 @@ using (var response = await _sut.Get("http://httpbin.org/ip")
 ```
 ### Polly [![NuGet](https://img.shields.io/nuget/v/Jal.HttpClient.Polly.svg)](https://www.nuget.org/packages/Jal.HttpClient.Polly)
 ```csharp
-container.AddPollyForHttpClient();
+container.AddHttpClient(c=>
+{
+    c.Add<CircuitBreakerMiddelware>();
+    c.Add<TimeoutMiddelware>();
+    c.Add<OnConditionRetryMiddelware>();
+});
 ...
 using (var response = await _sut.Get("http://httpbin.org/ip")
     .WithMiddleware(x=>x.UseTimeout(5)).SendAsync())
@@ -123,12 +128,12 @@ var policy = Policy
 using (var response = await _sut.Get("http://httpbin.org/ip")
     .WithMiddleware(x => x.UseCircuitBreaker(policy)).SendAsync())
 {
-    response.Message.StatusCode.ShouldBe(HttpStatusCode.InternalServerError);
+
 }
 ```
 ### Application Insights [![NuGet](https://img.shields.io/nuget/v/Jal.HttpClient.ApplicationInsights.svg)](https://www.nuget.org/packages/Jal.HttpClient.ApplicationInsights)
 ```csharp
-container.AddApplicationInsightsForHttpClient("appname");
+container.AddHttpClient(c=>c.Add<ApplicationInsightsMiddelware>());
 ...
 using (var response = await _sut.Get("http://httpbin.org/ip")
     .WithMiddleware(x=>x.UseApplicationInsights()).SendAsync())
@@ -138,7 +143,7 @@ using (var response = await _sut.Get("http://httpbin.org/ip")
 ```
 ### Common Logging [![NuGet](https://img.shields.io/nuget/v/Jal.HttpClient.Common.Logging.svg)](https://www.nuget.org/packages/Jal.HttpClient.Common.Logging)
 ```csharp
-container.AddCommonLoggingForHttpClient();
+container.AddHttpClient(c=>c.Add<CommonLoggingMiddelware>());
 ...
 using (var response = await _sut.Get("http://httpbin.org/ip")
     .WithMiddleware(x=>x.UseCommonLogging()).SendAsync())

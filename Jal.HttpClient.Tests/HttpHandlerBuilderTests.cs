@@ -5,19 +5,16 @@ using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Common.Logging;
 using Jal.HttpClient.Installer;
-using Jal.HttpClient.Common.Logging;
-using Jal.HttpClient.Common.Logging.Installer;
 using Shouldly;
-using Jal.HttpClient.Polly.Installer;
-using Jal.HttpClient.Polly;
 using System;
-using Polly.CircuitBreaker;
-using Polly;
-using Jal.HttpClient.Serilog.Installer;
-using Jal.HttpClient.Serilog;
 using Serilog;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
+using Jal.HttpClient.Common.Logging;
+using Jal.HttpClient.Serilog;
+using Jal.HttpClient.Polly;
+using Polly;
+using Polly.CircuitBreaker;
 
 namespace Jal.HttpClient.Tests
 {
@@ -37,11 +34,15 @@ namespace Jal.HttpClient.Tests
 
             container.AddHttpClient(c=>
             {
-                c.AddCommonLoggingForHttpClient();
+                c.Add<CommonLoggingMiddelware>();
 
-                c.AddSerilogForHttpClient();
+                c.Add<SerilogMiddelware>();
 
-                c.AddPollyForHttpClient();
+                c.Add<CircuitBreakerMiddelware>();
+
+                c.Add<TimeoutMiddelware>();
+
+                c.Add<OnConditionRetryMiddelware>();
             });
 
             _sut = container.GetHttpClient();
@@ -96,7 +97,7 @@ namespace Jal.HttpClient.Tests
         {
             var retries = 0;
             using (var response = await _sut.Get("http://httpbin.org/get?hi=1").WithMiddleware(x => {
-                x.AddTracingInformation();
+                x.AddTracing();
                 x.AuthorizedByToken("token", "value");
                 x.OnConditionRetry(3, y => y.Message.StatusCode == HttpStatusCode.OK, (z, c) => { retries++; });
                 x.UseSerilog();

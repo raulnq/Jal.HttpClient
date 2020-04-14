@@ -6,16 +6,29 @@ namespace Jal.HttpClient.LightInject.Installer
 {
     public static class ServiceContainerExtension
     {
-        public static void AddHttpClient(this IServiceContainer container, Action<IServiceContainer> action = null)
+        public static void AddHttpClient(this IServiceContainer container, Action<IHttpClientBuilder> action = null)
         {
-            container.AddChainOfResponsability();
+            container.AddChainOfResponsability(c=>
+            {
+                var builder = new HttpClientBuilder(c);
+
+                builder.Add<TracingMiddleware>();
+
+                builder.Add<MemoryCacheMiddleware>();
+
+                builder.Add<TokenAuthenticatorMiddleware>();
+
+                builder.Add<HttpMiddelware>();
+
+                builder.Add<BasicHttpAuthenticatorMiddleware>();
+
+                if (action != null)
+                {
+                    action(builder);
+                }
+            });
 
             container.RegisterFrom<HttpClientCompositionRoot>();
-
-            if (action != null)
-            {
-                action(container);
-            }
         }
 
         public static IHttpFluentHandler GetHttpClient(this IServiceContainer container)

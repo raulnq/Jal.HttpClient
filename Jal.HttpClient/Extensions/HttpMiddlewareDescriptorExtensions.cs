@@ -10,7 +10,7 @@ namespace Jal.HttpClient
             descriptor.Add<TokenAuthenticatorMiddleware>(y => { y.Add(TokenAuthenticatorMiddleware.TOKEN_VALUE_KEY, tokenvalue); y.Add(TokenAuthenticatorMiddleware.TOKEN_TYPE_KEY, "Bearer"); });
         }
 
-        public static void AddTracingInformation(this IHttpMiddlewareDescriptor descriptor, string requestidheadername="requestid", string parentidheadername = "parentid", string operationidheadername = "operationid")
+        public static void AddTracing(this IHttpMiddlewareDescriptor descriptor, string requestidheadername="requestid", string parentidheadername = "parentid", string operationidheadername = "operationid")
         {
             descriptor.Add<TracingMiddleware>(y => { y.Add(TracingMiddleware.REQUESTID_HEADER_NAME_KEY, requestidheadername); y.Add(TracingMiddleware.PARENTID_HEADER_NAME_KEY, parentidheadername); y.Add(TracingMiddleware.OPERATIONID_HEADER_NAME_KEY, operationidheadername); });
         }
